@@ -149,4 +149,3 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 | `INVERTIR(arreglo)` | Invierte el arreglo. | Arreglo |
 | `COPIAR(arreglo)` | Copia el arreglo. | Arreglo |
 | `UNIR(arreglo, separador)` | Une elementos en cadena. | Cadena |
-```
