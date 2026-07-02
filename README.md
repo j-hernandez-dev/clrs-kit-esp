@@ -1,4 +1,4 @@
-# clrs-kit-esp README
+# CLRS Kit Español
 
 **gaddis-kit-esp** es una extensión para Visual Studio Code orientada al soporte de un lenguaje de pseudocódigo, fuertemente inspirado en la sintaxis utilizada en el libro Introducción a Algoritmos (CLRS).
 
@@ -10,7 +10,7 @@
 | Ejecutar código      | Ejecuta el código escrito en CLRS mediante su transpilación a JavaScript y posterior ejecución en tiempo de ejecución. |
 | Construir código (JS) | Transpila el código CLRS a JavaScript sin ejecutarlo, generando un archivo listo para ser usado en Node.js. |
 
-## ⚙️ Estado actual (versión 1.0.0)
+## ⚙️ Estado actual (versión 1.0.1)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
@@ -23,6 +23,7 @@
 - Biblioteca estándar para manejo de archivos, cadenas, arreglos y funciones matemáticas.
 - Reporte de errores de sintaxis y de ejecución.
 - Soporte para funciones, arreglos, expresiones, condicionales, ciclos y operaciones de entrada/salida.
+- Soporte para CodeLens en el uso de botón para ejecutar y construir.
 
 ---
 
