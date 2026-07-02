@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { build } from "./src/interpreter/Runtime.js";
+import { CLRSCodeLensProvider } from "./providers/codeLensProvider.js";
 import path from 'path';
 /**
  * @param {vscode.ExtensionContext} context
@@ -65,6 +66,13 @@ export function activate(context) {
     });
 
     context.subscriptions.push(buildCode);
+
+    context.subscriptions.push(
+        vscode.languages.registerCodeLensProvider(
+            { language: "clrs-es" },
+            new CLRSCodeLensProvider()
+        )
+    );
 }
 
 export function deactivate() { }
