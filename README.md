@@ -6,7 +6,7 @@
 
 | Concepto              | Descripción |
 |----------------------|-------------|
-| Extensión de archivo | `.gds` |
+| Extensión de archivo | `.clrs` |
 | Ejecutar código      | Ejecuta el código escrito en CLRS mediante su transpilación a JavaScript y posterior ejecución en tiempo de ejecución. |
 | Construir código (JS) | Transpila el código CLRS a JavaScript sin ejecutarlo, generando un archivo listo para ser usado en Node.js. |
 
