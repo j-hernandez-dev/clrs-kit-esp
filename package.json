@@ -1,0 +1,94 @@
+{
+  "name": "clrs-kit-esp",
+  "displayName": "CLRS Kit Español",
+  "description": "Soporte de lenguaje y herramientas para el pseudolenguaje CRLS.",
+  "version": "1.0.0",
+  "publisher": "j-hernandez-dev",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.125.0"
+  },
+  "categories": [
+    "Language Packs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/j-hernandez-dev/clrs-kit-esp.git"
+  },
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "CLRS.runCode",
+        "title": "Ejecutar código"
+      },
+      {
+        "command": "CLRS.buildCode",
+        "title": "Construir código (JS)"
+      }
+    ],
+    "languages": [
+      {
+        "id": "clrs-es",
+        "aliases": [
+          "CLRS Español",
+          "clrs-es"
+        ],
+        "extensions": [
+          ".clrs"
+        ],
+        "configuration": "./language-config/language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "clrs-es",
+        "scopeName": "source.clrs-es",
+        "path": "./syntaxes/clrs.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "clrs-es",
+        "path": "./snippets/clrs-core.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./snippets/clrs-math.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./snippets/clrs-io.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./snippets/clrs-strings.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./snippets/clrs-array.code-snippets"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.125.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.39.3"
+  },
+  "dependencies": {
+    "chevrotain": "^12.0.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}

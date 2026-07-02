@@ -1,0 +1,150 @@
+{
+  "name": "CLRS Español",
+  "scopeName": "source.clrs-es",
+
+  "foldingStartMarker": "(\\bsi\\b|\\bpara\\b|\\bmientras\\b|\\w+\\s*\\()",
+  "foldingStopMarker": "^\\s*(sino\\s+si|sino|fin)\\b",
+
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#booleans" },
+    { "include": "#functions" },
+    { "include": "#calls" },
+    { "include": "#variables" },
+    { "include": "#operators" },
+    { "include": "#punctuation" }
+  ],
+
+  "repository": {
+
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.clrs",
+          "match": "//.*$"
+        }
+      ]
+    },
+
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.clrs",
+          "begin": "\"",
+          "end": "\""
+        }
+      ]
+    },
+
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.clrs",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+
+    "booleans": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.clrs",
+          "match": "\\b(VERDAD|FALSO)\\b"
+        }
+      ]
+    },
+
+    "keywords": {
+      "patterns": [
+
+        {
+          "name": "keyword.control.conditional.elseif.clrs",
+          "match": "\\bsino\\s+si\\b"
+        },
+        {
+          "name": "keyword.control.conditional.clrs",
+          "match": "\\b(si|sino)\\b"
+        },
+
+        {
+          "name": "keyword.control.loop.clrs",
+          "match": "\\b(para|mientras)\\b"
+        },
+
+        {
+          "name": "keyword.control.loop.direction.clrs",
+          "match": "\\b(hasta|bajando)\\b"
+        },
+
+        {
+          "name": "keyword.control.io.clrs",
+          "match": "\\b(escribir|leer|retornar)\\b"
+        }
+      ]
+    },
+
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.assignment.clrs",
+          "match": "<-"
+        },
+        {
+          "name": "keyword.operator.comparison.clrs",
+          "match": "(<=|>=|!=|=|<|>)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.clrs",
+          "match": "(\\+|-|\\*|/|\\^|%)"
+        },
+        {
+          "name": "keyword.operator.logical.clrs",
+          "match": "\\b(y|o|no)\\b"
+        }
+      ]
+    },
+
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.clrs",
+          "match": "^[ \\t]*[A-Za-z_][A-Za-z0-9_]*\\s*\\("
+        }
+      ]
+    },
+
+    "calls": {
+      "patterns": [
+        {
+          "name": "support.function.call.clrs",
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\s*\\("
+        }
+      ]
+    },
+
+    "variables": {
+      "patterns": [
+        {
+          "name": "variable.other.assignment.clrs",
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*<-) "
+        },
+        {
+          "name": "variable.other.array.clrs",
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\[)"
+        }
+      ]
+    },
+
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.clrs",
+          "match": "(\\(|\\)|\\[|\\]|,)"
+        }
+      ]
+    }
+  }
+}
