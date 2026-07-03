@@ -101,7 +101,7 @@ export class Transpiler {
 
         const fileContent = dependencies + standartLibrary + code + endProgram;
         this.createFile(fileContent);
-        this.freezeThread(500);
+        //this.freezeThread(500);
     }
 
     /**
@@ -321,7 +321,7 @@ export class Transpiler {
             return `var ${identifier};\n`;
         }
 
-        return `var ${identifier} = cre_array_1029347226(${dimensions});\n`;
+        return `var ${identifier} = cre_array_1029347226(${identifier}, ${dimensions});\n`;
     }
 
     /**
@@ -647,7 +647,7 @@ if (${expr}.trim() !== "" && !Number.isNaN(Number(${expr}))) {
             this.buildBlock(statement.body?.statements);
 
 
-        return `for (${variable} = ${start}; ${variable} ${condOperator} ${end}; ${variable} = ${variable} ${unaryOperator} ${incrementValue}) {\n${body}\n}\n`;
+        return `for (var ${variable} = ${start}; ${variable} ${condOperator} ${end}; ${variable} = ${variable} ${unaryOperator} ${incrementValue}) {\n${body}\n}\n`;
     }
 
     /**

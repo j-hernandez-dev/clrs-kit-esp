@@ -61,6 +61,14 @@ export class StatementVisitor {
             return this.visitWrite(CSTAdapter.first(ctx, "writeStatement"));
         }
 
+        if (CSTAdapter.has(ctx, "functionCall")) {
+
+            return this.expressionVisitor.visitFunctionCall(
+                CSTAdapter.first(ctx, "functionCall")
+            );
+
+        }
+
         if (
             CSTAdapter.has(ctx, "functionDeclaration")
         ) {
@@ -320,7 +328,7 @@ export class StatementVisitor {
             location
         );
     }
-    
+
 
     /**
      * =========================
@@ -449,34 +457,6 @@ export class StatementVisitor {
         );
 
     }
-
-    /*
-    visitRead(ctx) {
-
-        const identifiers =
-            CSTAdapter.get(ctx, "Identifier") ?? [];
-
-
-        const identifierNodes =
-            identifiers.map(
-                (token) =>
-                    ASTFactory.identifier(
-                        token.image,
-                        LocationHelper.fromTokens(token)
-                    )
-            );
-
-
-        const location =
-            LocationHelper.from(ctx);
-
-
-        return ASTFactory.read(
-            identifierNodes,
-            location
-        );
-    }
-    */
 
     /**
      * =========================

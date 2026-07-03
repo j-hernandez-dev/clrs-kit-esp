@@ -23,6 +23,8 @@ export function activate(context) {
             terminal = vscode.window.createTerminal('CLRS');
         }
 
+        vscode.window.showInformationMessage("Ejecutando código");
+
         terminal.show();
 
         terminal.sendText(`node "${interpreterPath}" "${actualFilePath}"`);
@@ -47,7 +49,7 @@ export function activate(context) {
 
         if (!projecRootPath) {
             vscode.window.showErrorMessage(
-                "No hay un proyecto abierto."
+                "No hay un proyecto abierto"
             );
             return;
         }

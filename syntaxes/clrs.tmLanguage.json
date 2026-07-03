@@ -1,25 +1,41 @@
 {
   "name": "CLRS Español",
   "scopeName": "source.clrs-es",
-
   "foldingStartMarker": "(\\bsi\\b|\\bpara\\b|\\bmientras\\b|\\w+\\s*\\()",
   "foldingStopMarker": "^\\s*(sino\\s+si|sino|fin)\\b",
-
   "patterns": [
-    { "include": "#comments" },
-    { "include": "#strings" },
-    { "include": "#numbers" },
-    { "include": "#keywords" },
-    { "include": "#booleans" },
-    { "include": "#functions" },
-    { "include": "#calls" },
-    { "include": "#variables" },
-    { "include": "#operators" },
-    { "include": "#punctuation" }
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#booleans"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#calls"
+    },
+    {
+      "include": "#variables"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#punctuation"
+    }
   ],
-
   "repository": {
-
     "comments": {
       "patterns": [
         {
@@ -28,7 +44,6 @@
         }
       ]
     },
-
     "strings": {
       "patterns": [
         {
@@ -38,7 +53,6 @@
         }
       ]
     },
-
     "numbers": {
       "patterns": [
         {
@@ -47,7 +61,6 @@
         }
       ]
     },
-
     "booleans": {
       "patterns": [
         {
@@ -56,10 +69,8 @@
         }
       ]
     },
-
     "keywords": {
       "patterns": [
-
         {
           "name": "keyword.control.conditional.elseif.clrs",
           "match": "\\bsino\\s+si\\b"
@@ -68,24 +79,20 @@
           "name": "keyword.control.conditional.clrs",
           "match": "\\b(si|sino)\\b"
         },
-
         {
           "name": "keyword.control.loop.clrs",
           "match": "\\b(para|mientras)\\b"
         },
-
         {
           "name": "keyword.control.loop.direction.clrs",
           "match": "\\b(hasta|bajando)\\b"
         },
-
         {
           "name": "keyword.control.io.clrs",
           "match": "\\b(escribir|leer|retornar)\\b"
         }
       ]
     },
-
     "operators": {
       "patterns": [
         {
@@ -98,15 +105,10 @@
         },
         {
           "name": "keyword.operator.arithmetic.clrs",
-          "match": "(\\+|-|\\*|/|\\^|%)"
-        },
-        {
-          "name": "keyword.operator.logical.clrs",
-          "match": "\\b(y|o|no)\\b"
+          "match": "(\\+|-|\\*|/|\\^|%|y|o|no)"
         }
       ]
     },
-
     "functions": {
       "patterns": [
         {
@@ -115,7 +117,6 @@
         }
       ]
     },
-
     "calls": {
       "patterns": [
         {
@@ -124,7 +125,6 @@
         }
       ]
     },
-
     "variables": {
       "patterns": [
         {
@@ -137,7 +137,6 @@
         }
       ]
     },
-
     "punctuation": {
       "patterns": [
         {

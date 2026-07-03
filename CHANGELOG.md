@@ -2,6 +2,57 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.0.8] - 2026-07-02
+
+### Added
+
+- Added README documentation.
+- Modified TextMate to highlight logical operations differently.
+
+## [1.0.7] - 2026-07-02
+
+### Added
+
+- Array parameter bug fixed.
+- README with complete documentation.
+
+## [1.0.6] - 2026-07-02
+
+### Added
+
+- Bug fix when calling a function within another function.
+
+## [1.0.5] - 2026-07-02
+
+### Added
+
+- Change in README
+
+## [1.0.4] - 2026-07-02
+
+### Added
+
+- VS Code Window added for run code.
+
+## [1.0.3] - 2026-07-02
+
+### Added
+
+- Correction in variable initialization for 'for' loops. It is no longer necessary to define it before.
+
+## [1.0.2] - 2026-07-02
+
+### Added
+
+- Correction in the version.
+
+## [1.0.1] - 2026-07-02
+
+### Added
+
+- Support for CodeLens in using button to run and build.
+- Correction in the use of arrays, they are no longer emptied with each access.
+
 ## [1.0.0] - 2026-07-02
 
 ### Added

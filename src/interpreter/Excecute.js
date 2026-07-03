@@ -14,7 +14,6 @@ export function executeCodeInteractive(transpiler) {
 
   // Cuando el archivo temporal termine, volvemos a tomar el control aquí
   // @ts-ignore
-  
   proceso.on('close', (/** @type {any} */ code) => {
     console.log(`\n--- The interactive execution ended (Exit code: ${code}) ---`);
     transpiler.deleteFile(transpiler.JSFile);

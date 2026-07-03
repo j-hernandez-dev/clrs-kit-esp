@@ -59,16 +59,9 @@ export class DeclarationVisitor {
 
         switch (ctx.name) {
 
-            case "arrayDeclaration":
-
-                return this.visitArrayDeclaration(ctx);
-
-
-
             case "functionDeclaration":
 
                 return this.visitFunctionDeclaration(ctx);
-
 
             default:
 
@@ -225,6 +218,48 @@ export class DeclarationVisitor {
             dimensions,
             location
         );
+    }
+
+    /**
+     * =========================
+     * CONTAR DIMENSIONES
+     * =========================
+     *
+     * @param {any} ctx
+     */
+    getParameterDimensions(ctx) {
+
+        const brackets =
+            CSTAdapter.get(
+                ctx,
+                "LBracket"
+            ) ?? [];
+
+
+        const expressions =
+            CSTAdapter.get(
+                ctx,
+                "expression"
+            ) ?? [];
+
+        const dimensions = [];
+
+        for (let i = 0; i < brackets.length; i++) {
+
+            const expression =
+                expressions[i];
+
+
+            dimensions.push(
+                expression
+                    ?
+                    this.expressionVisitor.visitExpression(expression)
+                    :
+                    null
+            );
+        }
+
+        return dimensions;
     }
     
     /**

@@ -1,6 +1,6 @@
 # CLRS Kit Español
 
-**gaddis-kit-esp** es una extensión para Visual Studio Code orientada al soporte de un lenguaje de pseudocódigo, fuertemente inspirado en la sintaxis utilizada en el libro Introducción a Algoritmos (CLRS).
+**clrs-kit-esp** es una extensión para Visual Studio Code orientada al soporte de un lenguaje de pseudocódigo, fuertemente inspirado en la sintaxis utilizada en el libro Introducción a Algoritmos (CLRS).
 
 ## 💻 Inicio en VS Code
 
@@ -10,7 +10,7 @@
 | Ejecutar código      | Ejecuta el código escrito en CLRS mediante su transpilación a JavaScript y posterior ejecución en tiempo de ejecución. |
 | Construir código (JS) | Transpila el código CLRS a JavaScript sin ejecutarlo, generando un archivo listo para ser usado en Node.js. |
 
-## ⚙️ Estado actual (versión 1.0.1)
+## ⚙️ Estado actual (versión 1.0.8)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
@@ -62,6 +62,217 @@ Este proyecto es de código abierto. Puede ser modificado y extendido libremente
 
 * No hay soporte para el análisis semántico. Por lo que todo es realizado en el análisis de JavaScript sin especificar la localización del error.
 * Es posible que determinado código se genere de manera incorrecta por el transpilador.
+
+---
+
+# 🧮 Características del lenguaje
+
+## Comentarios
+
+CLRS únicamente admite comentarios de una sola línea mediante `//`.
+
+```text
+// Comentario simple
+```
+
+## Variables
+
+Las variables son dinámicas y débilmente tipadas. Esto significa que pueden almacenar valores de distintos tipos y cambiar de tipo durante la ejecución mediante conversiones implícitas cuando sea necesario.
+
+```text
+variable1 <- 10
+variable2 <- "texto"
+variable1 <- variable2
+```
+
+Las variables son siempre mutables; el lenguaje no dispone de constantes. Su ámbito es local a la función donde se definen y la asignación se realiza mediante el operador `<-`.
+
+```text
+variable1 <- 10
+variable1 <- 2
+variable1 <- 4
+```
+
+Las variables deben inicializarse en el momento de su creación, por lo que no es posible declararlas sin asignarles un valor inicial. Los valores admitidos son numéricos, cadenas y lógicos.
+
+```text
+variable1 <- 10
+variable2 <- "texto"
+variable3 <- VERDAD
+```
+
+## Arreglos
+
+Los arreglos son dinámicos. Su tamaño y número de dimensiones se determinan automáticamente conforme se accede a nuevas posiciones.
+
+```text
+arreglo[0] <- 10
+arregloBi[2][2] <- 10
+```
+
+Es posible asignar un arreglo completo a una variable o el contenido de una variable a un arreglo. En ambos casos, la asignación copia el contenido correspondiente.
+
+```text
+variable1 <- arreglo
+arregloBi <- variable2
+```
+
+## Entrada y salida
+
+La instrucción `escribir` permite mostrar información en la consola. Puede imprimir valores individuales, varios valores separados por comas, expresiones concatenadas y arreglos completos.
+
+```text
+escribir variable1
+escribir arreglo
+escribir variable1, variable2, variable3
+escribir variable1 + variable2 + variable3
+```
+
+La instrucción `leer` permite obtener datos desde la consola. Es posible leer una o varias variables en una sola instrucción. El tipo del valor leído se determina automáticamente.
+
+```text
+leer variable1
+leer variable1, variable2, variable3
+```
+
+## Estructuras de selección
+
+La única estructura de selección es `si`, junto con las variantes `sino si` y `sino`. Los bloques de código se delimitan mediante indentación, por lo que es importante mantener una indentación consistente.
+
+```text
+si variable3 o VERDAD
+    escribir "a"
+sino si variable1 > 3
+    escribir "b"
+sino si variable2 = "texto"
+    escribir "c"
+sino
+    escribir "d"
+```
+
+## Operadores
+
+CLRS dispone de operadores lógicos, relacionales y aritméticos similares a los de otros lenguajes. La comparación de igualdad utiliza el operador `=`.
+
+```text
+si VERDAD y VERDAD
+    escribir "a"
+
+si FALSO o VERDAD
+    escribir "b"
+
+si 10 > 20
+    escribir "c"
+
+si 20 < 10
+    escribir "d"
+
+si 10 = 10
+    escribir "e"
+
+si 20 != 10
+    escribir "f"
+```
+
+## Ciclo `para`
+
+La estructura `para` dispone de dos variantes.
+
+La variante `hasta` incrementa automáticamente la variable de iteración hasta que alcance el valor indicado por la expresión final.
+
+```text
+para i <- 0 hasta 5
+    escribir i
+```
+
+La variante `bajando` decrementa automáticamente la variable de iteración hasta alcanzar el valor indicado.
+
+```text
+para j <- 5 bajando 0
+    escribir j
+```
+
+## Ciclo `mientras`
+
+La estructura `mientras` ejecuta repetidamente un bloque de instrucciones mientras la condición evaluada sea verdadera.
+
+```text
+mientras variable3 y FALSO
+    escribir "no entra"
+```
+
+## Funciones
+
+Las funciones se definen mediante un identificador, una lista de parámetros y un bloque de código.
+
+```text
+holaMundo()
+    escribir "Hola mundo"
+```
+
+Su invocación utiliza la misma sintaxis que su definición. Después de una llamada no debe agregarse un bloque indentado, ya que este podría interpretarse como el cuerpo de una nueva función.
+
+```text
+holaMundo()
+```
+
+Las funciones pueden recibir cualquier cantidad de parámetros y devolver un valor mediante la instrucción `retornar`.
+
+```text
+suma(a, b)
+    retornar a + b
+```
+
+También es posible recibir arreglos como parámetros. Para ello únicamente se especifica el número de dimensiones del arreglo.
+
+```text
+suma2(a, b[])
+    retornar a + b[0]
+```
+
+Las llamadas a funciones pueden utilizarse como parte de cualquier expresión. Los arreglos se pasan simplemente mediante su identificador.
+
+```text
+variable1 <- suma(1, 2)
+escribir suma(1, 2)
+
+variable1 <- suma2(1, arreglo)
+escribir suma2(1, arreglo)
+```
+
+Es posible utilizar como identificador `principal` en una función para usarlo como punto de entrada. No es necesario realizar una llamada explícita.
+
+```text
+principal()
+    escribir "Hola mundo"
+
+principal() // No es necesario, se ejecutaría 2 veces
+```
+
+## Ejemplo
+
+Ejemplo completo de Bubble Sort.
+```text
+arreglo[0] <- 5
+arreglo[1] <- 2
+arreglo[2] <- 9
+arreglo[3] <- 1
+arreglo[4] <- 6
+
+n <- LONGITUD(arreglo)
+
+escribir n
+i <- 0
+j <- 0
+
+para i <- 0 hasta n - 1
+    para j <- 0 hasta n - i - 2
+        si arreglo[j] > arreglo[j + 1]
+            temp <- arreglo[j]
+            arreglo[j] <- arreglo[j + 1]
+            arreglo[j + 1] <- temp
+escribir arreglo
+```
 
 ---
 

@@ -25,7 +25,6 @@ export class CLRSCodeLensProvider {
                 title: "$(tools) Construir",
                 command: "CLRS.buildCode"
             })
-
         ];
     }
 }

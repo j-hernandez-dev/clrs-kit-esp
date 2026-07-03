@@ -13,11 +13,10 @@ process.exit(0);
 } catch (error) {
 console.error("╔═ Runtime Error ══════════════════════════════════════════\\n"
       + "\\n"
-      + error.name + ":"
+      // @ts-ignore
+      + error.stack
       + "\\n"
-      + error.message
-      + "\\n"
-      + "\\n══════════════════════════════════════════════════════════");
+      + "\\n═══════════════════════════════════════════════════════════");
 process.exit(1);
 }
 `
@@ -26,53 +25,60 @@ export const standartLibrary =
 `
 try {
 
-function cre_array_1029347226(dimensions, size = 1) {
+    function cre_array_1029347226(array, dimensions, size = 1) {
+        try {
+            array[0];
+            if(typeof array === "string"
+                || typeof array === "number" 
+                || typeof array === "boolean") {throw new Error("");}
+            return array;
+        } catch (error) {
+            if (dimensions <= 0) {
+                return undefined;
+            }
 
-    if (dimensions <= 0) {
-        return undefined;
+            const arr = new Array();
+
+            return new Proxy(arr, {
+
+                get(target, prop) {
+
+                    if (isIndex_1029347226(prop)) {
+
+                        const index = Number(prop);
+
+                        if (target[index] === undefined) {
+                            target[index] = cre_array_1029347226(dimensions - 1, size);
+                        }
+
+                        return target[index];
+                    }
+
+                    return target[prop];
+                },
+
+                set(target, prop, value) {
+
+                    if (isIndex_1029347226(prop)) {
+                        const index = Number(prop);
+
+                        if (target[index] === undefined) {
+                            target[index] = cre_array_1029347226(dimensions - 1, size);
+                        }
+
+                        target[index] = value;
+                        return true;
+                    }
+
+                    target[prop] = value;
+                    return true;
+                }
+            });
+        }
     }
 
-    const arr = new Array();
-
-    return new Proxy(arr, {
-
-        get(target, prop) {
-
-            if (isIndex_1029347226(prop)) {
-
-                const index = Number(prop);
-
-                if (!target[index]) {
-                    target[index] = cre_array_1029347226(dimensions - 1, size);
-                }
-
-                return target[index];
-            }
-
-            return target[prop];
-        },
-
-        set(target, prop, value) {
-
-            if (isIndex_1029347226(prop)) {
-                const index = Number(prop);
-
-                if (!target[index]) {
-                    target[index] = cre_array_1029347226(dimensions - 1, size);
-                }
-
-                target[index] = value;
-                return true;
-            }
-
-            target[prop] = value;
-            return true;
-        }
-    });
-}
-
 function isIndex_1029347226(prop) {
-    return String(prop) === String(Number(prop));
+    return typeof prop === "string" && /^[0-9]+$/.test(prop);
 }
 
 // INPUT

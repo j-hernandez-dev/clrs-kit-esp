@@ -1,51 +1,59 @@
 import { run } from "./Runtime.js"
 
 let source = `
-resultado <- 10
+// Comentario simple
 
-arreglo[resultado] <- "10"
+variable1 <- 10
+variable2 <- "texto"
+variable3 <- VERDAD
 
-matriz[0][1] <- VERDAD
+arreglo[0] <- 10
+matriz[2][2] <- 10
 
-escribir LONGITUD(matriz)
+variable1 <- arreglo
+matriz <- variable2
 
-suma (a, b)
-    escribir resultado
+escribir variable1
+escribir variable1, variable2, variable3
+escribir variable1 + variable2 + variable3
 
-suma2 (a, b)
+leer variable1
+leer variable1, variable2, variable3
+
+
+si variable3 o VERDAD
+    escribir "a"
+sino si variable1 > 3
+    escribir "b"
+sino si variable2 = "texto"
+    escribir "c"
+sino
+    escribir "d"
+
+para i <- 0 hasta 5
+    escribir i
+
+para j <- 5 bajando 0
+    escribir j
+
+mientras variable3 y FALSO
+    escribir "no entra"
+
+holaMundo()
+    escribir "hola mundo"
+
+holaMundo()
+
+suma(a, b)
     retornar a + b
 
-i <- 0
-para i <- 2 bajando 0
-    escribir resultado + "para1"
+suma2(a, b[])
+    retornar a + b[0]
 
-para i <- 0 hasta 2
-    escribir resultado + "para2"
-
-mientras matriz[0][1] y FALSO
-    matriz[0][1] <- FALSO
-    escribir resultado + "mientras"
-
-si resultado > 5
-    escribir resultado + "si"
-
-
-si resultado = 5
-    escribir resultado + "si"
-sino si resultado > 5
-    escribir resultado + "sino si"
-
-
-si resultado = 5
-    escribir resultado + "si"
-sino
-    escribir resultado + "sino"
-
-suma()
-
-resultado <- suma2(20, 30)
-
-escribir suma2(20, 30)
+variable1 <- suma(1, 2)
+escribir suma(1, 2)
+variable1 <- suma2(1, arreglo)
+escribir suma2(1, arreglo)
 `
 
 run(source);

@@ -157,46 +157,10 @@ export class ASTBuilder {
          *
          */
 
-        if (children.variableDeclaration) {
-
-            return this.declarationVisitor.visitDeclaration(
-                children.variableDeclaration[0]
-            );
-
-        }
-
-
-        if (children.constantDeclaration) {
-
-            return this.declarationVisitor.visitDeclaration(
-                children.constantDeclaration[0]
-            );
-
-        }
-
-
-        if (children.arrayDeclaration) {
-
-            return this.declarationVisitor.visitDeclaration(
-                children.arrayDeclaration[0]
-            );
-
-        }
-
-
         if (children.functionDeclaration) {
 
             return this.declarationVisitor.visitDeclaration(
                 children.functionDeclaration[0]
-            );
-
-        }
-
-
-        if (children.procedureDeclaration) {
-
-            return this.declarationVisitor.visitDeclaration(
-                children.procedureDeclaration[0]
             );
 
         }
@@ -272,25 +236,6 @@ export class ASTBuilder {
                 );
 
         }
-
-
-
-        /**
-         * =====================
-         * SWITCH
-         * =====================
-         */
-
-        if (children.switchStatement) {
-
-
-            return this.statementVisitor
-                .visitSwitch(
-                    children.switchStatement[0]
-                );
-
-        }
-
 
 
         /**
