@@ -2,6 +2,16 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.0.9] - 2026-07-05
+
+### Added
+
+- Time complexity analysis for algorithms.
+- CodeLens integration to display cost expressions above functions and control structures.
+- Inline cost visualization using editor decorations.
+- Toggle button to enable or disable complexity analysis directly from the editor.
+- Command to copy generated cost expressions to the clipboard.
+
 ## [1.0.8] - 2026-07-02
 
 ### Added

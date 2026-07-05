@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
 import { build } from "./src/interpreter/Runtime.js";
-import { CLRSCodeLensProvider } from "./providers/codeLensProvider.js";
+import { CLRSCodeLensProvider } from "./providers/CodeLensProvider.js";
 import path from 'path';
+import { CLRSCostDecorator } from './providers/DecoratorProvider.js';
+import { ViewState } from "./providers/ViewState.js";
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -32,7 +34,7 @@ export function activate(context) {
 
     context.subscriptions.push(runCode);
 
-    const buildCode = vscode.commands.registerCommand('CLRS.buildCode', () => {
+    const buildCode = vscode.commands.registerCommand('CLRS.buildCode', async () => {
 
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
@@ -69,12 +71,77 @@ export function activate(context) {
 
     context.subscriptions.push(buildCode);
 
+    // CODE LENS
+    const codeLensProvider =
+        new CLRSCodeLensProvider();
+
     context.subscriptions.push(
         vscode.languages.registerCodeLensProvider(
             { language: "clrs-es" },
-            new CLRSCodeLensProvider()
+            codeLensProvider
         )
     );
+
+    // DECORATOR
+
+    const costDecorator = new CLRSCostDecorator();
+
+    function updateDecorations() {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+
+        if (editor.document.languageId !== "clrs-es") return;
+
+        costDecorator.update(editor);
+    }
+
+    // actualizar cuando:
+    vscode.window.onDidChangeActiveTextEditor(updateDecorations, null, context.subscriptions);
+
+    vscode.workspace.onDidChangeTextDocument(updateDecorations, null, context.subscriptions);
+
+    vscode.window.onDidChangeVisibleTextEditors(editors => {
+        for (const editor of editors) {
+            if (editor.document.languageId === "clrs-es") {
+                costDecorator.update(editor);
+            }
+        }
+    });
+
+    // inicial
+    updateDecorations();
+
+    // COPIAR EXPRESION
+    const copyCost = vscode.commands.registerCommand(
+        "CLRS.copyCostExpression",
+        async (text) => {
+
+            await vscode.env.clipboard.writeText(text);
+
+            vscode.window.showInformationMessage(
+                "Expresión copiada al portapapeles"
+            );
+        }
+    );
+
+    context.subscriptions.push(copyCost);
+
+    // BOTON MOSTRAR ANALISIS
+    const toggleCost = vscode.commands.registerCommand(
+        "CLRS.toggleCost",
+        async () => {
+
+            ViewState.showCost =
+                !ViewState.showCost;
+
+            codeLensProvider.refresh();
+
+            updateDecorations();
+        }
+
+    );
+
+    context.subscriptions.push(toggleCost);
 }
 
 export function deactivate() { }

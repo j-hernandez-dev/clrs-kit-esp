@@ -9,8 +9,9 @@
 | Extensión de archivo | `.clrs` |
 | Ejecutar código      | Ejecuta el código escrito en CLRS mediante su transpilación a JavaScript y posterior ejecución en tiempo de ejecución. |
 | Construir código (JS) | Transpila el código CLRS a JavaScript sin ejecutarlo, generando un archivo listo para ser usado en Node.js. |
+| Costo | Genera automáticamente la función de costo de cada algoritmo construyendo expresiones simbólicas basadas en el número de operaciones elementales ejecutadas. |
 
-## ⚙️ Estado actual (versión 1.0.8)
+## ⚙️ Estado actual (versión 1.0.9)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
@@ -23,7 +24,8 @@
 - Biblioteca estándar para manejo de archivos, cadenas, arreglos y funciones matemáticas.
 - Reporte de errores de sintaxis y de ejecución.
 - Soporte para funciones, arreglos, expresiones, condicionales, ciclos y operaciones de entrada/salida.
-- Soporte para CodeLens en el uso de botón para ejecutar y construir.
+- Soporte para el uso de botón para ejecutar y construir.
+- Soporte para muestreo de costo algorítmico.
 
 ---
 
@@ -361,3 +363,23 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 | `INVERTIR(arreglo)` | Invierte el arreglo. | Arreglo |
 | `COPIAR(arreglo)` | Copia el arreglo. | Arreglo |
 | `UNIR(arreglo, separador)` | Une elementos en cadena. | Cadena |
+
+---
+
+# 📊 Análisis de costo
+
+El análisis de costo permite visualizar cómo se construye la función de costo de un algoritmo de forma teórica directamente desde el código fuente.
+
+| Funcionalidad              | Descripción                                                                                                        |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **CodeLens**               | Muestra la expresión de costo encima de funciones y estructuras de control.                                        |
+| **Decoradores**            | Muestra el costo individual de cada instrucción al final de la línea correspondiente.                              |
+| **Copiar expresión**       | Permite copiar cualquier expresión de costo al portapapeles mediante un clic.                                      |
+| **Mostrar/Ocultar**        | Activa o desactiva toda la visualización del análisis desde un botón en el editor.                                 |
+| **Generación automática**  | Las expresiones se generan a partir del AST del programa sin intervención del usuario.                             |
+| **Expresiones simbólicas** | Se preservan llamadas como `TLongitud(n)` y otras funciones para mantener un análisis algebraico.                  |
+| **Análisis paso a paso**   | El costo se muestra por instrucción y por bloque, facilitando la deducción manual de la complejidad del algoritmo. |
+
+Si bien no muestra la notación asintótica de funciones completas, permite dar con la función de costo que al simplificarse algebráicamente se puede calcular la notación asintótica Big O.
+
+Esta funcionalidad tiene un objetivo académico y de aprendizaje algorítmico.
