@@ -17,6 +17,7 @@ export class CLRSCostDecorator {
     }
 
     update(editor) {
+
         if (!ViewState.showCost) {
             editor.setDecorations(
                 this.decoration,
@@ -31,37 +32,72 @@ export class CLRSCostDecorator {
         const tree = cost(editor.document.getText());
         if (!tree) return;
 
+        //==========================================
+        // Longitud de la línea más larga
+        //==========================================
+
+        let maxLength = 0;
+
+        for (let i = 0; i < editor.document.lineCount; i++) {
+
+            maxLength = Math.max(
+                maxLength,
+                editor.document.lineAt(i).text.length
+            );
+        }
+
         const decorations = [];
 
-        this.visit(tree.statementsCost, decorations);
+        this.visit(
+            tree.statementsCost,
+            decorations,
+            maxLength
+        );
 
-        editor.setDecorations(this.decoration, decorations);
+        editor.setDecorations(
+            this.decoration,
+            decorations
+        );
     }
 
-    visit(nodes, decorations) {
+    visit(nodes, decorations, maxLength) {
 
         for (const node of nodes) {
 
             const isLeaf =
-                !node.instructions || node.instructions.length === 0;
+                !node.instructions ||
+                node.instructions.length === 0;
 
             if (isLeaf) {
 
-                const line = node.location.endLine - 1;
-                const col = node.location.endColumn;
+                const line =
+                    node.location.endLine - 1;
 
                 decorations.push({
-                    range: new vscode.Range(line, col, line, col),
+
+                    range: new vscode.Range(
+                        line,
+                        maxLength,
+                        line,
+                        maxLength
+                    ),
+
                     renderOptions: {
                         after: {
-                            contentText: ` ⟶ ${node.expression}`
+                            contentText:
+                                ` ⟶ ${node.expression}`
                         }
                     }
                 });
             }
 
             if (node.instructions) {
-                this.visit(node.instructions, decorations);
+
+                this.visit(
+                    node.instructions,
+                    decorations,
+                    maxLength
+                );
             }
         }
     }

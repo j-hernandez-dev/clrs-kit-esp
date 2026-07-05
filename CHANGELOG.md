@@ -2,6 +2,12 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.1.0] - 2026-07-05
+
+### Added
+
+- Visual bug with the decorator prior to the fix. Working with the costs is still awkward, but it is now correctly visible.
+
 ## [1.0.9] - 2026-07-05
 
 ### Added
