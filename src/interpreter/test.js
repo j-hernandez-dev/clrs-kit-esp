@@ -6,6 +6,11 @@ si VERDAD
 sino
     escribir ""
 
+para i <- 0 hasta 10
+    escribir ""
+
+mientras VERDAD
+    escribir ""
 `
 
 cost(source);

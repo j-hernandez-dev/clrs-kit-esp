@@ -2,6 +2,12 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.1.3] - 2026-07-06
+
+### Added
+
+- The complete expressions for each block are shown.
+
 ## [1.1.2] - 2026-07-05
 
 ### Added

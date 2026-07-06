@@ -287,7 +287,7 @@ export class CostAnalysisVisitor {
                 statements
             );
 
-        const expression =
+        const fullExpression =
             this.buildBlockCost(
                 prefixExpression,
                 instructions
@@ -297,13 +297,12 @@ export class CostAnalysisVisitor {
             this.blockNodeFactory(
                 type,
                 location,
-                shortExpression,
+                fullExpression,
                 instructions
             );
 
         return {
             node,
-            expression,
             instructions
         };
     }
@@ -344,7 +343,7 @@ export class CostAnalysisVisitor {
             );
 
         branches.push(ifBranch.node);
-        expressions.push(ifBranch.expression);
+        expressions.push(ifBranch.node.expression);
 
         //====================================
         // ELSE IF
@@ -382,7 +381,7 @@ export class CostAnalysisVisitor {
                 );
 
             branches.push(branch.node);
-            expressions.push(branch.expression);
+            expressions.push(branch.node.expression);;
         }
 
         //====================================
@@ -421,7 +420,7 @@ export class CostAnalysisVisitor {
                 );
 
             branches.push(branch.node);
-            expressions.push(branch.expression);
+            expressions.push(branch.node.expression);
         }
 
         //====================================
@@ -479,7 +478,7 @@ export class CostAnalysisVisitor {
             this.blockNodeFactory(
                 type,
                 location,
-                shortExpression,
+                fullExpression,
                 body.instructions
             );
 
@@ -624,7 +623,7 @@ export class CostAnalysisVisitor {
             this.blockNodeFactory(
                 "ForStatement",
                 statement.location,
-                shortExpression,
+                fullExpression,
                 body.instructions
             );
 
