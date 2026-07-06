@@ -25,9 +25,10 @@
  */
 
 import { NodeTypes } from "../core/NodeTypes.js";
+import { ASTNode } from "../core/ASTNode.js";
 
 
-export class BlockNode {
+export class BlockNode extends ASTNode {
 
     /**
      * Crea un nodo de bloque.
@@ -36,9 +37,9 @@ export class BlockNode {
      * Lista de instrucciones contenidas
      * en el bloque.
      */
-    constructor(statements = []) {
+    constructor(statements = [], location) {
+        super(NodeTypes.BLOCK, location);
         
-        this.type = NodeTypes.BLOCK;
         this.statements = statements;
         
     }

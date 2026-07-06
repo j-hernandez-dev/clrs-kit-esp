@@ -146,8 +146,8 @@ export class ASTFactory {
     /**
      * @param {any[]} statements
      */
-    static block(statements = []) {
-        return new BlockNode(statements);
+    static block(statements = [], location) {
+        return new BlockNode(statements, location);
     }
 
     /**

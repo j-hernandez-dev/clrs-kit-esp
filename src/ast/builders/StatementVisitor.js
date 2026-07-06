@@ -171,9 +171,16 @@ export class StatementVisitor {
             const elseCtx =
                 CSTAdapter.first(ctx, "elseClause");
 
+            const elseToken =
+                CSTAdapter.first(elseCtx, "Else");
+
+            const elseLocation =
+                LocationHelper.fromTokens(elseToken);
+
             elseBlock =
                 this.visitBlock(
-                    CSTAdapter.first(elseCtx, "block")
+                    CSTAdapter.first(elseCtx, "block"),
+                    elseLocation
                 );
         }
 
@@ -483,7 +490,7 @@ export class StatementVisitor {
      * =========================
      * @param {any} ctx
      */
-    visitBlock(ctx) {
+    visitBlock(ctx, elseLocation = null) {
 
         const statements =
             CSTAdapter.get(
@@ -491,12 +498,16 @@ export class StatementVisitor {
                 "statement"
             );
 
+        const location = elseLocation === null
+        ? LocationHelper.from(ctx)
+        : elseLocation;
+
         return ASTFactory.block(
             statements.map(
                 (/** @type {any} */ stmt) =>
                     this.visitStatement(stmt)
-            )
+            ),
+            location
         );
-
     }
 }

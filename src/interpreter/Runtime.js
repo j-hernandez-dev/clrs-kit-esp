@@ -6,6 +6,7 @@ import { ASTBuilder } from "../ast/builders/ASTBuilder.js"
 import { Transpiler } from "./Transpiler.js";
 import { executeCodeInteractive } from "./Excecute.js";
 import { addIndentationTokens } from "../lexer/Indentation.js";
+import { CostAnalysisVisitor } from "../complex/CostAnalysisVisitor.js";
 
 /**
  * Tokenización
@@ -105,6 +106,29 @@ function transpileCode(ast, build) {
 }
 
 /**
+ * Análisis de costo
+ * @param {any} ast
+ */
+function costCode(ast) {
+  const costAnalyzer = new CostAnalysisVisitor();
+
+  try {
+    
+    return costAnalyzer.costAnalysis(ast);
+
+  } catch (error) {
+    console.error("╔═ Cost Error ══════════════════════════════════════════\n"
+      + "\n"
+      // @ts-ignore
+      + error.stack
+      + "\n"
+      + "\n═════════════════════════════════════════════════════════════════");
+  }
+
+  return null;
+}
+
+/**
  * @param {string} sourceCode
  */
 export function run(sourceCode) {
@@ -136,4 +160,20 @@ export function build(sourceCode, absolutePath) {
   if (ast != null) {
     transpileCode(ast, absolutePath);
   }
+}
+
+/**
+ * @param {string} sourceCode
+ * @param {any} absolutePath
+ */
+export function cost(sourceCode) {
+  const tokens = tokenizeCode(sourceCode);
+
+  if (tokens != null) {
+    const ast = parserCode(tokens);
+
+    return costCode(ast);
+  }
+
+  return null;
 }

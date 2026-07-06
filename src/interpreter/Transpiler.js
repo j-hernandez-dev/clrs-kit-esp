@@ -90,11 +90,10 @@ export class Transpiler {
 
         }
 
-        const Program = ast.statements;
+        const program = ast.statements;
 
         let code = "";
-        for (let i = 0; i < Program.length; i++) {
-            const statement = Program[i];
+        for (const statement of program) {
 
             code += this.statementType(statement);
         }

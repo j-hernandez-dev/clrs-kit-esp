@@ -281,7 +281,8 @@ export class DeclarationVisitor {
             statements.map(
                 (/** @type {any} */ stmt) =>
                     this.statementVisitor.visitStatement(stmt)
-            )
+            ),
+            LocationHelper.from(ctx)
         );
 
     }
