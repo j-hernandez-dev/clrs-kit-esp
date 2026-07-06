@@ -11,7 +11,7 @@
 | Construir código (JS) | Transpila el código CLRS a JavaScript sin ejecutarlo, generando un archivo listo para ser usado en Node.js. |
 | Costo | Genera automáticamente la función de costo de cada algoritmo construyendo expresiones simbólicas basadas en el número de operaciones elementales ejecutadas. |
 
-## ⚙️ Estado actual (versión 1.1.3)
+## ⚙️ Estado actual (versión 1.1.4)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
@@ -372,14 +372,28 @@ El análisis de costo permite visualizar cómo se construye la función de costo
 
 | Funcionalidad              | Descripción                                                                                                        |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **CodeLens**               | Muestra la expresión de costo encima de funciones y estructuras de control.                                        |
-| **Decoradores**            | Muestra el costo individual de cada instrucción al final de la línea correspondiente.                              |
+| **Expresión de costo de bloque** | Muestra la expresión de costo encima de funciones y estructuras de control.                                        |
+| **Expresión de costo de línea**  | Muestra el costo individual de cada instrucción al final de la línea correspondiente.                              |
 | **Copiar expresión**       | Permite copiar cualquier expresión de costo al portapapeles mediante un clic.                                      |
 | **Mostrar/Ocultar**        | Activa o desactiva toda la visualización del análisis desde un botón en el editor.                                 |
-| **Generación automática**  | Las expresiones se generan a partir del AST del programa sin intervención del usuario.                             |
-| **Expresiones simbólicas** | Se preservan llamadas como `TLongitud(n)` y otras funciones para mantener un análisis algebraico.                  |
-| **Análisis paso a paso**   | El costo se muestra por instrucción y por bloque, facilitando la deducción manual de la complejidad del algoritmo. |
 
-Si bien no muestra la notación asintótica de funciones completas, permite dar con la función de costo que al simplificarse algebráicamente se puede calcular la notación asintótica Big O.
+La herramienta de análisis de costo genera expresiones de costo a partir del Árbol de Sintaxis Abstracta (AST). El análisis se basa únicamente en la estructura sintáctica del código y no realiza un análisis semántico avanzado.
 
-Esta funcionalidad tiene un objetivo académico y de aprendizaje algorítmico.
+Por ello, estructuras cuya complejidad depende del comportamiento de las variables, de la reducción del problema en bucles o de la recursión no pueden resolverse automáticamente. Estos son los casos en los que la herramienta no puede determinar el costo de forma exacta.
+
+| Complejidad                                  | Determina el costo | Observaciones                                                                                     |
+| -------------------------------------------- | :------------------: | ------------------------------------------------------------------------------------------------- |
+| **O(1)**                                     |           ✅          | Operaciones de costo constante.                                                                   |
+| **O(n)**                                     |           ✅          | Bucles lineales y recorridos simples.                                                             |
+| **O(n²)**                                    |           ✅          | Dos niveles de iteración anidados.                                                                |
+| **O(n³)**                                    |           ✅          | Tres niveles de iteración anidados.                                                               |
+| **O(nᵏ)**                                    |           ✅          | Cualquier número fijo de ciclos anidados puede deducirse estructuralmente.                        |
+| **O(log n)**                                 |           ❌          | Requiere identificar reducciones del problema (por ejemplo, dividir entre dos en cada iteración). |
+| **O(n log n)**                               |           ❌          | Generalmente implica recursión o una combinación de iteración con reducción del problema.         |
+| **O(2ⁿ)**                                    |           ❌          | Requiere analizar recursión múltiple o crecimiento exponencial.                                   |
+| **O(n!)**                                    |           ❌          | Depende de estructuras recursivas o permutaciones, no sólo de la sintaxis.                        |
+| **Complejidades definidas por recurrencias** |           ❌          | Es necesario resolver ecuaciones de recurrencia mediante técnicas matemáticas.                    |
+
+Aunque no calcula automáticamente la notación asintótica, sí genera la función de costo correspondiente, la cual puede simplificarse algebraicamente para obtener la notación Big O.
+
+No sustituye el análisis manual, pero proporciona una referencia visual que facilita el análisis de costo en una amplia variedad de casos.

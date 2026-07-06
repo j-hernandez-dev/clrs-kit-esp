@@ -2,6 +2,12 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.1.4] - 2026-07-06
+
+### Added
+
+- README updated with information on the cost functionality, its limitations, and the scope of the tool
+
 ## [1.1.3] - 2026-07-06
 
 ### Added
