@@ -2,6 +2,12 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.1.2] - 2026-07-05
+
+### Added
+
+- Visual error in the 'else' block when displaying its block.
+
 ## [1.1.1] - 2026-07-05
 
 ### Added

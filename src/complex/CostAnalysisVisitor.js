@@ -409,20 +409,7 @@ export class CostAnalysisVisitor {
                 toSubscript(lastBranch) +
                 "(n)";
 
-            const location = {
-
-                startLine:
-                    statement.elseBlock.location.startLine - 1,
-
-                startColumn:
-                    statement.elseBlock.location.startColumn,
-
-                endLine:
-                    statement.elseBlock.location.endLine,
-
-                endColumn:
-                    statement.elseBlock.location.endColumn
-            };
+            const location = statement.elseBlock.location;
 
             const branch =
                 this.buildBlockNode(
