@@ -233,7 +233,8 @@ async function ALEATORIO(min, max) {
 }
 
 async function PROMEDIO(x) {
-    return SUMATORIA(x) / x.length;
+    const suma = await SUMATORIA(x);
+    return suma / x.length;
 }
 
 async function SUMATORIA(x) {
