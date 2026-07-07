@@ -11,7 +11,7 @@
 | Construir código (JS) | Transpila el código CLRS a JavaScript sin ejecutarlo, generando un archivo listo para ser usado en Node.js. |
 | Costo | Genera automáticamente la función de costo de cada algoritmo construyendo expresiones simbólicas basadas en el número de operaciones elementales ejecutadas. |
 
-## ⚙️ Estado actual (versión 1.1.5)
+## ⚙️ Estado actual (versión 1.1.6)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
@@ -363,6 +363,22 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 | `INVERTIR(arreglo)` | Invierte el arreglo. | Arreglo |
 | `COPIAR(arreglo)` | Copia el arreglo. | Arreglo |
 | `UNIR(arreglo, separador)` | Une elementos en cadena. | Cadena |
+
+## 🔩 Tipos
+
+| Función CLRS      | Descripción                                        | Retorno |
+| ----------------- | -------------------------------------------------- | ------- |
+| `TIPO_NUM(valor)` | Verifica si un valor es de tipo numérico.          | Lógico  |
+| `TIPO_CAD(valor)` | Verifica si un valor es de tipo cadena.            | Lógico  |
+| `TIPO_LOG(valor)` | Verifica si un valor es de tipo lógico (booleano). | Lógico  |
+| `A_CADENA(valor)` | Convierte un valor a una cadena de texto.          | Cadena  |
+| `A_NUMERO(valor)` | Convierte un valor a un número.                    | Número  |
+| `A_LOGICO(valor)` | Convierte un valor a un valor lógico.              | Lógico  |
+
+
+| Función CLRS            | Descripción                                                             | Retorno |
+| ----------------------- | ----------------------------------------------------------------------- | ------- |
+| `LANZAR_ERROR(mensaje)` | Genera un error con un mensaje personalizado e interrumpe la ejecución. | -       |
 
 ---
 

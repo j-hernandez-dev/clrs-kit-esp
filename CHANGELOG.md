@@ -2,6 +2,12 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.1.6] - 2026-07-06
+
+### Added
+
+- Errors throwing now have a snippet file.
+
 ## [1.1.5] - 2026-07-06
 
 ### Added

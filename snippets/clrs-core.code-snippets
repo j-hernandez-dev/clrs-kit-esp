@@ -123,13 +123,5 @@
             "${1:matriz}[${2:fila}][${3:columna}] <- ${4:valor}"
         ],
         "description": "Asignación a un elemento de una matriz."
-    },
-
-    "Lanzar Error": {
-        "prefix": "error",
-        "body": [
-            "LANZAR_ERROR(${1:mensaje})"
-        ],
-        "description": "Lanza un error de ejecución de forma manual."
     }
 }
