@@ -21,7 +21,7 @@ export const Identifier = createToken({
  */
 export const NumberLiteral = createToken({
   name: "NumberLiteral",
-  pattern: /\d+/,
+  pattern: /\d+(\.\d+)?/,
   label: "numero"
 });
 

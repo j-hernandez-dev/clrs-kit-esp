@@ -2,6 +2,12 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.2.0] - 2026-07-07
+
+### Added
+
+- Lexer fix on numberLiterals. 
+
 ## [1.1.9] - 2026-07-07
 
 ### Added
