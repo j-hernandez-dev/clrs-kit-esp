@@ -60,7 +60,18 @@ export function substitution(name) {
         ORDENAR: "(n log n)",
         INVERTIR: "n",
         COPIAR: "n",
-        UNIR: "n"
+        UNIR: "n",
+
+        // TYPES
+        TIPO_NUM: "c",
+        TIPO_CAD: "c",
+        TIPO_LOG: "c",
+        A_NUMERO: "c",
+        A_CADENA: "c",
+        A_LOGICO: "c",
+
+        // ERROR
+        LANZAR_ERROR: "c",
     };
 
     return costs[name] ?? null;

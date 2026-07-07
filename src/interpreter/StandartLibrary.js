@@ -1,3 +1,5 @@
+import * as Tokens from "../lexer/tokens/Index.js";
+
 export const dependencies =
 `
 // @ts-nocheck
@@ -353,5 +355,37 @@ async function COPIAR(arreglo) {
 
 async function UNIR(arreglo, separador) {
     return arreglo.join(separador);
+}
+
+// TYPES
+
+async function TIPO_NUM(valor) {
+    return typeof valor === "number";
+}
+
+async function TIPO_CAD(valor) {
+    return typeof valor === "string";
+}
+
+async function TIPO_LOG(valor) {
+    return typeof valor === "boolean";
+}
+
+async function A_CADENA(valor) {
+    return String(valor);
+}
+
+async function A_NUMERO(valor) {
+    return Number(valor);
+}
+
+async function A_LOGICO(valor) {
+    return Boolean(valor);
+}
+
+// ERROR
+
+async function LANZAR_ERROR(mensaje) {
+    throw new Error (mensaje);
 }
 `

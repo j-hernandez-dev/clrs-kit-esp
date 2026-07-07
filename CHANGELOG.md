@@ -2,6 +2,12 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.1.5] - 2026-07-06
+
+### Added
+
+- Added validation for type values, type conversion and manual error throwing.
+
 ## [1.1.4] - 2026-07-06
 
 ### Added
