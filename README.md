@@ -364,6 +364,8 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 | `COPIAR(arreglo)` | Copia el arreglo. | Arreglo |
 | `UNIR(arreglo, separador)` | Une elementos en cadena. | Cadena |
 
+---
+
 ## 🔩 Tipos
 
 | Función CLRS      | Descripción                                        | Retorno |
@@ -375,6 +377,9 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 | `A_NUMERO(valor)` | Convierte un valor a un número.                    | Número  |
 | `A_LOGICO(valor)` | Convierte un valor a un valor lógico.              | Lógico  |
 
+---
+
+## ⚠️ Errores
 
 | Función CLRS            | Descripción                                                             | Retorno |
 | ----------------------- | ----------------------------------------------------------------------- | ------- |
