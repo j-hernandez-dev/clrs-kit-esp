@@ -2,7 +2,19 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
-## [1.1.6] - 2026-07-06
+## [1.1.8] - 2026-07-07
+
+### Added
+
+- Fix error on library function.
+- 
+## [1.1.7] - 2026-07-07
+
+### Added
+
+- Fix error on library function.
+
+## [1.1.6] - 2026-07-07
 
 ### Added
 
