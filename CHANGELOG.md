@@ -2,6 +2,10 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.2.5] - 2026-07-09
+
+- Remove directory screenshots.
+
 ## [1.2.4] - 2026-07-09
 
 - Language configuration fix.

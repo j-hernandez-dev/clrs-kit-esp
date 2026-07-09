@@ -16,7 +16,7 @@
 [![Extension - One Dark Pro](https://img.shields.io/badge/extension-One_Dark_Pro-2979ff?style=flat-square&logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=zhuangtongfa.Material-theme)
 [![Font - JetBrains Mono](https://img.shields.io/badge/font-JetBrains_Mono-f42f7d?style=flat-square&logo=jetbrains&logoColor=white)](https://www.jetbrains.com/es-es/lp/mono/)
 
-## ⚙️ Estado actual (versión 1.2.4)
+## ⚙️ Estado actual (versión 1.2.5)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
