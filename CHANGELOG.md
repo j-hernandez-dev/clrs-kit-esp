@@ -2,6 +2,39 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.2.4] - 2026-07-09
+
+- Language configuration fix.
+- Screenshots added to README.
+- Improved TextMate scope configuration.
+- Minor change to the main function definition.
+
+### Added
+
+- Fix in a standard library function.
+
+## [1.2.3] - 2026-07-08
+
+### Added
+
+- Fix in a standard library function.
+
+## [1.2.2] - 2026-07-08
+
+### Added
+
+- Fix in a standard library function.
+
+## [1.2.1] - 2026-07-08
+
+### Added
+
+- Change in error message generation.
+- Visual fix of cost expressions in line instructions.
+- Expansion in the TextMate grammar scope (textMate now looks better in certain visual themes).
+- Removal of two redundant functions and change of function names to shorter versions.
+- Slight adjustment in the language configuration.
+
 ## [1.2.0] - 2026-07-07
 
 ### Added

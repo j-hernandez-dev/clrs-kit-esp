@@ -2,7 +2,7 @@
 
 **clrs-kit-esp** es una extensión para Visual Studio Code orientada al soporte de un lenguaje de pseudocódigo, fuertemente inspirado en la sintaxis utilizada en el libro Introducción a Algoritmos (CLRS).
 
-## 💻 Inicio en VS Code
+## 💻 Inicio rápido
 
 | Concepto              | Descripción |
 |----------------------|-------------|
@@ -11,7 +11,12 @@
 | Construir código (JS) | Transpila el código CLRS a JavaScript sin ejecutarlo, generando un archivo listo para ser usado en Node.js. |
 | Costo | Genera automáticamente la función de costo de cada algoritmo construyendo expresiones simbólicas basadas en el número de operaciones elementales ejecutadas. |
 
-## ⚙️ Estado actual (versión 1.2.0)
+### Recomendado:
+
+[![Extension - One Dark Pro](https://img.shields.io/badge/extension-One_Dark_Pro-2979ff?style=flat-square&logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=zhuangtongfa.Material-theme)
+[![Font - JetBrains Mono](https://img.shields.io/badge/font-JetBrains_Mono-f42f7d?style=flat-square&logo=jetbrains&logoColor=white)](https://www.jetbrains.com/es-es/lp/mono/)
+
+## ⚙️ Estado actual (versión 1.2.4)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
@@ -73,75 +78,136 @@ Este proyecto es de código abierto. Puede ser modificado y extendido libremente
 
 CLRS únicamente admite comentarios de una sola línea mediante `//`.
 
-```text
+![Código](images/screenshots/code1.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 // Comentario simple
 ```
+
+</details>
 
 ## Variables
 
 Las variables son dinámicas y débilmente tipadas. Esto significa que pueden almacenar valores de distintos tipos y cambiar de tipo durante la ejecución mediante conversiones implícitas cuando sea necesario.
 
-```text
+![Código](images/screenshots/code2.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 variable1 <- 10
 variable2 <- "texto"
 variable1 <- variable2
 ```
 
+</details>
+
 Las variables son siempre mutables; el lenguaje no dispone de constantes. Su ámbito es local a la función donde se definen y la asignación se realiza mediante el operador `<-`.
 
-```text
+![Código](images/screenshots/code3.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 variable1 <- 10
 variable1 <- 2
 variable1 <- 4
 ```
 
+</details>
+
 Las variables deben inicializarse en el momento de su creación, por lo que no es posible declararlas sin asignarles un valor inicial. Los valores admitidos son numéricos, cadenas y lógicos.
 
-```text
+![Código](images/screenshots/code4.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 variable1 <- 10
 variable2 <- "texto"
 variable3 <- VERDAD
 ```
 
+</details>
+
 ## Arreglos
 
 Los arreglos son dinámicos. Su tamaño y número de dimensiones se determinan automáticamente conforme se accede a nuevas posiciones.
 
-```text
+![Código](images/screenshots/code5.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 arreglo[0] <- 10
 arregloBi[2][2] <- 10
 ```
 
+</details>
+
 Es posible asignar un arreglo completo a una variable o el contenido de una variable a un arreglo. En ambos casos, la asignación copia el contenido correspondiente.
 
-```text
+![Código](images/screenshots/code6.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 variable1 <- arreglo
 arregloBi <- variable2
 ```
+
+</details>
 
 ## Entrada y salida
 
 La instrucción `escribir` permite mostrar información en la consola. Puede imprimir valores individuales, varios valores separados por comas, expresiones concatenadas y arreglos completos.
 
-```text
+![Código](images/screenshots/code7.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 escribir variable1
 escribir arreglo
 escribir variable1, variable2, variable3
 escribir variable1 + variable2 + variable3
 ```
 
+</details>
+
 La instrucción `leer` permite obtener datos desde la consola. Es posible leer una o varias variables en una sola instrucción. El tipo del valor leído se determina automáticamente.
 
-```text
+![Código](images/screenshots/code8.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 leer variable1
 leer variable1, variable2, variable3
 ```
+
+</details>
 
 ## Estructuras de selección
 
 La única estructura de selección es `si`, junto con las variantes `sino si` y `sino`. Los bloques de código se delimitan mediante indentación, por lo que es importante mantener una indentación consistente.
 
-```text
+![Código](images/screenshots/code9.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 si variable3 o VERDAD
     escribir "a"
 sino si variable1 > 3
@@ -152,29 +218,33 @@ sino
     escribir "d"
 ```
 
+</details>
+
 ## Operadores
 
 CLRS dispone de operadores lógicos, relacionales y aritméticos similares a los de otros lenguajes. La comparación de igualdad utiliza el operador `=`.
 
-```text
+![Código](images/screenshots/code10.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 si VERDAD y VERDAD
     escribir "a"
-
 si FALSO o VERDAD
     escribir "b"
-
 si 10 > 20
     escribir "c"
-
 si 20 < 10
     escribir "d"
-
 si 10 = 10
     escribir "e"
-
 si 20 != 10
     escribir "f"
 ```
+
+</details>
 
 ## Ciclo `para`
 
@@ -182,99 +252,176 @@ La estructura `para` dispone de dos variantes.
 
 La variante `hasta` incrementa automáticamente la variable de iteración hasta que alcance el valor indicado por la expresión final.
 
-```text
+![Código](images/screenshots/code11.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 para i <- 0 hasta 5
     escribir i
 ```
 
+</details>
+
 La variante `bajando` decrementa automáticamente la variable de iteración hasta alcanzar el valor indicado.
 
-```text
+![Código](images/screenshots/code12.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 para j <- 5 bajando 0
     escribir j
 ```
+
+</details>
 
 ## Ciclo `mientras`
 
 La estructura `mientras` ejecuta repetidamente un bloque de instrucciones mientras la condición evaluada sea verdadera.
 
-```text
+![Código](images/screenshots/code13.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
 mientras variable3 y FALSO
     escribir "no entra"
 ```
 
+</details>
+
 ## Funciones
 
-Las funciones se definen mediante un identificador, una lista de parámetros y un bloque de código.
+Las funciones se definen mediante un identificador, una lista de parámetros y un bloque de código. La convención usada en el libro CLRS para la declaración de funciones se basa en el uso de mayúsculas y `_` para la separación de palabras.
 
-```text
-holaMundo()
-    escribir "Hola mundo"
+![Código](images/screenshots/code14.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
+HOLA_MUNDO()
+    escribir "Hola mundo!!"
 ```
+
+</details>
 
 Su invocación utiliza la misma sintaxis que su definición. Después de una llamada no debe agregarse un bloque indentado, ya que este podría interpretarse como el cuerpo de una nueva función.
 
-```text
-holaMundo()
+![Código](images/screenshots/code15.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
+HOLA_MUNDO()
 ```
+
+</details>
 
 Las funciones pueden recibir cualquier cantidad de parámetros y devolver un valor mediante la instrucción `retornar`.
 
-```text
-suma(a, b)
+![Código](images/screenshots/code16.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
+SUMA(a, b)
     retornar a + b
 ```
 
+</details>
+
 También es posible recibir arreglos como parámetros. Para ello únicamente se especifica el número de dimensiones del arreglo.
 
-```text
-suma2(a, b[])
+![Código](images/screenshots/code17.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
+SUMA2(a, b[])
     retornar a + b[0]
 ```
 
+</details>
+
 Las llamadas a funciones pueden utilizarse como parte de cualquier expresión. Los arreglos se pasan simplemente mediante su identificador.
 
-```text
-variable1 <- suma(1, 2)
-escribir suma(1, 2)
+![Código](images/screenshots/code18.png)
 
-variable1 <- suma2(1, arreglo)
-escribir suma2(1, arreglo)
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
+variable1 <- SUMA(1, 2)
+escribir SUMA(1, 2)
+
+variable1 <- SUMA2(1, arreglo)
+escribir SUMA2(1, arreglo)
 ```
 
-Es posible utilizar como identificador `principal` en una función para usarlo como punto de entrada. No es necesario realizar una llamada explícita.
+</details>
 
-```text
-principal()
+Es posible utilizar como identificador `PRINCIPAL` en una función para usarlo como punto de entrada. No es necesario realizar una llamada explícita.
+
+![Código](images/screenshots/code19.png)
+
+<details>
+<summary>Copiar código</summary>
+
+```clrs-es
+PRINCIPAL()
     escribir "Hola mundo"
 
-principal() // No es necesario, se ejecutaría 2 veces
+PRINCIPAL() // No es necesario
 ```
+
+</details>
 
 ## Ejemplo
 
 Ejemplo completo de Bubble Sort.
-```text
-arreglo[0] <- 5
-arreglo[1] <- 2
-arreglo[2] <- 9
-arreglo[3] <- 1
-arreglo[4] <- 6
 
-n <- LONGITUD(arreglo)
+![Código](images/screenshots/code20.png)
 
-escribir n
-i <- 0
-j <- 0
+<details>
+<summary>Copiar código</summary>
 
-para i <- 0 hasta n - 1
-    para j <- 0 hasta n - i - 2
-        si arreglo[j] > arreglo[j + 1]
-            temp <- arreglo[j]
-            arreglo[j] <- arreglo[j + 1]
-            arreglo[j + 1] <- temp
-escribir arreglo
+```clrs-es
+BURBUJA(A)
+    n <- LONG(A)
+
+    para i <- 0 hasta n - 2
+        para j <- 0 hasta n - i - 2
+            si A[j] > A[j + 1]
+                intercambio <- A[j]
+                A[j] <- A[j + 1]
+                A[j + 1] <- intercambio
+
+    retornar A
+
+PRINCIPAL()
+    A[0] <- 5
+    A[1] <- 2
+    A[2] <- 9
+    A[3] <- 1
+    A[4] <- 6
+
+    escribir "Sin ordenar:"
+    escribir A
+
+    escribir "Ordenado:"
+    A <- BURBUJA(A)
+    escribir A
 ```
+
+</details>
 
 ---
 
@@ -301,31 +448,31 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 
 | Función CLRS | Descripción | Retorno |
 |--------------|-------------|---------|
-| `ABSOLUTO(x)` | Valor absoluto de un número. | Número |
-| `MINIMO(a, b)` | Devuelve el menor de dos valores. | Número |
-| `MAXIMO(a, b)` | Devuelve el mayor de dos valores. | Número |
-| `REDONDEO(x)` | Redondea al entero más cercano. | Número |
+| `ASB(x)` | Valor absoluto de un número. | Número |
+| `MIN(a, b)` | Devuelve el menor de dos valores. | Número |
+| `MAX(a, b)` | Devuelve el mayor de dos valores. | Número |
+| `REDONDEA(x)` | Redondea al entero más cercano. | Número |
 | `PISO(x)` | Redondea hacia abajo. | Número |
-| `RAIZ2(x)` | Raíz cuadrada. | Número |
-| `RAIZ3(x)` | Raíz cúbica. | Número |
-| `EXPONENCIAL(x)` | e elevado a x. | Número |
-| `LOG(x)` | Logaritmo natural. | Número |
+| `RAIZ(x)` | Raíz cuadrada. | Número |
+| `RAIZCUB(x)` | Raíz cúbica. | Número |
+| `EXP(x)` | e elevado a x. | Número |
+| `LOGN(x)` | Logaritmo natural. | Número |
 | `LOG10(x)` | Logaritmo base 10. | Número |
 | `LOG2(x)` | Logaritmo base 2. | Número |
-| `SENO(x)` | Seno de un ángulo. | Número |
-| `COSENO(x)` | Coseno de un ángulo. | Número |
-| `TANGENTE(x)` | Tangente de un ángulo. | Número |
-| `ARCOSENO(x)` | Arcoseno. | Número |
-| `ARCOCOSENO(x)` | Arcocoseno. | Número |
-| `A_RADIANES(x)` | Convierte grados a radianes. | Número |
-| `A_GRADOS(x)` | Convierte radianes a grados. | Número |
+| `SEN(x)` | Seno de un ángulo. | Número |
+| `COS(x)` | Coseno de un ángulo. | Número |
+| `TAN(x)` | Tangente de un ángulo. | Número |
+| `ARC(x)` | Arcoseno. | Número |
+| `ARCOCOS(x)` | Arcocoseno. | Número |
+| `RAD(x)` | Convierte grados a radianes. | Número |
+| `GRAD(x)` | Convierte radianes a grados. | Número |
 | `PI()` | Constante π. | Número |
-| `EULER()` | Constante e. | Número |
-| `ALEATORIO(min, max)` | Número aleatorio. | Número |
-| `PROMEDIO(x)` | Promedio de un arreglo. | Número |
-| `SUMATORIA(x)` | Suma total de un arreglo. | Número |
-| `MEDIANA(x)` | Mediana de un conjunto. | Número |
-| `VARIANZA(x)` | Varianza de un conjunto. | Número |
+| `E()` | Constante e. | Número |
+| `ALEAT(min, max)` | Número aleatorio. | Número |
+| `PROM(x)` | Promedio de un arreglo. | Número |
+| `SUM(x)` | Suma total de un arreglo. | Número |
+| `MED(x)` | Mediana de un conjunto. | Número |
+| `VAR(x)` | Varianza de un conjunto. | Número |
 
 ---
 
@@ -333,20 +480,18 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 
 | Función CLRS | Descripción | Retorno |
 |--------------|-------------|---------|
-| `LONGITUD(x)` | Longitud de una cadena o estructura. | Número |
-| `CARACTER_EN(cadena, posición)` | Obtiene un carácter en una posición. | Cadena |
-| `SUB_CADENA(cadena, inicio, fin)` | Extrae una subcadena. | Cadena |
-| `BUSCAR(cadena, texto)` | Posición de una subcadena. | Número |
-| `CONTIENE(cadena, texto)` | Verifica si contiene un texto. | Lógico |
-| `MAYUSCULAS(cadena)` | Convierte a mayúsculas. | Cadena |
-| `MINUSCULAS(cadena)` | Convierte a minúsculas. | Cadena |
-| `RECORTAR(cadena)` | Elimina espacios en blanco. | Cadena |
-| `REEMPLAZAR(cadena, viejo, nuevo)` | Reemplaza texto. | Cadena |
-| `DIVIDIR(cadena, separador)` | Divide en arreglo. | Arreglo |
-| `ES_NUMERO(cadena)` | Verifica si es número. | Lógico |
-| `ES_VACIA(cadena)` | Verifica si está vacía. | Lógico |
-| `EMPIEZA_CON(cadena, texto)` | Verifica prefijo. | Lógico |
-| `TERMINA_CON(cadena, texto)` | Verifica sufijo. | Lógico |
+| `LONG(x)` | Longitud de una cadena o estructura. | Número |
+| `CAR_EN(cadena, posición)` | Obtiene un carácter en una posición. | Cadena |
+| `SUBCAD(cadena, inicio, fin)` | Extrae una subcadena. | Cadena |
+| `MAYUS(cadena)` | Convierte a mayúsculas. | Cadena |
+| `MAYUS(cadena)` | Convierte a minúsculas. | Cadena |
+| `RECORTA(cadena)` | Elimina espacios en blanco. | Cadena |
+| `REEMP(cadena, viejo, nuevo)` | Reemplaza texto. | Cadena |
+| `DIV(cadena, separador)` | Divide en arreglo. | Arreglo |
+| `ES_CAD_NUM(cadena)` | Verifica si es número. | Lógico |
+| `ES_VAC(cadena)` | Verifica si está vacía. | Lógico |
+| `EMP_CON(cadena, texto)` | Verifica prefijo. | Lógico |
+| `TERM_CON(cadena, texto)` | Verifica sufijo. | Lógico |
 
 ---
 
@@ -354,15 +499,15 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 
 | Función CLRS | Descripción | Retorno |
 |--------------|-------------|---------|
-| `AGREGAR(arreglo, valor)` | Agrega un elemento al final. | Número |
-| `ELIMINAR(arreglo, índice)` | Elimina un elemento. | - |
-| `INSERTAR(arreglo, índice, valor)` | Inserta en posición. | - |
-| `BUSCAR_INDICE(arreglo, valor)` | Índice de un elemento. | Número |
-| `CONTIENE_VALOR(arreglo, valor)` | Verifica existencia. | Lógico |
-| `ORDENAR(arreglo)` | Ordena el arreglo. | - |
-| `INVERTIR(arreglo)` | Invierte el arreglo. | Arreglo |
-| `COPIAR(arreglo)` | Copia el arreglo. | Arreglo |
-| `UNIR(arreglo, separador)` | Une elementos en cadena. | Cadena |
+| `AGREGA(arreglo, valor)` | Agrega un elemento al final. | Arreglo |
+| `ELIM(arreglo, índice)` | Elimina un elemento. | Arreglo |
+| `INSER(arreglo, índice, valor)` | Inserta en posición. | Arreglo |
+| `INDICE(arreglo, valor)` | Índice de un elemento. | Número |
+| `CONT(arreglo, valor)` | Verifica existencia. | Lógico |
+| `ORDENA(arreglo)` | Ordena el arreglo. | Arreglo |
+| `INVER(arreglo)` | Invierte el arreglo. | Arreglo |
+| `COPIA(arreglo)` | Copia el arreglo. | Arreglo |
+| `UNE(arreglo, separador)` | Une elementos en cadena. | Cadena |
 
 ---
 
@@ -370,12 +515,12 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 
 | Función CLRS      | Descripción                                        | Retorno |
 | ----------------- | -------------------------------------------------- | ------- |
-| `TIPO_NUM(valor)` | Verifica si un valor es de tipo numérico.          | Lógico  |
-| `TIPO_CAD(valor)` | Verifica si un valor es de tipo cadena.            | Lógico  |
-| `TIPO_LOG(valor)` | Verifica si un valor es de tipo lógico (booleano). | Lógico  |
-| `A_CADENA(valor)` | Convierte un valor a una cadena de texto.          | Cadena  |
-| `A_NUMERO(valor)` | Convierte un valor a un número.                    | Número  |
-| `A_LOGICO(valor)` | Convierte un valor a un valor lógico.              | Lógico  |
+| `ES_NUM(valor)` | Verifica si un valor es de tipo numérico.          | Lógico  |
+| `ES_CAD(valor)` | Verifica si un valor es de tipo cadena.            | Lógico  |
+| `ES_LOG(valor)` | Verifica si un valor es de tipo lógico (booleano). | Lógico  |
+| `A_CAD(valor)` | Convierte un valor a una cadena de texto.          | Cadena  |
+| `A_NUM(valor)` | Convierte un valor a un número.                    | Número  |
+| `A_LOG(valor)` | Convierte un valor a un valor lógico.              | Lógico  |
 
 ---
 

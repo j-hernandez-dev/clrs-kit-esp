@@ -1,0 +1,9 @@
+{
+    "Lanzar Error": {
+        "prefix": "error",
+        "body": [
+            "LANZAR_ERROR(${1:mensaje})"
+        ],
+        "description": "Lanza un error de ejecución de forma manual."
+    }
+}

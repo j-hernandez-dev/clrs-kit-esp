@@ -2,7 +2,7 @@
   "name": "clrs-kit-esp",
   "displayName": "CLRS Kit Español",
   "description": "Soporte de lenguaje y herramientas para el pseudolenguaje CRLS.",
-  "version": "1.2.0",
+  "version": "1.2.4",
   "publisher": "j-hernandez-dev",
   "icon": "images/icon.png",
   "engines": {
@@ -63,11 +63,11 @@
       },
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-io.code-snippets"
+        "path": "./snippets/clrs-file.code-snippets"
       },
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-strings.code-snippets"
+        "path": "./snippets/clrs-string.code-snippets"
       },
       {
         "language": "clrs-es",
@@ -75,11 +75,11 @@
       },
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-types.code-snippets"
+        "path": "./snippets/clrs-type.code-snippets"
       },
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-errors.code-snippets"
+        "path": "./snippets/clrs-error.code-snippets"
       }
     ]
   },

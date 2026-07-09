@@ -20,6 +20,9 @@
       "include": "#booleans"
     },
     {
+      "include": "#stdlib"
+    },
+    {
       "include": "#functions"
     },
     {
@@ -39,7 +42,7 @@
     "comments": {
       "patterns": [
         {
-          "name": "comment.line.clrs",
+          "name": "comment.line.double-slash.clrs",
           "match": "//.*$"
         }
       ]
@@ -49,7 +52,23 @@
         {
           "name": "string.quoted.double.clrs",
           "begin": "\"",
-          "end": "\""
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.clrs"
+            }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.clrs"
+            }
+          },
+          "patterns": [
+            {
+              "name": "constant.character.escape.clrs",
+              "match": "\\\\."
+            }
+          ]
         }
       ]
     },
@@ -105,23 +124,101 @@
         },
         {
           "name": "keyword.operator.arithmetic.clrs",
-          "match": "(\\+|-|\\*|/|\\^|%|y|o|no)"
+          "match": "(\\+|-|\\*|/|\\^|%)"
+        },
+        {
+          "name": "keyword.operator.logical.clrs",
+          "match": "\\b(y|o|no)\\b"
+        }
+      ]
+    },
+    "stdlib": {
+      "patterns": [
+        {
+          "name": "support.function.clrs",
+          "match": "\\b(AGREGA|ELIM|INSER|INDICE|CONT|ORDENA|INVER|COPIA|UNE|LANZAR_ERROR|LEER_ARCHIVO|EXISTE_ARCHIVO|PESO_ARCHIVO|CREAR_ARCHIVO|ESCRIBIR_ARCHIVO|ELIMINAR_ARCHIVO|ABS|MIN|MAX|REDONDEA|PISO|RAIZ|RAIZCUB|EXP|LOGN|LOG10|LOG2|SEN|COS|TAN|ARC|ARCOCOS|RAD|GRAD|PI|E|ALEAT|PROM|SUM|MED|VAR|LONG|CAR_EN|SUBCAD|MAYUS|MINUS|RECORTA|REEMP|DIV|ES_CAD_NUM|ES_VAC|EMP_CON|TERM_CON|ES_NUM|ES_CAD|ES_LOG|A_CAD|A_NUM|A_LOG)\\b(?=\\s*\\()"
         }
       ]
     },
     "functions": {
       "patterns": [
         {
-          "name": "entity.name.function.clrs",
-          "match": "^[ \\t]*[A-Za-z_][A-Za-z0-9_]*\\s*\\("
-        }
-      ]
-    },
-    "calls": {
-      "patterns": [
+          "name": "meta.function.main.clrs",
+          "begin": "\\b(PRINCIPAL)(\\s*)(\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.function.main.clrs"
+            },
+            "3": {
+              "name": "punctuation.section.parens.begin.clrs"
+            }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.parens.end.clrs"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#booleans"
+            },
+            {
+              "include": "#variables"
+            },
+            {
+              "include": "#operators"
+            },
+            {
+              "name": "punctuation.separator.comma.clrs",
+              "match": ","
+            }
+          ]
+        },
         {
-          "name": "support.function.call.clrs",
-          "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\s*\\("
+          "name": "meta.function.clrs",
+          "begin": "\\b([A-Za-z_][A-Za-z0-9_]*)(\\s*)(\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.function.clrs"
+            },
+            "3": {
+              "name": "punctuation.section.parens.begin.clrs"
+            }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.parens.end.clrs"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#booleans"
+            },
+            {
+              "include": "#variables"
+            },
+            {
+              "include": "#operators"
+            },
+            {
+              "name": "punctuation.separator.comma.clrs",
+              "match": ","
+            }
+          ]
         }
       ]
     },
@@ -129,19 +226,65 @@
       "patterns": [
         {
           "name": "variable.other.assignment.clrs",
-          "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*<-) "
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*<-)"
+        },
+        {
+          "name": "meta.indexer.clrs",
+          "begin": "\\[",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.section.brackets.begin.clrs"
+            }
+          },
+          "end": "\\]",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.brackets.end.clrs"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#variables"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
         },
         {
           "name": "variable.other.array.clrs",
           "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\[)"
+        },
+        {
+          "name": "variable.other.clrs",
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
         }
       ]
     },
     "punctuation": {
       "patterns": [
         {
-          "name": "punctuation.clrs",
-          "match": "(\\(|\\)|\\[|\\]|,)"
+          "name": "punctuation.section.parens.begin.clrs",
+          "match": "\\("
+        },
+        {
+          "name": "punctuation.section.parens.end.clrs",
+          "match": "\\)"
+        },
+        {
+          "name": "punctuation.section.brackets.begin.clrs",
+          "match": "\\["
+        },
+        {
+          "name": "punctuation.section.brackets.end.clrs",
+          "match": "\\]"
+        },
+        {
+          "name": "punctuation.separator.comma.clrs",
+          "match": ","
         }
       ]
     }
