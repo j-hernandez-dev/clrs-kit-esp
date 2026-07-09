@@ -8,6 +8,43 @@ import { executeCodeInteractive } from "./Excecute.js";
 import { addIndentationTokens } from "../lexer/Indentation.js";
 import { CostAnalysisVisitor } from "../complex/CostAnalysisVisitor.js";
 
+function printError(type, error) {
+    const width = 60;
+    const title = ` ${type} `;
+    const filling = "═".repeat(width - title.length - 1);
+
+    console.error(
+        `╔═${title}${filling}╗\n` +
+        `\n` +
+        // @ts-ignore
+        `${error.stack}\n` +
+        `\n` +
+        `╚${"═".repeat(width)}╝`
+    );
+}
+
+function printParserError(type, errors) {
+    const width = 60;
+    const title = ` ${type} `;
+    const filling = "═".repeat(width - title.length - 1);
+
+    console.error(`╔═${title}${filling}╗\n`);
+
+    for (const error of errors) {
+        console.error(error.message);
+
+        if (error.token) {
+            console.error(
+                `→ Line ${error.token.startLine}, Column ${error.token.startColumn}`
+            );
+        }
+
+        console.error("");
+    }
+
+    console.error(`╚${"═".repeat(width)}╝`);
+}
+
 /**
  * Tokenización
  * @param {string} sourceCode
@@ -23,12 +60,7 @@ function tokenizeCode(sourceCode) {
 
     return tokens;
   } catch (error) {
-    console.error("╔═ Lexicographic Error ══════════════════════════════════════════\n"
-      + "\n"
-      // @ts-ignore
-      + error.stack
-      + "\n"
-      + "\n═════════════════════════════════════════════════════════════════");
+    printError("Lexicographic Error", error);
   }
 
   return null;
@@ -46,24 +78,7 @@ function parserCode(tokens) {
 
   if (parser.errors.length > 0) {
 
-    console.error(
-      "╔═ Syntactic Error ══════════════════════════════════════════\n"
-    );
-    for (const error of parser.errors) {
-      console.error(error.message);
-
-      if (error.token) {
-        console.error(
-          `→ Line ${error.token.startLine}, Column ${error.token.startColumn}`
-        );
-      }
-
-      console.error("");
-    }
-
-    console.error(
-      "══════════════════════════════════════════════════════════════"
-    );
+    printParserError("Syntactic Error", parser.errors);
 
     return null;
   }
@@ -94,12 +109,7 @@ function transpileCode(ast, build) {
     return transpiler;
 
   } catch (error) {
-    console.error("╔═ Transpilation Error ══════════════════════════════════════════\n"
-      + "\n"
-      // @ts-ignore
-      + error.stack
-      + "\n"
-      + "\n═════════════════════════════════════════════════════════════════");
+    printError("Transpilation Error", error);
   }
 
   return null;
@@ -117,12 +127,7 @@ function costCode(ast) {
     return costAnalyzer.costAnalysis(ast);
 
   } catch (error) {
-    console.error("╔═ Cost Error ══════════════════════════════════════════\n"
-      + "\n"
-      // @ts-ignore
-      + error.stack
-      + "\n"
-      + "\n═════════════════════════════════════════════════════════════════");
+    printError("Cost Error", error);
   }
 
   return null;
@@ -164,7 +169,6 @@ export function build(sourceCode, absolutePath) {
 
 /**
  * @param {string} sourceCode
- * @param {any} absolutePath
  */
 export function cost(sourceCode) {
   const tokens = tokenizeCode(sourceCode);

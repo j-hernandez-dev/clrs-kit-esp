@@ -412,8 +412,7 @@ export class Transpiler {
         if (
             statement.type === "FunctionDeclaration" &&
             (
-                identifier === "main" ||
-                identifier === "principal"
+                identifier === "PRINCIPAL"
             )
         ) {
 

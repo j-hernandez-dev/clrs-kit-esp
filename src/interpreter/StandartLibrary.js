@@ -13,13 +13,23 @@ export const endProgram =
 `
 process.exit(0);
 } catch (error) {
-console.error("╔═ Runtime Error ══════════════════════════════════════════\\n"
-      + "\\n"
-      // @ts-ignore
-      + error.stack
-      + "\\n"
-      + "\\n═══════════════════════════════════════════════════════════");
+printError_1029347226("Runtime Error", error);
 process.exit(1);
+}
+
+function printError_1029347226(type, error) {
+    const width = 60;
+    const title = \` \${type} \`;
+    const filling = "═".repeat(width - title.length - 1);
+
+    console.error(
+        \`╔═\${title}\${filling}╗\\n\` +
+        \`\\n\` +
+        // @ts-ignore
+        \`\${error.stack}\\n\` +
+        \`\\n\` +
+        \`╚\${"═".repeat(width)}╝\`
+    );
 }
 `
 
@@ -145,19 +155,19 @@ async function ELIMINAR_ARCHIVO(ruta) {
 
 // MATH
 
-async function ABSOLUTO(x) {
+async function ABS(x) {
     return Math.abs(x);
 }
 
-async function MINIMO(a, b) {
+async function MIN(a, b) {
     return Math.min(a, b);
 }
 
-async function MAXIMO(a, b) {
+async function MAX(a, b) {
     return Math.max(a, b);
 }
 
-async function REDONDEO(decimal) {
+async function REDONDEA(decimal) {
     return Math.round(decimal);
 }
 
@@ -165,19 +175,19 @@ async function PISO(decimal) {
     return Math.floor(decimal);
 }
 
-async function RAIZ2(x) {
+async function RAIZ(x) {
     return Math.sqrt(x);
 }
 
-async function RAIZ3(x) {
+async function RAIZCUB(x) {
     return Math.cbrt(x);
 }
 
-async function EXPONENCIAL(x) {
+async function EXP(x) {
     return Math.exp(x);
 }
 
-async function LOG(x) {
+async function LOGN(x) {
     return Math.log(x);
 }
 
@@ -189,31 +199,31 @@ async function LOG2(x) {
     return Math.log2(x);
 }
 
-async function SENO(x) {
+async function SEN(x) {
     return Math.sin(x);
 }
 
-async function COSENO(x) {
+async function COS(x) {
     return Math.cos(x);
 }
 
-async function TANGENTE(x) {
+async function TAN(x) {
     return Math.tan(x);
 }
 
-async function ARCOSENO(x) {
+async function ARC(x) {
     return Math.asin(x);
 }
 
-async function ARCOCOSENO(x) {
+async function ARCOCOS(x) {
     return Math.acos(x);
 }
 
-async function A_RADIANES(x) {
+async function RAD(x) {
     return x * (Math.PI / 180);
 }
 
-async function A_GRADOS(x) {
+async function GRAD(x) {
     return x * (180 / Math.PI);
 }
 
@@ -221,27 +231,27 @@ async function PI() {
     return Math.PI;
 }
 
-async function EULER() {
+async function E() {
     return Math.E;
 }
 
-async function ALEATORIO(min, max) {
+async function ALEAT(min, max) {
     if (min === undefined || max === undefined) {
         return Math.random();
     }
     return Math.random() * (max - min) + min;
 }
 
-async function PROMEDIO(x) {
+async function PROM(x) {
     const suma = await SUMATORIA(x);
     return suma / x.length;
 }
 
-async function SUMATORIA(x) {
+async function SUM(x) {
     return x.reduce((acc, val) => acc + val, 0);
 }
 
-async function MEDIANA(x) {
+async function MED(x) {
     const sorted = [...x].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
 
@@ -251,92 +261,87 @@ async function MEDIANA(x) {
     return sorted[mid];
 }
 
-async function VARIANZA(x) {
-    const prom = Promedio(x);
-    return Promedio(x.map(v => (v - prom) ** 2));
+async function VAR(x) {
+    const prom = await PROM(x);
+    return PROM(x.map(v => (v - prom) ** 2));
 }
 
 // STRINGS
 
-async function LONGITUD(estructura) {
+async function LONG(estructura) {
     return estructura.length;
 }
 
-async function CARACTER_EN(cadena, posicion) {
-    return cadena[posicion];
+async function CAR_EN(cadena, posicion) {
+    return cadena.charAt(posicion);
 }
 
-async function SUB_CADENA(cadena, inicio, fin) {
+async function SUBCAD(cadena, inicio, fin) {
     return cadena.slice(inicio, fin);
 }
 
-async function BUSCAR(cadena, cadenaBuscar) {
-    return cadena.indexOf(cadenaBuscar);
-}
-
-async function CONTIENE(cadena, texto) {
-    return cadena.includes(texto);
-}
-
-async function MAYUSCULAS(cadena) {
+async function MAYUS(cadena) {
     return cadena.toUpperCase();
 }
 
-async function MINUSCULAS(cadena) {
+async function MINUS(cadena) {
     return cadena.toLowerCase();
 }
 
-async function RECORTAR(cadena) {
+async function RECORTA(cadena) {
     return cadena.trim();
 }
 
-async function REEMPLAZAR(cadena, viejo, nuevo) {
+async function REEMP(cadena, viejo, nuevo) {
     return cadena.replaceAll(viejo, nuevo);
 }
 
-async function DIVIDIR(cadena, separador) {
+async function DIV(cadena, separador) {
     return cadena.split(separador);
 }
 
-async function ES_NUMERO(cadena) {
-    return !isNaN(cadena) && cadena.trim() !== "";
+async function ES_CAD_NUM(cadena) {
+    return !isNaN(cadena) && String(cadena).trim() !== "";
 }
 
-async function ES_VACIA(cadena) {
+async function ES_VAC(cadena) {
     return cadena.length === 0;
 }
 
-async function EMPIEZA_CON(cadena, texto) {
+async function EMP_CON(cadena, texto) {
     return cadena.startsWith(texto);
 }
 
-async function TERMINA_CON(cadena, texto) {
+async function TERM_CON(cadena, texto) {
     return cadena.endsWith(texto);
 }
 
 // ARRAY
 
-async function AGREGAR(arreglo, valor) {
-    return arreglo.push(valor);
+async function AGREGA(arreglo, valor) {
+    arreglo.push(valor);
+    return arreglo;
 }
 
-function ELIMINAR(arreglo, indice) {
+function ELIM(arreglo, indice) {
     arreglo.splice(indice, 1);
+    return arreglo;
 }
 
-function INSERTAR(arreglo, indice, valor) {
+function INSER(arreglo, indice, valor) {
     arreglo.splice(indice, 0, valor);
+    return arreglo;
 }
 
-function BUSCAR_INDICE(arreglo, valor) {
+function INDICE(arreglo, valor) {
     return arreglo.indexOf(valor);
 }
 
-function CONTIENE_VALOR(arreglo, valor) {
+function CONT(arreglo, valor) {
     return arreglo.includes(valor);
 }
 
-function ORDENAR(arreglo) {
+function ORDENA(arreglo) {
     arreglo.sort((a, b) => {
         if (typeof a === "number" && typeof b === "number") {
             return a - b;
@@ -344,43 +349,45 @@ function ORDENAR(arreglo) {
 
         return String(a).localeCompare(String(b));
     });
+
+    return arreglo;
 }
 
-async function INVERTIR(arreglo) {
+async function INVER(arreglo) {
     return arreglo.reverse();
 }
 
-async function COPIAR(arreglo) {
+async function COPIA(arreglo) {
     return arreglo.slice();
 }
 
-async function UNIR(arreglo, separador) {
+async function UNE(arreglo, separador) {
     return arreglo.join(separador);
 }
 
 // TYPES
 
-async function TIPO_NUM(valor) {
+async function ES_NUM(valor) {
     return typeof valor === "number";
 }
 
-async function TIPO_CAD(valor) {
+async function ES_CAD(valor) {
     return typeof valor === "string";
 }
 
-async function TIPO_LOG(valor) {
+async function ES_LOG(valor) {
     return typeof valor === "boolean";
 }
 
-async function A_CADENA(valor) {
-    return String(valor);
+async function A_CAD(valor) {
+    return valor.toString();
 }
 
-async function A_NUMERO(valor) {
+async function A_NUM(valor) {
     return Number(valor);
 }
 
-async function A_LOGICO(valor) {
+async function A_LOG(valor) {
     return Boolean(valor);
 }
 

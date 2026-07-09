@@ -30,7 +30,13 @@ export class CLRSCostDecorator {
         if (editor.document.languageId !== "clrs-es") return;
 
         const tree = cost(editor.document.getText());
-        if (!tree) return;
+        if (!tree) {
+            editor.setDecorations(
+                this.decoration,
+                []
+            );
+            return;
+        }
 
         //==========================================
         // Longitud de la línea más larga
