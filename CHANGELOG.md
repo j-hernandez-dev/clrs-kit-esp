@@ -2,6 +2,16 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.2.6] - 2026-07-16
+
+- Mainly structural changes in the overall project architecture to improve overall cohesion.  
+- The compiler pipelining now supports files with any extension, as long as the language grammar is maintained.  
+- A global variable "ProgramKey" was added, which allows generating the user's program and runtime structures with a random identifier. This is to avoid runtime identifier collisions.  
+- The terminal output was visually modified; it now shows the running file and the program's status with a single word.  
+- Menu items were added to the top bar in VS Code. Cost expressions no longer overlap with previous buttons.  
+- Standard file paths are now used with support for different file systems.  
+- In the command to run code, it now clears the previous execution before running.
+
 ## [1.2.5] - 2026-07-09
 
 - Remove directory screenshots.
