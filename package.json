@@ -1,10 +1,10 @@
 {
   "name": "clrs-kit-esp",
   "displayName": "CLRS Kit Español",
-  "description": "Soporte de lenguaje y herramientas para el pseudolenguaje CRLS.",
-  "version": "1.2.5",
+  "description": "Soporte de lenguaje y herramientas para el lenguaje de pseudocódigo CRLS.",
+  "version": "1.2.6",
   "publisher": "j-hernandez-dev",
-  "icon": "images/icon.png",
+  "icon": "./extension/images/icon.png",
   "engines": {
     "vscode": "^1.125.0"
   },
@@ -16,20 +16,42 @@
     "url": "https://github.com/j-hernandez-dev/clrs-kit-esp.git"
   },
   "activationEvents": [],
-  "main": "./extension.js",
+  "main": "./extension/extension.js",
   "contributes": {
+    "menus": {
+      "editor/title": [
+        {
+          "command": "CLRS.runCode",
+          "group": "navigation@1",
+          "when": "resourceLangId == clrs-es"
+        },
+        {
+          "command": "CLRS.toggleCost",
+          "group": "navigation@2",
+          "when": "resourceLangId == clrs-es"
+        },
+        {
+          "command": "CLRS.generateCode",
+          "group": "navigation@3",
+          "when": "resourceLangId == clrs-es"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "CLRS.runCode",
-        "title": "Ejecutar código"
-      },
-      {
-        "command": "CLRS.buildCode",
-        "title": "Construir código (JS)"
+        "title": "Ejecutar código CLRS",
+        "icon": "$(play)"
       },
       {
         "command": "CLRS.toggleCost",
-        "title": "Mostrar u ocultar costos"
+        "title": "Mostrar/ocultar costo algorítmico",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "CLRS.generateCode",
+        "title": "Generar código JavaScript",
+        "icon": "$(file-code)"
       }
     ],
     "languages": [
@@ -42,44 +64,44 @@
         "extensions": [
           ".clrs"
         ],
-        "configuration": "./language-config/language-configuration.json"
+        "configuration": "./extension/language-config/language-configuration.json"
       }
     ],
     "grammars": [
       {
         "language": "clrs-es",
         "scopeName": "source.clrs-es",
-        "path": "./syntaxes/clrs.tmLanguage.json"
+        "path": "./extension/syntaxes/clrs.tmLanguage.json"
       }
     ],
     "snippets": [
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-core.code-snippets"
+        "path": "./extension/snippets/clrs-core.code-snippets"
       },
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-math.code-snippets"
+        "path": "./extension/snippets/clrs-math.code-snippets"
       },
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-file.code-snippets"
+        "path": "./extension/snippets/clrs-file.code-snippets"
       },
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-string.code-snippets"
+        "path": "./extension/snippets/clrs-string.code-snippets"
       },
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-array.code-snippets"
+        "path": "./extension/snippets/clrs-array.code-snippets"
       },
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-type.code-snippets"
+        "path": "./extension/snippets/clrs-type.code-snippets"
       },
       {
         "language": "clrs-es",
-        "path": "./snippets/clrs-error.code-snippets"
+        "path": "./extension/snippets/clrs-error.code-snippets"
       }
     ]
   },

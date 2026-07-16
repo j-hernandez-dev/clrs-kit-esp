@@ -4,19 +4,28 @@
 
 ## 💻 Inicio rápido
 
-| Concepto              | Descripción |
+| Extensión de archivo | Descripción |
 |----------------------|-------------|
-| Extensión de archivo | `.clrs` |
-| Ejecutar código      | Ejecuta el código escrito en CLRS mediante su transpilación a JavaScript y posterior ejecución en tiempo de ejecución. |
-| Construir código (JS) | Transpila el código CLRS a JavaScript sin ejecutarlo, generando un archivo listo para ser usado en Node.js. |
-| Costo | Genera automáticamente la función de costo de cada algoritmo construyendo expresiones simbólicas basadas en el número de operaciones elementales ejecutadas. |
+| `.clrs` | Recomendada para habilitar las herramientas integradas en VS Code. Puedes ejecutar archivos con otras extensiones, pero no contarán con el soporte de la extensión. |
 
 ### Recomendado:
 
 [![Extension - One Dark Pro](https://img.shields.io/badge/extension-One_Dark_Pro-2979ff?style=flat-square&logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=zhuangtongfa.Material-theme)
 [![Font - JetBrains Mono](https://img.shields.io/badge/font-JetBrains_Mono-f42f7d?style=flat-square&logo=jetbrains&logoColor=white)](https://www.jetbrains.com/es-es/lp/mono/)
 
-## ⚙️ Estado actual (versión 1.2.5)
+---
+
+## ⌨️ Comandos para VS Code
+
+| Comando              | Descripción |
+|----------------------|-------------|
+| Ejecutar código CLRS      | Transpila el código a JavaScript y lo ejecuta inmediatamente. |
+| Generar código JavaScript | Transpila el código a un archivo `.js` listo para usar, sin ejecutarlo. |
+| Mostrar/ocultar costo algorítmico | Muestra u oculta el costo algorítmico de cada instrucción mediante expresiones simbólicas basadas en operaciones elementales. |
+
+---
+
+## ⚙️ Estado actual (versión 1.2.6)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
@@ -53,12 +62,6 @@ El lenguaje está diseñado bajo los siguientes principios:
 
 ---
 
-## 🧑‍💻 Autor
-
-Proyecto desarrollado por **j-hernandez-dev** como herramienta educativa abierta.
-
----
-
 ## 📜 Licencia (GPLv2)
 
 Este proyecto es de código abierto. Puede ser modificado y extendido libremente, siempre que se mantenga la atribución al autor original.
@@ -78,7 +81,7 @@ Este proyecto es de código abierto. Puede ser modificado y extendido libremente
 
 CLRS únicamente admite comentarios de una sola línea mediante `//`.
 
-![Código](images/screenshots/code1.png)
+![Código](extension/images/screenshots/code1.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -93,7 +96,7 @@ CLRS únicamente admite comentarios de una sola línea mediante `//`.
 
 Las variables son dinámicas y débilmente tipadas. Esto significa que pueden almacenar valores de distintos tipos y cambiar de tipo durante la ejecución mediante conversiones implícitas cuando sea necesario.
 
-![Código](images/screenshots/code2.png)
+![Código](extension/images/screenshots/code2.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -108,7 +111,7 @@ variable1 <- variable2
 
 Las variables son siempre mutables; el lenguaje no dispone de constantes. Su ámbito es local a la función donde se definen y la asignación se realiza mediante el operador `<-`.
 
-![Código](images/screenshots/code3.png)
+![Código](extension/images/screenshots/code3.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -123,7 +126,7 @@ variable1 <- 4
 
 Las variables deben inicializarse en el momento de su creación, por lo que no es posible declararlas sin asignarles un valor inicial. Los valores admitidos son numéricos, cadenas y lógicos.
 
-![Código](images/screenshots/code4.png)
+![Código](extension/images/screenshots/code4.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -140,7 +143,7 @@ variable3 <- VERDAD
 
 Los arreglos son dinámicos. Su tamaño y número de dimensiones se determinan automáticamente conforme se accede a nuevas posiciones.
 
-![Código](images/screenshots/code5.png)
+![Código](extension/images/screenshots/code5.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -154,7 +157,7 @@ arregloBi[2][2] <- 10
 
 Es posible asignar un arreglo completo a una variable o el contenido de una variable a un arreglo. En ambos casos, la asignación copia el contenido correspondiente.
 
-![Código](images/screenshots/code6.png)
+![Código](extension/images/screenshots/code6.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -170,7 +173,7 @@ arregloBi <- variable2
 
 La instrucción `escribir` permite mostrar información en la consola. Puede imprimir valores individuales, varios valores separados por comas, expresiones concatenadas y arreglos completos.
 
-![Código](images/screenshots/code7.png)
+![Código](extension/images/screenshots/code7.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -186,7 +189,7 @@ escribir variable1 + variable2 + variable3
 
 La instrucción `leer` permite obtener datos desde la consola. Es posible leer una o varias variables en una sola instrucción. El tipo del valor leído se determina automáticamente.
 
-![Código](images/screenshots/code8.png)
+![Código](extension/images/screenshots/code8.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -202,7 +205,7 @@ leer variable1, variable2, variable3
 
 La única estructura de selección es `si`, junto con las variantes `sino si` y `sino`. Los bloques de código se delimitan mediante indentación, por lo que es importante mantener una indentación consistente.
 
-![Código](images/screenshots/code9.png)
+![Código](extension/images/screenshots/code9.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -224,7 +227,7 @@ sino
 
 CLRS dispone de operadores lógicos, relacionales y aritméticos similares a los de otros lenguajes. La comparación de igualdad utiliza el operador `=`.
 
-![Código](images/screenshots/code10.png)
+![Código](extension/images/screenshots/code10.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -252,7 +255,7 @@ La estructura `para` dispone de dos variantes.
 
 La variante `hasta` incrementa automáticamente la variable de iteración hasta que alcance el valor indicado por la expresión final.
 
-![Código](images/screenshots/code11.png)
+![Código](extension/images/screenshots/code11.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -266,7 +269,7 @@ para i <- 0 hasta 5
 
 La variante `bajando` decrementa automáticamente la variable de iteración hasta alcanzar el valor indicado.
 
-![Código](images/screenshots/code12.png)
+![Código](extension/images/screenshots/code12.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -282,7 +285,7 @@ para j <- 5 bajando 0
 
 La estructura `mientras` ejecuta repetidamente un bloque de instrucciones mientras la condición evaluada sea verdadera.
 
-![Código](images/screenshots/code13.png)
+![Código](extension/images/screenshots/code13.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -298,7 +301,7 @@ mientras variable3 y FALSO
 
 Las funciones se definen mediante un identificador, una lista de parámetros y un bloque de código. La convención usada en el libro CLRS para la declaración de funciones se basa en el uso de mayúsculas y `_` para la separación de palabras.
 
-![Código](images/screenshots/code14.png)
+![Código](extension/images/screenshots/code14.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -312,7 +315,7 @@ HOLA_MUNDO()
 
 Su invocación utiliza la misma sintaxis que su definición. Después de una llamada no debe agregarse un bloque indentado, ya que este podría interpretarse como el cuerpo de una nueva función.
 
-![Código](images/screenshots/code15.png)
+![Código](extension/images/screenshots/code15.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -325,7 +328,7 @@ HOLA_MUNDO()
 
 Las funciones pueden recibir cualquier cantidad de parámetros y devolver un valor mediante la instrucción `retornar`.
 
-![Código](images/screenshots/code16.png)
+![Código](extension/images/screenshots/code16.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -339,7 +342,7 @@ SUMA(a, b)
 
 También es posible recibir arreglos como parámetros. Para ello únicamente se especifica el número de dimensiones del arreglo.
 
-![Código](images/screenshots/code17.png)
+![Código](extension/images/screenshots/code17.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -353,7 +356,7 @@ SUMA2(a, b[])
 
 Las llamadas a funciones pueden utilizarse como parte de cualquier expresión. Los arreglos se pasan simplemente mediante su identificador.
 
-![Código](images/screenshots/code18.png)
+![Código](extension/images/screenshots/code18.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -370,7 +373,7 @@ escribir SUMA2(1, arreglo)
 
 Es posible utilizar como identificador `PRINCIPAL` en una función para usarlo como punto de entrada. No es necesario realizar una llamada explícita.
 
-![Código](images/screenshots/code19.png)
+![Código](extension/images/screenshots/code19.png)
 
 <details>
 <summary>Copiar código</summary>
@@ -388,7 +391,7 @@ PRINCIPAL() // No es necesario
 
 Ejemplo completo de Bubble Sort.
 
-![Código](images/screenshots/code20.png)
+![Código](extension/images/screenshots/code20.png)
 
 <details>
 <summary>Copiar código</summary>
