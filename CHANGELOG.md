@@ -2,6 +2,13 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.2.8] - 2026-07-22
+
+- Fixed "Not" expression bug.
+- Sentence !, &&, || denormalized from the AST, now they look Not, Y, O.
+- Eliminated question marks from the decision symbol.
+- The global flow is now generated as a subgraph when there is at least one function.
+
 ## [1.2.7] - 2026-07-21
 
 ## Added

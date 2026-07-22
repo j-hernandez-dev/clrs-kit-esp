@@ -27,7 +27,7 @@
 
 ---
 
-## ⚙️ Estado actual (versión 1.2.7)
+## ⚙️ Estado actual (versión 1.2.8)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
@@ -575,114 +575,119 @@ No sustituye el análisis manual, pero proporciona una referencia visual que fac
 
 # 🗺️ Generador de diagramas de flujo
 
-El Generador de diagramas de flujo permite visualizar el flujo de ejecución de tus algoritmos CLRS directamente dentro de Visual Studio Code. Los diagramas se generan automáticamente a partir del código fuente, sin necesidad de dibujarlos manualmente.
+El generador de diagramas de flujo transforma automáticamente tu código CLRS en un diagrama visual que representa el flujo de ejecución del algoritmo.
+
+La vista previa se genera directamente dentro de Visual Studio Code y se mantiene sincronizada con el código mientras trabajas, permitiéndote comprender, revisar y documentar tus algoritmos de una forma mucho más intuitiva.
 
 ---
 
-## Abrir el diagrama
+## 🚀 Generar un diagrama
 
-Para generar un diagrama, abre un archivo CLRS y ejecuta:
+Para abrir el generador:
 
-* **Paleta de comandos → `CLRS: Mostrar diagrama de flujo`**
+- **Paleta de comandos → `Mostrar diagrama de flujo`**
 
-o utiliza el comando asignado por la extensión.
+También puedes utilizar el comando asignado desde la interfaz de Visual Studio Code.
 
-Se abrirá un nuevo panel junto al editor mostrando el diagrama generado.
-
----
-
-## Sincronización en tiempo real
-
-El diagrama se actualiza automáticamente mientras editas tu código.
-
-Cada vez que el documento cambia, el diagrama se vuelve a generar para reflejar el estado actual del programa.
-
-Si antes de abrir la vista previa seleccionas únicamente una parte del código, el diagrama se generará únicamente para ese fragmento.
+Al ejecutarlo, se abrirá un nuevo panel junto al editor con el diagrama correspondiente al archivo actual.
 
 ---
 
-## Estructuras compatibles
+## 🔄 Sincronización automática
 
-El generador reconoce automáticamente las principales estructuras del lenguaje y las convierte en nodos del diagrama.
+El diagrama permanece sincronizado con el código fuente durante toda la edición.
 
-Entre los elementos soportados se encuentran:
+Cada modificación realizada en el documento actual provoca una actualización automática de la vista previa, sin necesidad de volver a generar el diagrama manualmente.
 
-* Punto de entrada (`PRINCIPAL`)
-* Declaración de funciones
-* Llamadas a funciones
-* Asignaciones de variables
-* Entrada (`leer`)
-* Salida (`escribir`)
-* Estructuras condicionales (`si`, `sino si`, `sino`)
-* Ciclos `mientras`
-* Ciclos `para`
-* `retornar`
+Si antes de abrir el panel seleccionas únicamente un fragmento del código, el diagrama se construirá exclusivamente para dicha selección.
 
-Las funciones se representan dentro de **subgrafos independientes**, facilitando la comprensión de programas de mayor tamaño.
+Esto resulta especialmente útil para analizar funciones o bloques específicos de programas grandes.
 
 ---
 
-## Barra de herramientas
+## 📦 Estructuras compatibles
 
-La vista previa incorpora una barra de herramientas que permite personalizar el diagrama.
+Actualmente el generador reconoce automáticamente los principales elementos del lenguaje CLRS, entre ellos:
 
-### Tema
+- Punto de entrada (`PRINCIPAL`)
+- Declaración de funciones
+- Llamadas a funciones
+- Asignaciones
+- Entrada (`leer`)
+- Salida (`escribir`)
+- Condicionales (`si`, `sino si`, `sino`)
+- Ciclos `mientras`
+- Ciclos `para`
+- Instrucciones `retornar`
 
-Permite seleccionar entre los distintos temas disponibles. Sugerencias de paletas de colores para nuevos temas son bienvenidas.
+Las funciones se representan automáticamente como **subgrafos independientes**, facilitando la lectura de programas con múltiples módulos.
 
-El cambio de tema actualiza inmediatamente la apariencia del diagrama sin necesidad de reconstruir el modelo.
+---
 
-### Dirección del diagrama
+# 🎨 Personalización
+
+La vista previa incluye una barra de herramientas para adaptar la apariencia del diagrama.
+
+Es posible cambiar el tema visual del diagrama sin necesidad de volver a generarlo.
+
+Los cambios se aplican inmediatamente sobre la vista previa.
+
+> 💡 Si tienes sugerencias para nuevos temas o combinaciones de colores, serán bienvenidas.
+
+---
+
+## ↕️ Dirección del flujo
 
 El diagrama puede visualizarse en dos orientaciones:
 
 | Dirección | Descripción |
-| ---------- | ----------- |
+|-----------|-------------|
 | **Vertical** | Flujo de arriba hacia abajo. |
 | **Horizontal** | Flujo de izquierda a derecha. |
 
-La orientación seleccionada se aplica tanto al flujo principal como a los subgrafos de funciones.
+La orientación elegida se aplica tanto al flujo principal como a los subgrafos de funciones.
 
 ---
 
-## Navegación
+## 🖱️ Navegación
 
-Los diagramas grandes pueden explorarse de forma interactiva.
+Los diagramas pueden explorarse libremente mediante:
 
-Se admiten las siguientes acciones:
+- Zoom con la rueda del ratón.
+- Desplazamiento arrastrando el diagrama.
+- Ajuste automático al espacio disponible.
+- Centrado automático después de cada actualización.
 
-* Zoom con la rueda del ratón.
-* Desplazamiento arrastrando el diagrama.
-* Ajuste automático al área disponible.
-* Centrado automático después de cada renderizado.
-
----
-
-## Exportar el diagrama
-
-El diagrama generado puede exportarse como una imagen PNG.
-
-Ejecuta:
-
-* **Paleta de comandos → `CLRS: Exportar diagrama de flujo como PNG`**
-
-Selecciona la carpeta de destino y el nombre del archivo.
-
-La imagen se genera en alta resolución, por lo que resulta adecuada para:
-
-* Documentación.
-* Reportes.
-* Presentaciones.
-* Tareas o proyectos académicos.
+Estas herramientas permiten trabajar cómodamente incluso con diagramas de gran tamaño.
 
 ---
 
-## Ejemplo
+# 🖼️ Exportar el diagrama
+
+El diagrama puede exportarse como una imagen **PNG** de alta resolución.
+
+Para ello utiliza:
+
+- **Paleta de comandos → `Exportar diagrama de flujo PNG`**
+
+Después únicamente selecciona la ubicación y el nombre del archivo.
+
+La imagen generada es adecuada para:
+
+- Documentación técnica.
+- Reportes.
+- Presentaciones.
+- Tareas o proyectos académicos.
+
+---
+
+## 📖 Ejemplo
 
 Dado el siguiente programa:
 
 ```clrs-es
 PRINCIPAL()
+
     leer n
 
     si n > 0
@@ -691,22 +696,24 @@ PRINCIPAL()
         escribir "Negativo"
 ```
 
-El generador produce automáticamente un diagrama que contiene:
+---
 
-* Nodo de inicio.
-* Entrada.
-* Decisión.
-* Salida para la rama verdadera.
-* Salida para la rama falsa.
-* Nodo de fin.
+El generador construirá automáticamente un diagrama que representa:
 
-Todo ello sin requerir ninguna configuración adicional.
+- Inicio del programa.
+- Entrada de datos.
+- Evaluación de la condición.
+- Rama verdadera.
+- Rama falsa.
+- Fin del programa.
+
+Todo ello sin necesidad de realizar ninguna configuración adicional.
 
 ---
 
-## Notas
+### 📝 Consideraciones
 
-* El diagrama se genera directamente a partir del Árbol de Sintaxis Abstracta (AST).
-* Si el código contiene errores sintácticos, el diagrama no podrá generarse hasta que estos sean corregidos.
-* Las funciones se agrupan automáticamente en subgrafos independientes para mejorar la legibilidad.
-* La vista previa siempre refleja la última versión del código que pudo analizarse correctamente.
+- Los diagramas se generan directamente a partir del Árbol de Sintaxis Abstracta (AST) construido por el compilador.
+- Si existen errores sintácticos, el diagrama no podrá generarse hasta que el código sea válido.
+- Cada función se representa automáticamente como un subgrafo independiente para mejorar la organización del diagrama.
+- La vista previa siempre refleja la última versión del código que pudo analizarse correctamente.

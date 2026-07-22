@@ -164,6 +164,51 @@ function buildTopLevel(
 
     let insertedMainCall = false;
 
+    //--------------------------------------------------
+    // ¿Existe al menos una función?
+    //--------------------------------------------------
+
+    const hasFunctions =
+        statements.some(
+            statement =>
+                statement.type === "FunctionDeclaration"
+        );
+
+    //--------------------------------------------------
+    // Crear subgraph solamente si existen funciones
+    //--------------------------------------------------
+
+    let targetDiagram = diagram;
+    let subgraph = null;
+
+    if (hasFunctions) {
+
+        subgraph =
+            createSubgraph(
+
+                diagram,
+
+                {
+
+                    id: "top_level",
+
+                    title: "Flujo global"
+
+                }
+
+            );
+
+        targetDiagram = {
+
+            ...diagram,
+
+            nodes: subgraph.nodes,
+
+            edges: subgraph.edges
+
+        };
+
+    }
 
     //--------------------------------------------------
     // Inicio programa
@@ -172,9 +217,10 @@ function buildTopLevel(
     const startId =
         createNode(
 
-            diagram,
+            targetDiagram,
 
             {
+
                 type: "start",
 
                 label: "Inicio"
@@ -183,11 +229,8 @@ function buildTopLevel(
 
         );
 
-
     let previousNode =
         startId;
-
-
 
     //--------------------------------------------------
     // Código global
@@ -195,22 +238,24 @@ function buildTopLevel(
 
     for (const statement of statements) {
 
-
         if (
             statement.type === "FunctionDeclaration"
         ) {
 
+            //--------------------------------------------------
+            // Llamada implícita a PRINCIPAL()
+            //--------------------------------------------------
 
             if (
                 statement.identifier?.name === "PRINCIPAL" &&
                 !insertedMainCall
             ) {
 
-
                 const result =
                     statementType(
 
                         {
+
                             type: "FunctionCall",
 
                             identifier: {
@@ -223,16 +268,15 @@ function buildTopLevel(
 
                         },
 
-                        diagram
+                        targetDiagram
 
                     );
-
 
                 if (result?.entry) {
 
                     connect(
 
-                        diagram,
+                        targetDiagram,
 
                         previousNode,
 
@@ -240,47 +284,39 @@ function buildTopLevel(
 
                     );
 
-
                     previousNode =
                         result.exit;
 
                 }
 
-
                 insertedMainCall = true;
 
             }
 
-
             continue;
 
         }
-
-
 
         const result =
             statementType(
 
                 statement,
 
-                diagram
+                targetDiagram
 
             );
 
-
         if (result?.entry) {
-
 
             connect(
 
-                diagram,
+                targetDiagram,
 
                 previousNode,
 
                 result.entry
 
             );
-
 
             previousNode =
                 result.exit;
@@ -289,8 +325,6 @@ function buildTopLevel(
 
     }
 
-
-
     //--------------------------------------------------
     // Fin programa
     //--------------------------------------------------
@@ -298,7 +332,7 @@ function buildTopLevel(
     const endId =
         createNode(
 
-            diagram,
+            targetDiagram,
 
             {
 
@@ -310,18 +344,28 @@ function buildTopLevel(
 
         );
 
+    connect(
 
-    if (previousNode) {
+        targetDiagram,
 
+        previousNode,
 
-        connect(
+        endId
 
-            diagram,
+    );
 
-            previousNode,
+    //--------------------------------------------------
+    // Registrar subgraph
+    //--------------------------------------------------
 
-            endId
+    if (subgraph) {
 
+        sortSubgraphEdges(
+            subgraph
+        );
+
+        diagram.subgraphs.push(
+            subgraph
         );
 
     }
@@ -474,11 +518,13 @@ function getExpression(expression) {
 
         case "LogicalExpression":
 
-            return (
+            let operator = expression.operator === "&&" 
+            ? "Y" : "O";
 
+            return (
                 getExpression(expression.left) +
                 " " +
-                expression.operator +
+                operator +
                 " " +
                 getExpression(expression.right)
 
@@ -493,10 +539,10 @@ function getExpression(expression) {
 
             return (
 
-                "NO " +
+                "No " +
 
                 getExpression(
-                    expression.expression
+                    expression.operand
                 )
 
             );
@@ -1340,7 +1386,7 @@ function ifStatement(
             type: "decision",
 
             label:
-                `¿${getExpression(statement.condition)}?`
+                `${getExpression(statement.condition)}`
 
         });
 
