@@ -17,15 +17,17 @@
 
 ## ⌨️ Comandos para VS Code
 
-| Comando              | Descripción |
-|----------------------|-------------|
-| Ejecutar código CLRS      | Transpila el código a JavaScript y lo ejecuta inmediatamente. |
+| Paleta de comandos | Descripción |
+|--------------------|-------------|
+| Ejecutar código CLRS | Transpila el código a JavaScript y lo ejecuta inmediatamente. |
 | Generar código JavaScript | Transpila el código a un archivo `.js` listo para usar, sin ejecutarlo. |
 | Mostrar/ocultar costo algorítmico | Muestra u oculta el costo algorítmico de cada instrucción mediante expresiones simbólicas basadas en operaciones elementales. |
+| Mostrar diagrama de flujo | Genera automáticamente un diagrama de flujo del código y lo muestra en un panel interactivo junto al editor. |
+| Exportar diagrama de flujo PNG | Exporta el diagrama de flujo generado como una imagen PNG de alta resolución para su uso en documentación, reportes o presentaciones. |
 
 ---
 
-## ⚙️ Estado actual (versión 1.2.6)
+## ⚙️ Estado actual (versión 1.2.7)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
@@ -40,6 +42,8 @@
 - Soporte para funciones, arreglos, expresiones, condicionales, ciclos y operaciones de entrada/salida.
 - Soporte para el uso de botón para ejecutar y construir.
 - Soporte para muestreo de costo algorítmico.
+- Soporte para muestreo de diagrama de flujo en tiempo real.
+- Exportación de diagrama de flujo en formato PNG.
 
 ---
 
@@ -566,3 +570,143 @@ Por ello, estructuras cuya complejidad depende del comportamiento de las variabl
 Aunque no calcula automáticamente la notación asintótica, sí genera la función de costo correspondiente, la cual puede simplificarse algebraicamente para obtener la notación Big O.
 
 No sustituye el análisis manual, pero proporciona una referencia visual que facilita el análisis de costo en una amplia variedad de casos.
+
+---
+
+# 🗺️ Generador de diagramas de flujo
+
+El Generador de diagramas de flujo permite visualizar el flujo de ejecución de tus algoritmos CLRS directamente dentro de Visual Studio Code. Los diagramas se generan automáticamente a partir del código fuente, sin necesidad de dibujarlos manualmente.
+
+---
+
+## Abrir el diagrama
+
+Para generar un diagrama, abre un archivo CLRS y ejecuta:
+
+* **Paleta de comandos → `CLRS: Mostrar diagrama de flujo`**
+
+o utiliza el comando asignado por la extensión.
+
+Se abrirá un nuevo panel junto al editor mostrando el diagrama generado.
+
+---
+
+## Sincronización en tiempo real
+
+El diagrama se actualiza automáticamente mientras editas tu código.
+
+Cada vez que el documento cambia, el diagrama se vuelve a generar para reflejar el estado actual del programa.
+
+Si antes de abrir la vista previa seleccionas únicamente una parte del código, el diagrama se generará únicamente para ese fragmento.
+
+---
+
+## Estructuras compatibles
+
+El generador reconoce automáticamente las principales estructuras del lenguaje y las convierte en nodos del diagrama.
+
+Entre los elementos soportados se encuentran:
+
+* Punto de entrada (`PRINCIPAL`)
+* Declaración de funciones
+* Llamadas a funciones
+* Asignaciones de variables
+* Entrada (`leer`)
+* Salida (`escribir`)
+* Estructuras condicionales (`si`, `sino si`, `sino`)
+* Ciclos `mientras`
+* Ciclos `para`
+* `retornar`
+
+Las funciones se representan dentro de **subgrafos independientes**, facilitando la comprensión de programas de mayor tamaño.
+
+---
+
+## Barra de herramientas
+
+La vista previa incorpora una barra de herramientas que permite personalizar el diagrama.
+
+### Tema
+
+Permite seleccionar entre los distintos temas disponibles. Sugerencias de paletas de colores para nuevos temas son bienvenidas.
+
+El cambio de tema actualiza inmediatamente la apariencia del diagrama sin necesidad de reconstruir el modelo.
+
+### Dirección del diagrama
+
+El diagrama puede visualizarse en dos orientaciones:
+
+| Dirección | Descripción |
+| ---------- | ----------- |
+| **Vertical** | Flujo de arriba hacia abajo. |
+| **Horizontal** | Flujo de izquierda a derecha. |
+
+La orientación seleccionada se aplica tanto al flujo principal como a los subgrafos de funciones.
+
+---
+
+## Navegación
+
+Los diagramas grandes pueden explorarse de forma interactiva.
+
+Se admiten las siguientes acciones:
+
+* Zoom con la rueda del ratón.
+* Desplazamiento arrastrando el diagrama.
+* Ajuste automático al área disponible.
+* Centrado automático después de cada renderizado.
+
+---
+
+## Exportar el diagrama
+
+El diagrama generado puede exportarse como una imagen PNG.
+
+Ejecuta:
+
+* **Paleta de comandos → `CLRS: Exportar diagrama de flujo como PNG`**
+
+Selecciona la carpeta de destino y el nombre del archivo.
+
+La imagen se genera en alta resolución, por lo que resulta adecuada para:
+
+* Documentación.
+* Reportes.
+* Presentaciones.
+* Tareas o proyectos académicos.
+
+---
+
+## Ejemplo
+
+Dado el siguiente programa:
+
+```clrs-es
+PRINCIPAL()
+    leer n
+
+    si n > 0
+        escribir "Positivo"
+    sino
+        escribir "Negativo"
+```
+
+El generador produce automáticamente un diagrama que contiene:
+
+* Nodo de inicio.
+* Entrada.
+* Decisión.
+* Salida para la rama verdadera.
+* Salida para la rama falsa.
+* Nodo de fin.
+
+Todo ello sin requerir ninguna configuración adicional.
+
+---
+
+## Notas
+
+* El diagrama se genera directamente a partir del Árbol de Sintaxis Abstracta (AST).
+* Si el código contiene errores sintácticos, el diagrama no podrá generarse hasta que estos sean corregidos.
+* Las funciones se agrupan automáticamente en subgrafos independientes para mejorar la legibilidad.
+* La vista previa siempre refleja la última versión del código que pudo analizarse correctamente.

@@ -130,9 +130,14 @@ export function registerCodeCommands(context) {
 
     // GENERAR ARCHIVO JS
     const generateCode = vscode.commands.registerCommand('CLRS.generateCode', async () => {
-
         const editor = vscode.window.activeTextEditor;
-        if (!editor) return;
+        if (!editor) {
+            vscode.window.showErrorMessage(
+                "No hay un proyecto abierto.",
+                3000
+            );
+            return;
+        }
 
         const code = editor.document.getText();
 

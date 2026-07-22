@@ -1,4 +1,13 @@
 {
+    "Función Principal": {
+        "prefix": "prin",
+        "body": [
+            "PRINCIPAL(${1:parametro})",
+            "\t${2}"
+        ],
+        "description": "Declaración de función principal."
+    },
+
     "Leer": {
         "prefix": "leer",
         "body": [

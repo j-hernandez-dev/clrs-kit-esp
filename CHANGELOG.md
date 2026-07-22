@@ -2,7 +2,22 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.2.7] - 2026-07-21
+
+## Added
+
+- Mermaid-based flowchart generation directly from the compiler AST.
+- Interactive flowchart preview integrated into the VS Code editor.
+- Live diagram synchronization with active document and text selection changes.
+- Automatic function grouping using Mermaid subgraphs.
+- Support for custom Mermaid themes and node styling.
+- Configurable flow direction (Top-to-Bottom / Left-to-Right).
+- Interactive pan, zoom, automatic fit, and centering controls.
+- High-resolution PNG export for generated flowcharts.
+
 ## [1.2.6] - 2026-07-16
+
+### Added
 
 - Mainly structural changes in the overall project architecture to improve overall cohesion.  
 - The compiler pipelining now supports files with any extension, as long as the language grammar is maintained.  

@@ -1,0 +1,22 @@
+{
+  "name": "flow",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.3",
+    "vite": "^8.1.1"
+  },
+  "dependencies": {
+    "html-to-image": "^1.11.13",
+    "mermaid": "^11.16.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "svg-pan-zoom": "^3.6.2"
+  }
+}

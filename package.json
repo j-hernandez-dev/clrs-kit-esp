@@ -2,7 +2,7 @@
   "name": "clrs-kit-esp",
   "displayName": "CLRS Kit Español",
   "description": "Soporte de lenguaje y herramientas para el lenguaje de pseudocódigo CRLS.",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "publisher": "j-hernandez-dev",
   "icon": "./extension/images/icon.png",
   "engines": {
@@ -31,8 +31,18 @@
           "when": "resourceLangId == clrs-es"
         },
         {
-          "command": "CLRS.generateCode",
+          "command": "CLRS.toggleDiagram",
           "group": "navigation@3",
+          "when": "resourceLangId == clrs-es"
+        },
+        {
+          "command": "CLRS.generateCode",
+          "group": "navigation@4",
+          "when": "resourceLangId == clrs-es"
+        },
+        {
+          "command": "CLRS.exportPNG",
+          "group": "navigation@5",
           "when": "resourceLangId == clrs-es"
         }
       ]
@@ -49,9 +59,19 @@
         "icon": "$(graph)"
       },
       {
+        "command": "CLRS.toggleDiagram",
+        "title": "Mostrar diagrama de flujo",
+        "icon": "$(type-hierarchy-sub)"
+      },
+      {
         "command": "CLRS.generateCode",
         "title": "Generar código JavaScript",
         "icon": "$(file-code)"
+      },
+      {
+        "command": "CLRS.exportPNG",
+        "title": "Exportar diagrama de flujo PNG",
+        "icon": "$(file-media)"
       }
     ],
     "languages": [
