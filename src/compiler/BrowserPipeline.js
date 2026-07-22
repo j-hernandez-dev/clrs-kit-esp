@@ -1,17 +1,11 @@
-// VARIABLES GLOBALES
+// BrowserPipeline.js
+
 import "./utils/ProgramKey.js";
 
-// MÓDULOS DE COMPILACIÓN
 import { tokenize } from "../lexer/Lexer.js";
 import { addIndentationTokens } from "../lexer/Indentation.js";
 import { parser } from "../parser/Parser.js";
-import { ASTBuilder } from "../ast/builders/ASTBuilder.js"
-import { Transpiler } from "./Transpiler.js";
-import { launch } from "./Launcher.js";
-
-// HERRAMIENTAS DE LENGUAJE
-import { CostAnalysisVisitor } from "../complex/CostAnalysisVisitor.js";
-
+import { ASTBuilder } from "../ast/builders/ASTBuilder.js";
 
 function printError(type, error) {
     const width = 60;
@@ -100,88 +94,15 @@ export function parserCode(tokens) {
 }
 
 /**
- * Transpilación
- * @param {any} ast
- * @param {any} build
- */
-export async function transpileCode(ast, absolutePath, run) {
-  const transpiler = new Transpiler(absolutePath, run);
-
-  try {
-
-    await transpiler.transpile(ast);
-
-    return transpiler;
-
-  } catch (error) {
-    printError("Transpilation Error", error);
-  }
-
-  return null;
-}
-
-/**
- * Análisis de costo
- * @param {any} ast
- */
-export function costCode(ast) {
-  const costAnalyzer = new CostAnalysisVisitor();
-
-  try {
-    
-    return costAnalyzer.costAnalysis(ast);
-
-  } catch (error) {
-    printError("Cost Error", error);
-  }
-
-  return null;
-}
-
-/**
  * @param {string} sourceCode
  */
-export async function run(sourceCode, absolutePath) {
-
+export function getAST(sourceCode) {
   const tokens = tokenizeCode(sourceCode);
 
   if (tokens != null) {
     const ast = parserCode(tokens);
 
-    if (ast != null) {
-      const transpiler = await transpileCode(ast, absolutePath, true);
-
-      if (transpiler != null) {
-        launch(transpiler.CLRSFile, transpiler.JSFile, transpiler.JSFile, transpiler.JSDir);
-      }
-    }
-  }
-}
-
-/**
- * @param {string} sourceCode
- * @param {any} absolutePath
- */
-export async function generate(sourceCode, absolutePath) {
-  const tokens = tokenizeCode(sourceCode);
-
-  const ast = parserCode(tokens);
-
-  if (ast != null) {
-    await transpileCode(ast, absolutePath, false);
-  }
-}
-
-/**
- * @param {string} sourceCode
- */
-export function cost(sourceCode) {
-  const tokens = tokenizeCode(sourceCode);
-
-  if (tokens != null) {
-    const ast = parserCode(tokens);
-
-    return costCode(ast);
+    return ast;
   }
 
   return null;
