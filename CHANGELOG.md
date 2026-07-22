@@ -2,6 +2,10 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [1.2.9] - 2026-07-22
+
+- Visual correction for conditional structure edge labels.
+
 ## [1.2.8] - 2026-07-22
 
 - Fixed "Not" expression bug.

@@ -261,6 +261,8 @@ export function buildBlock(
 
     let last = null;
 
+    let lastExitLabel = null;
+
     for (const statement of list) {
 
         const result =
@@ -284,9 +286,15 @@ export function buildBlock(
         if (last) {
 
             connect(
+
                 diagram,
+
                 last,
-                result.entry
+
+                result.entry,
+
+                lastExitLabel
+
             );
 
         }
@@ -294,13 +302,18 @@ export function buildBlock(
         last =
             result.exit;
 
+        lastExitLabel =
+            result.exitLabel ?? null;
+
     }
 
     return {
 
         first,
 
-        last
+        last,
+
+        lastExitLabel
 
     };
 

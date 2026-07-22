@@ -27,7 +27,7 @@
 
 ---
 
-## ⚙️ Estado actual (versión 1.2.8)
+## ⚙️ Estado actual (versión 1.2.9)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).

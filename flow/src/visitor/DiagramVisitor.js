@@ -231,6 +231,7 @@ function buildTopLevel(
 
     let previousNode =
         startId;
+    let previousExitLabel = null;
 
     //--------------------------------------------------
     // Código global
@@ -280,12 +281,16 @@ function buildTopLevel(
 
                         previousNode,
 
-                        result.entry
+                        result.entry,
+
+                        previousExitLabel
 
                     );
 
                     previousNode =
                         result.exit;
+                    previousExitLabel =
+                        result.exitLabel ?? null;
 
                 }
 
@@ -314,12 +319,16 @@ function buildTopLevel(
 
                 previousNode,
 
-                result.entry
+                result.entry,
+
+                previousExitLabel
 
             );
 
             previousNode =
                 result.exit;
+            previousExitLabel =
+                result.exitLabel ?? null;
 
         }
 
@@ -350,7 +359,9 @@ function buildTopLevel(
 
         previousNode,
 
-        endId
+        endId,
+
+        previousExitLabel
 
     );
 
@@ -942,7 +953,9 @@ function functionDeclaration(
 
                 body.last,
 
-                exitId
+                exitId,
+
+                body.lastExitLabel
 
             );
 
@@ -1442,7 +1455,7 @@ function ifStatement(
                 type: "decision",
 
                 label:
-                    `¿${getExpression(branch.condition)}?`
+                    `${getExpression(branch.condition)}`
 
             });
 
@@ -1777,7 +1790,7 @@ function whileStatement(
             type: "decision",
 
             label:
-                `¿${condition}?`
+                `${condition}`
 
         });
 
@@ -1834,7 +1847,7 @@ function whileStatement(
 
                 body.last,
 
-                decisionId
+                decisionId,
 
             );
 
@@ -1872,7 +1885,10 @@ function whileStatement(
             decisionId,
 
         exit:
-            decisionId
+            decisionId,
+        
+        exitLabel:
+            "No"
 
     };
 
@@ -1940,7 +1956,9 @@ function forStatement(
 
             forId,
 
-            body.first
+            body.first,
+
+            "No"
 
         );
 
@@ -1978,7 +1996,10 @@ function forStatement(
             forId,
 
         exit:
-            forId
+            forId,
+        
+        exitLabel:
+            "Sí"
 
     };
 
