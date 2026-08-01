@@ -4,6 +4,10 @@ All notable changes to the "clrs-kit-esp" extension will be documented in this f
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-07-1
+
+- A link to the manual was added in the form of a programming guide based on CLRS.
+
 ## [1.3.1] - 2026-07-31
 
 - Read statement fixed

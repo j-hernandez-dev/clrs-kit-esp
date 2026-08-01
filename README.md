@@ -12,6 +12,7 @@
 
 [![Extension - One Dark Pro](https://img.shields.io/badge/extension-One_Dark_Pro-2979ff?style=flat-square&logo=visual-studio-code&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=zhuangtongfa.Material-theme)
 [![Font - JetBrains Mono](https://img.shields.io/badge/font-JetBrains_Mono-f42f7d?style=flat-square&logo=jetbrains&logoColor=white)](https://www.jetbrains.com/es-es/lp/mono/)
+[![Manual - Programación con pseudocódigo CLRS](https://img.shields.io/badge/manual-Programaci%C3%B3n_con_pseudoc%C3%B3digo-EA4335?style=flat-square&logo=adobeacrobatreader&logoColor=white)](https://github.com/j-hernandez-dev/clrs-kit-esp/blob/main/Manual-programacion-pseudocodigo-clrs.pdf)
 
 ---
 
@@ -27,7 +28,7 @@
 
 ---
 
-## ⚙️ Estado actual (versión 1.3.1)
+## ⚙️ Estado actual (versión 1.3.2)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).

@@ -2,7 +2,7 @@
   "name": "clrs-kit-esp",
   "displayName": "CLRS Kit Español",
   "description": "Soporte de lenguaje y herramientas para el lenguaje de pseudocódigo CLRS.",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "publisher": "j-hernandez-dev",
   "icon": "./extension/images/icon.png",
   "engines": {
