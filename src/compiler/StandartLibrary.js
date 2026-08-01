@@ -13,23 +13,52 @@ export const endProgram =
 `
 process.exit(0);
 } catch (error) {
-printError_${globalThis.ProgramKey}("Runtime Error", error);
-process.exit(1);
+printError_${globalThis.ProgramKey}(error);
+process.exit(70);
 }
 
-function printError_${globalThis.ProgramKey}(type, error) {
-    const width = 60;
-    const title = \` \${type} \`;
-    const filling = "═".repeat(width - title.length - 1);
+function printError_${globalThis.ProgramKey}(error) {
+    const message = runtimeErrorMessage_${globalThis.ProgramKey}(error);
 
     console.error(
-        \`╔═\${title}\${filling}╗\\n\` +
-        \`\\n\` +
-        // @ts-ignore
-        \`\${error.stack}\\n\` +
-        \`\\n\` +
-        \`╚\${"═".repeat(width)}╝\`
+        \`✕ Error de ejecución\\n\\n\` +
+        \`  \${message}\`
     );
+
+    if (process.env.CLRS_DEBUG === "1") {
+        console.error(
+            \`\\n\\n[developer][runtime]\\n\` +
+            // @ts-ignore
+            \`\${error?.stack ?? String(error)}\`
+        );
+    }
+}
+
+function runtimeErrorMessage_${globalThis.ProgramKey}(error) {
+    switch (error?.code) {
+        case "ENOENT":
+            return "El archivo solicitado no existe.";
+        case "EACCES":
+        case "EPERM":
+            return "No hay permisos suficientes para completar la operación.";
+    }
+
+    switch (error?.name) {
+        case "CLRSUserError":
+            return String(error.message);
+        case "TypeError":
+            return "El programa intentó realizar una operación con un valor incompatible.";
+        case "ReferenceError":
+            return "El programa intentó utilizar un identificador que no está disponible.";
+        case "RangeError":
+            return "El programa utilizó un valor fuera del rango permitido.";
+        case "SyntaxError":
+            return "El programa contiene una operación que no pudo interpretarse.";
+        case "URIError":
+            return "El programa utilizó una dirección con formato inválido.";
+        default:
+            return "El programa terminó inesperadamente.";
+    }
 }
 `
 
@@ -394,6 +423,8 @@ async function A_LOG(valor) {
 // ERROR
 
 async function LANZAR_ERROR(mensaje) {
-    throw new Error (mensaje);
+    const error = new Error(mensaje);
+    error.name = "CLRSUserError";
+    throw error;
 }
 `

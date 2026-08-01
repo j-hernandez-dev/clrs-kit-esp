@@ -1,171 +1,151 @@
-// VARIABLES GLOBALES
 import "./utils/ProgramKey.js";
 
-// MÓDULOS DE COMPILACIÓN
-import { tokenize } from "../lexer/Lexer.js";
-import { addIndentationTokens } from "../lexer/Indentation.js";
-import { parser } from "../parser/Parser.js";
-import { ASTBuilder } from "../ast/builders/ASTBuilder.js"
+import {
+  buildASTFromTokens,
+  tokenizeSource,
+  tryParseSource
+} from "../language/LanguageFrontend.js";
+import { formatLanguageError } from "../errors/ErrorFormatter.js";
 import { Transpiler } from "./Transpiler.js";
-import { launch } from "./Launcher.js";
+import {
+  CompilationService
+} from "./services/CompilationService.js";
+import {
+  fileSystemEmitter
+} from "./utils/FileOperations.js";
+import {
+  nodeProgramRunner
+} from "./Launcher.js";
 
-// HERRAMIENTAS DE LENGUAJE
-import { CostAnalysisVisitor } from "../complex/CostAnalysisVisitor.js";
-
-
-function printError(type, error) {
-    const width = 60;
-    const title = ` ${type} `;
-    const filling = "═".repeat(width - title.length - 1);
-
-    console.error(
-        `╔═${title}${filling}╗\n` +
-        `\n` +
-        // @ts-ignore
-        `${error.stack}\n` +
-        `\n` +
-        `╚${"═".repeat(width)}╝`
-    );
-}
-
-function printParserError(type, errors) {
-    const width = 60;
-    const title = ` ${type} `;
-    const filling = "═".repeat(width - title.length - 1);
-
-    console.error(`╔═${title}${filling}╗\n`);
-
-    for (const error of errors) {
-        console.error(error.message);
-
-        if (error.token) {
-            console.error(
-                `→ Line ${error.token.startLine}, Column ${error.token.startColumn}`
-            );
-        }
-
-        console.error("");
-    }
-
-    console.error(`╚${"═".repeat(width)}╝`);
-}
+export const compilationService =
+  new CompilationService({
+    fileEmitter: fileSystemEmitter,
+    programRunner: nodeProgramRunner
+  });
 
 /**
- * Tokenización
+ * API histórica de tokenización. Devuelve null y reporta el error para
+ * conservar el contrato que utilizan los consumidores existentes.
+ *
  * @param {string} sourceCode
- * @returns {import("chevrotain").IToken[]}
+ * @returns {import("chevrotain").IToken[]|null}
  */
 export function tokenizeCode(sourceCode) {
   try {
-    let tokens = tokenize(sourceCode);
-
-    tokens = addIndentationTokens(tokens);
-
-    //console.log(tokens);
-
-    return tokens;
+    return tokenizeSource(sourceCode);
   } catch (error) {
-    printError("Lexicographic Error", error);
-  }
-
-  return null;
-}
-
-/**
- * Análisis gramatical (CST) y Construcción (AST)
- * @param {import("chevrotain").IToken[]} tokens
- * @returns {any}
- */
-export function parserCode(tokens) {
-  parser.input = tokens;
-
-  const cst = (/** @type {any} */ (parser)).program();
-
-  if (parser.errors.length > 0) {
-
-    printParserError("Syntactic Error", parser.errors);
-
+    reportError(error);
     return null;
   }
-
-  //console.log(JSON.stringify(cst, null, 1));
-
-  const builder = new ASTBuilder(parser);
-
-  const ast = builder.build(cst);
-
-  //console.log(JSON.stringify(ast, null, 4));
-
-  return ast;
 }
 
 /**
- * Transpilación
- * @param {any} ast
- * @param {any} build
+ * API histórica de construcción del AST a partir de tokens.
+ *
+ * @param {import("chevrotain").IToken[]} tokens
+ * @returns {any|null}
  */
-export async function transpileCode(ast, absolutePath, run) {
-  const transpiler = new Transpiler(absolutePath, run);
+export function parserCode(tokens) {
+  try {
+    return buildASTFromTokens(tokens).ast;
+  } catch (error) {
+    reportError(error);
+    return null;
+  }
+}
+
+/**
+ * Transpila un AST y conserva la instancia para los adaptadores de archivos.
+ *
+ * @param {any} ast
+ * @param {string} absolutePath
+ * @param {boolean} runProgram
+ * @returns {Promise<Transpiler|null>}
+ */
+export async function transpileCode(ast, absolutePath, runProgram) {
+  const transpiler = new Transpiler(
+    absolutePath,
+    runProgram,
+    {
+      fileEmitter:
+        compilationService.fileEmitter
+    }
+  );
 
   try {
+    const artifact =
+      await compilationService.compileAST(
+        ast,
+        absolutePath,
+        {
+          temporary: runProgram,
+          generator: transpiler
+        }
+      );
 
-    await transpiler.transpile(ast);
+    transpiler.lastArtifact = artifact;
 
     return transpiler;
-
   } catch (error) {
-    printError("Transpilation Error", error);
+    reportError(error, "Error de compilación");
+    return null;
   }
-
-  return null;
 }
 
 /**
- * Análisis de costo
+ * Analiza el costo de un AST.
+ *
  * @param {any} ast
+ * @returns {any|null}
  */
 export function costCode(ast) {
-  const costAnalyzer = new CostAnalysisVisitor();
-
   try {
-    
-    return costAnalyzer.costAnalysis(ast);
-
+    return compilationService
+      .analyzeAST(ast);
   } catch (error) {
-    printError("Cost Error", error);
+    reportError(error, "Error de análisis");
+    return null;
   }
-
-  return null;
 }
 
 /**
+ * Transpila y ejecuta código CLRS.
+ *
  * @param {string} sourceCode
+ * @param {string} absolutePath
  */
 export async function run(sourceCode, absolutePath) {
+  const ast = parseCode(sourceCode);
 
-  const tokens = tokenizeCode(sourceCode);
+  if (ast == null) {
+    return;
+  }
 
-  if (tokens != null) {
-    const ast = parserCode(tokens);
+  const transpiler =
+    await transpileCode(ast, absolutePath, true);
 
-    if (ast != null) {
-      const transpiler = await transpileCode(ast, absolutePath, true);
+  if (transpiler == null) {
+    return;
+  }
 
-      if (transpiler != null) {
-        launch(transpiler.CLRSFile, transpiler.JSFile, transpiler.JSFile, transpiler.JSDir);
-      }
-    }
+  try {
+    await compilationService
+      .runArtifact(
+        transpiler.lastArtifact
+      );
+  } catch (error) {
+    reportError(error, "Error de ejecución");
   }
 }
 
 /**
+ * Genera JavaScript sin ejecutar el programa.
+ *
  * @param {string} sourceCode
- * @param {any} absolutePath
+ * @param {string} absolutePath
  */
 export async function generate(sourceCode, absolutePath) {
-  const tokens = tokenizeCode(sourceCode);
-
-  const ast = parserCode(tokens);
+  const ast = parseCode(sourceCode);
 
   if (ast != null) {
     await transpileCode(ast, absolutePath, false);
@@ -173,16 +153,32 @@ export async function generate(sourceCode, absolutePath) {
 }
 
 /**
+ * Genera el informe de costo del código fuente.
+ *
  * @param {string} sourceCode
+ * @returns {any|null}
  */
 export function cost(sourceCode) {
-  const tokens = tokenizeCode(sourceCode);
+  const ast = parseCode(sourceCode);
 
-  if (tokens != null) {
-    const ast = parserCode(tokens);
+  return ast == null
+    ? null
+    : costCode(ast);
+}
 
-    return costCode(ast);
+function parseCode(sourceCode) {
+  const result = tryParseSource(sourceCode);
+
+  if (!result.ok) {
+    reportError(result.errors[0]);
+    return null;
   }
 
-  return null;
+  return result.value.ast;
+}
+
+function reportError(error, fallbackTitle = null) {
+  console.error(
+    formatLanguageError(error, fallbackTitle)
+  );
 }

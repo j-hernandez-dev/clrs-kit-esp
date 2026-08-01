@@ -3,6 +3,9 @@
 import { CstParser } from "chevrotain";
 
 import { TOKEN_VOCABULARY } from "../lexer/TokenVocabulary.js";
+import {
+  spanishParserErrorMessageProvider
+} from "../language/diagnostics/SpanishParserErrorMessageProvider.js";
 
 /**
  * Core
@@ -59,15 +62,28 @@ import { registerForRules } from "./control/ForRules.js";
 
 export class GaddisParser extends CstParser {
   /**
-   * @param {any} inputCode
+   * Ejecuta la regla raíz y devuelve una copia de los errores producidos.
+   *
+   * @param {import("chevrotain").IToken[]} tokens
+   * @returns {{cst: any, errors: any[]}}
    */
-  parse(inputCode) {
-    throw new Error("Method not implemented.");
+  parse(tokens) {
+    this.input = tokens;
+
+    const cst = this.program();
+
+    return {
+      cst,
+      errors: [...this.errors]
+    };
   }
 
   constructor() {
 
-    super(TOKEN_VOCABULARY);
+    super(TOKEN_VOCABULARY, {
+      errorMessageProvider:
+        spanishParserErrorMessageProvider
+    });
 
     /**
      * ==================================

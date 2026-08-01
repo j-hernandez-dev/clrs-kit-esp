@@ -5,7 +5,7 @@
  * ==================================
  */
 
-export const NodeTypes = {
+export const NodeTypes = Object.freeze({
 
     /**
      * =========================
@@ -49,6 +49,7 @@ export const NodeTypes = {
      */
     VARIABLE_DECLARATION: "VariableDeclaration",
     ARRAY_DECLARATION: "ArrayDeclaration",
+    DECLARATION_ITEM: "DeclarationItem",
     FUNCTION_DECLARATION: "FunctionDeclaration",
     PARAMETER: "Parameter",
 
@@ -61,4 +62,4 @@ export const NodeTypes = {
     SCIENTIFIC_LITERAL: "ScientificLiteral",
     STRING_LITERAL: "StringLiteral",
     BOOLEAN_LITERAL: "BooleanLiteral"
-};
+});

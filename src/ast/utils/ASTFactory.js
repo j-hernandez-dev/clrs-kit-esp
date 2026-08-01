@@ -23,6 +23,7 @@ import { WriteNode } from "../statements/WriteNode.js";
 
 import { FunctionDeclarationNode } from "../declarations/FunctionDeclarationNode.js";
 import { ParameterNode } from "../declarations/ParameterNode.js";
+import { ArrayDeclarationNode } from "../declarations/ArrayDeclarationNode.js";
 
 
 export class ASTFactory {
@@ -215,11 +216,17 @@ export class ASTFactory {
      * @param {any} dataType
      * @param {any} location
      */
-    static arrayDeclaration(identifier, dimensions, location) {
+    static arrayDeclaration(
+        identifier,
+        dimensions,
+        dataType = null,
+        location = null
+    ) {
 
         return new ArrayDeclarationNode(
             identifier,
             dimensions,
+            dataType,
             location
         );
     }

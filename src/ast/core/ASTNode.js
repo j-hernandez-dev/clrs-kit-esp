@@ -16,8 +16,8 @@
 export class ASTNode {
 
     /**
-     * @param {any} type
-     * @param {object} location
+     * @param {string} type
+     * @param {import("./ASTTypes.js").SourceLocation|null} location
      */
     constructor(type, location) {
 
