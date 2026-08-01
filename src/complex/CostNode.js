@@ -1,4 +1,8 @@
 
+import {
+    attachCostExpression
+} from "./algebra/CostExpressionSupport.js";
+
 export class CostNode{
     constructor(
         type,
@@ -8,6 +12,9 @@ export class CostNode{
     {
         this.type = type;
         this.location = location;
-        this.expression = expression;
+        attachCostExpression(
+            this,
+            expression
+        );
     }
 }

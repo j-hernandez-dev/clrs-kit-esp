@@ -1,26 +1,32 @@
-import { spawn } from 'node:child_process';
-import { Transpiler } from './Transpiler.js';
-import { deleteFile } from "./utils/FileOperations.js";
+import path from "node:path";
 
-export function launch(showFile, runningFile, deleFile, deleDir) {
-  console.log(`\nCLRS Runtime\n────────────────\n▶ ${showFile}\n`);
+import {
+  NodeProgramRunner
+} from "./adapters/NodeProgramRunner.js";
+import {
+  fileSystemEmitter
+} from "./utils/FileOperations.js";
 
-  // Lanzamos el proceso heredando los canales de entrada y salida estándar ('inherit')
-  const proceso = spawn('node', [runningFile], {
-    stdio: 'inherit'
+export const nodeProgramRunner =
+  new NodeProgramRunner({
+    fileEmitter: fileSystemEmitter
   });
 
-  // Cuando el archivo temporal termine, volvemos a tomar el control aquí
-  // @ts-ignore
-  proceso.on('close', async (code) => {
-
-    const state = code === 0 ? "Correct" : "Error";
-    console.log(`\n────────────────\nStatus: ${state}\n`);
-    await deleteFile(deleFile, deleDir);
-  });
-
-  // @ts-ignore
-  proceso.on('error', (error) => {
-    console.error('Error trying to run the code:', error.stack);
+/**
+ * Fachada histórica del ejecutor de programas.
+ */
+export function launch(
+  showFile,
+  runningFile,
+  deleFile,
+  deleDir
+) {
+  return nodeProgramRunner.run({
+    displayName: showFile,
+    programPath: runningFile,
+    cleanupPath: path.join(
+      deleDir,
+      deleFile
+    )
   });
 }

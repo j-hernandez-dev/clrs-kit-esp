@@ -1,4 +1,8 @@
 
+import {
+    attachCostExpression
+} from "./algebra/CostExpressionSupport.js";
+
 export class BlockCostNode{
     constructor(
         type,
@@ -9,7 +13,10 @@ export class BlockCostNode{
     {
         this.type = type;
         this.location = location;
-        this.expression = expression;
+        attachCostExpression(
+            this,
+            expression
+        );
         this.instructions = instructions;
     }
 }

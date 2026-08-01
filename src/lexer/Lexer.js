@@ -2,6 +2,10 @@
 
 import { Lexer } from "chevrotain";
 import { TOKEN_VOCABULARY } from "./TokenVocabulary.js";
+import { LexicalError } from "../errors/FrontendErrors.js";
+import {
+  spanishLexerErrorMessageProvider
+} from "../language/diagnostics/SpanishLexerErrorMessageProvider.js";
 
 /**
  * ==================================
@@ -9,7 +13,13 @@ import { TOKEN_VOCABULARY } from "./TokenVocabulary.js";
  * ==================================
  */
 
-export const GaddisLexer = new Lexer(TOKEN_VOCABULARY);
+export const GaddisLexer = new Lexer(
+  TOKEN_VOCABULARY,
+  {
+    errorMessageProvider:
+      spanishLexerErrorMessageProvider
+  }
+);
 
 /**
  * ==================================
@@ -24,10 +34,23 @@ export function tokenize(sourceCode) {
   const lexingResult = GaddisLexer.tokenize(sourceCode);
 
   if (lexingResult.errors.length > 0) {
-    throw new Error(
-      `Lexing failed:\n${lexingResult.errors
-        .map(error => error.message)
-        .join("\n")}`
+    const diagnostics = lexingResult.errors.map(error => ({
+      message: error.message,
+      location: {
+        startLine: error.line ?? null,
+        startColumn: error.column ?? null,
+        endLine: error.line ?? null,
+        endColumn:
+          error.column == null
+            ? null
+            : error.column + Math.max(error.length ?? 1, 1) - 1
+      }
+    }));
+
+    throw new LexicalError(
+      diagnostics.map(diagnostic => diagnostic.message).join("\n"),
+      diagnostics[0]?.location ?? null,
+      { diagnostics }
     );
   }
 
