@@ -3,21 +3,70 @@
 html,
 body,
 #app {
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
     margin: 0;
-    background: #020817;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    overflow: hidden;
+    background: var(
+        --diagram-background,
+        #020817
+    );
 }
 
 body {
     font-family: "JetBrains Mono", "Segoe UI", sans-serif;
 }
 
+.flow-app {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background: var(
+        --diagram-background,
+        #020817
+    );
+}
+
 .diagram-preview {
+    box-sizing: border-box;
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
     overflow: hidden;
+    background: var(
+        --diagram-background,
+        #020817
+    );
+}
+
+.diagram-preview::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(100, 116, 139, 0.22) 1.25px,
+            transparent 1.5px
+        );
+    background-position: 10px 10px;
+    background-size: 40px 40px;
 }
 
 .diagram-toolbar-floating {
@@ -40,19 +89,31 @@ body {
 }
 
 .diagram-canvas-container {
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
     flex: 1;
     width: 100%;
     height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    background: transparent;
 }
 
 .diagram-canvas {
+    box-sizing: border-box;
     cursor: grab;
     width: 100%;
     height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,19 +133,33 @@ body {
 }
 
 .diagram-canvas svg {
+    display: block;
     width: 100% !important;
     height: 100% !important;
     max-width: none !important;
+    border: 0 !important;
+    outline: 0 !important;
 }
 
 .light-mode {
-    background: #ffffff;
     color: #000000;
 }
 
 .dark-mode {
-    background: #020817;
     color: #ffffff;
+}
+
+.diagram-preview.light-mode,
+.diagram-preview.dark-mode {
+    background: var(
+        --diagram-background,
+        #020817
+    );
+}
+
+.diagram-canvas.light-mode,
+.diagram-canvas.dark-mode {
+    background: transparent;
 }
 
 
@@ -115,9 +190,18 @@ body {
     font-family: "JetBrains Mono", monospace;
     font-size: 13px;
     font-weight: 500;
-    color: #e5e7eb;
-    background: rgba(15, 23, 42, 0.75);
-    border: 1px solid rgba(148, 163, 184, 0.18);
+    color: var(
+        --vscode-dropdown-foreground,
+        #e5e7eb
+    );
+    background: var(
+        --vscode-dropdown-background,
+        rgba(15, 23, 42, 0.88)
+    );
+    border: 1px solid var(
+        --vscode-dropdown-border,
+        rgba(148, 163, 184, 0.28)
+    );
     backdrop-filter: blur(12px);
     box-shadow:
         0 4px 12px rgba(0, 0, 0, 0.25);
@@ -129,17 +213,56 @@ body {
 
 
 .toolbar-select:hover {
-    background:
-        rgba(30, 41, 59, 0.85);
+    background: var(
+        --vscode-list-hoverBackground,
+        rgba(30, 41, 59, 0.92)
+    );
     border-color:
-        rgba(96, 165, 250, 0.45);
+        var(
+            --vscode-focusBorder,
+            rgba(96, 165, 250, 0.65)
+        );
 }
 
 
 .toolbar-select:focus {
     outline: none;
     border-color:
-        #60a5fa;
+        var(
+            --vscode-focusBorder,
+            #60a5fa
+        );
     box-shadow:
         0 0 0 3px rgba(96, 165, 250, 0.15);
+}
+
+.diagram-diagnostics {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 20;
+    width: min(560px, calc(100vw - 40px));
+    max-height: 35vh;
+    overflow: auto;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    border: 1px solid rgba(248, 113, 113, 0.45);
+    border-radius: 12px;
+    color: #fee2e2;
+    background: rgba(69, 10, 10, 0.92);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(12px);
+}
+
+.diagram-diagnostics strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.diagram-diagnostics pre {
+    margin: 6px 0 0;
+    white-space: pre-wrap;
+    font: inherit;
+    font-size: 12px;
 }

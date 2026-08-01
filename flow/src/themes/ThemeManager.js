@@ -14,6 +14,12 @@ import { DARK_THEME } from "./presets/DarkTheme.js";
 import { MODERN_THEME } from "./presets/ModernTheme.js";
 import { PASTEL_THEME } from "./presets/PastelTheme.js";
 import { SOBER_THEME } from "./presets/SoberTheme.js";
+import {
+    createVSCodeTheme
+} from "./presets/VSCodeTheme.js";
+
+export const DEFAULT_THEME_ID =
+    "vscode";
 
 /**
  * Temas personalizados disponibles.
@@ -71,7 +77,30 @@ const MERMAID_THEMES = {
  *
  * @returns {Object}
  */
-export function getTheme(themeName) {
+export function getTheme(
+    themeName = DEFAULT_THEME_ID,
+    options = {}
+) {
+
+
+    //--------------------------------------------------
+    // Tema adaptativo de VS Code
+    //--------------------------------------------------
+
+    if (themeName === DEFAULT_THEME_ID) {
+
+        return {
+
+            type: "custom",
+
+            theme:
+                createVSCodeTheme(
+                    options.resolveColor
+                )
+
+        };
+
+    }
 
 
     //--------------------------------------------------
@@ -98,7 +127,10 @@ export function getTheme(themeName) {
 
         type: "custom",
 
-        theme: DARK_THEME
+        theme:
+            createVSCodeTheme(
+                options.resolveColor
+            )
 
     };
 
@@ -114,6 +146,11 @@ export function getTheme(themeName) {
 export function getAvailableThemes() {
 
     return [
+
+        {
+            id: DEFAULT_THEME_ID,
+            name: "◈ VS Code"
+        },
 
         {
             id: "classic",

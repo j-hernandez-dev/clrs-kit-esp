@@ -1,6 +1,8 @@
 import mermaid from "mermaid";
 import svgPanZoom from "svg-pan-zoom";
-import { toPng } from "html-to-image";
+import {
+    setExportSource
+} from "./SvgExporter.js";
 
 /**
  * Renderiza un diagrama Mermaid.
@@ -9,7 +11,9 @@ export async function renderMermaid({
 
     container,
 
-    diagram
+    diagram,
+
+    themeConfig
 
 }) {
 
@@ -44,6 +48,11 @@ export async function renderMermaid({
 
             initializePanZoom(svgElement);
 
+            setExportSource({
+                diagram,
+                themeConfig
+            });
+
         }
 
         finishRender(container);
@@ -72,6 +81,14 @@ async function startRender(container) {
 
     container.classList.add("rendering");
 
+    const fonts =
+        container.ownerDocument
+            ?.fonts;
+
+    if (fonts?.ready) {
+        await fonts.ready;
+    }
+
     await new Promise(resolve =>
 
         setTimeout(resolve, 300)
@@ -79,8 +96,6 @@ async function startRender(container) {
     );
 
 }
-
-let currentSvg = "";
 
 /**
  * Genera el SVG Mermaid.
@@ -96,8 +111,6 @@ async function renderSvg({
     container.innerHTML = svg;
 
     const svgElement = container.querySelector("svg");
-
-    currentSvg = svgElement;
 
     return svgElement;
 }
@@ -170,7 +183,18 @@ function initializePanZoom(svgElement) {
  */
 function finishRender(container) {
 
-    requestAnimationFrame(() => {
+    const requestFrame =
+        container.ownerDocument
+            ?.defaultView
+            ?.requestAnimationFrame
+            ?.bind(
+                container.ownerDocument
+                    .defaultView
+            ) ??
+        (callback =>
+            setTimeout(callback, 0));
+
+    requestFrame(() => {
 
         container.classList.remove("rendering");
 
@@ -178,22 +202,6 @@ function finishRender(container) {
 
 }
 
-
-export async function exportPng() {
-
-    if (!currentSvg) {
-
-        throw new Error(
-            "No diagram rendered."
-        );
-
-    }
-
-    const dataUrl = await toPng(currentSvg, {
-
-        pixelRatio: 5
-
-    });
-
-    return dataUrl;
-}
+export {
+    exportSvg
+} from "./SvgExporter.js";

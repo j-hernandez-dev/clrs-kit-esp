@@ -6,11 +6,24 @@ import {
 
 const FLOWCHART_CONFIG = {
 
-    curve: "basis"
+    curve: "basis",
+
+    // El valor predeterminado de Mermaid (200 px) fuerza el ajuste
+    // antes de calcular la geometría y puede dejar etiquetas largas
+    // fuera de símbolos inclinados.
+    wrappingWidth: 640,
+
+    padding: 28
 
 };
 
-export function initializeMermaid(themeConfig) {
+export function initializeMermaid(
+    themeConfig,
+    options = {}
+) {
+
+    const htmlLabels =
+        options.htmlLabels ?? true;
 
     const baseConfig = {
 
@@ -18,7 +31,15 @@ export function initializeMermaid(themeConfig) {
 
         securityLevel:"loose",
 
-        htmlLabels: true
+        htmlLabels
+
+    };
+
+    const flowchartConfig = {
+
+        ...FLOWCHART_CONFIG,
+
+        htmlLabels
 
     };
 
@@ -30,7 +51,10 @@ export function initializeMermaid(themeConfig) {
 
             ...baseConfig,
 
-            theme:"base"
+            theme:"base",
+
+            flowchart:
+                flowchartConfig
 
         });
 
@@ -49,7 +73,8 @@ export function initializeMermaid(themeConfig) {
             theme:
                 themeConfig.theme,
             
-            flowchart: FLOWCHART_CONFIG
+            flowchart:
+                flowchartConfig
 
         });
 
@@ -72,7 +97,8 @@ export function initializeMermaid(themeConfig) {
                     themeConfig.theme
                 ),
 
-            flowchart: FLOWCHART_CONFIG
+            flowchart:
+                flowchartConfig
 
         });
 
@@ -92,7 +118,10 @@ export function initializeMermaid(themeConfig) {
 
         ...baseConfig,
 
-        theme:"default"
+        theme:"default",
+
+        flowchart:
+            flowchartConfig
 
     });
 

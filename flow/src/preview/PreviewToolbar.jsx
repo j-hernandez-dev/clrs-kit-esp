@@ -37,11 +37,6 @@ export default function PreviewToolbar({
     const themes =
         getAvailableThemes();
 
-    const backgroundClass =
-        theme === "dark"
-            ? "dark-mode"
-            : "light-mode";
-
     const directions = [
 
         {

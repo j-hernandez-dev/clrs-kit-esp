@@ -21,7 +21,7 @@ export const DARK_THEME = {
 
     canvas: {
 
-        background: "#FFFFFF"
+        background: "#020817"
 
     },
 

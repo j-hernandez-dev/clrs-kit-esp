@@ -1,100 +1,53 @@
-import { useEffect, useMemo, useState } from "react";
-import { getAST } from "../../src/compiler/BrowserPipeline.js";
-import DEFAULT_DIAGRAM from "./config/DefaultDiagram.js";
-import DiagramPreview from "./preview/DiagramPreview.jsx";
-import { build } from "./visitor/DiagramVisitor.js";
-import { initializeBridge } from "./extension/Bridge.js";
+import {
+    useEffect,
+    useState
+} from "react";
+import {
+    useDiagramModel
+} from "./hooks/useDiagramModel.js";
+import DiagramDiagnostics
+    from "./preview/DiagramDiagnostics.jsx";
+import DiagramPreview
+    from "./preview/DiagramPreview.jsx";
 
-export default function App() {
-
-    //--------------------------------------------------
-    // Código recibido desde VS Code
-    //--------------------------------------------------
-
-    const [sourceCode, setSourceCode] = useState("");
-
-    //--------------------------------------------------
-    // Escuchar mensajes del Webview
-    //--------------------------------------------------
-
-    useEffect(() => {
-
-        const listener = (event) => {
-
-            const message = event.data;
-
-            switch (message?.type) {
-
-                case "source":
-
-                    setSourceCode(message.source);
-
-                    break;
-
-                default:
-
-                    break;
-
-            }
-
-        };
-
-        window.addEventListener(
-            "message",
-            listener
+export default function App({
+    application
+}) {
+    const [sourceCode, setSourceCode] =
+        useState(
+            application.config
+                .initialSourceCode
+        );
+    const bridge =
+        application.bridge;
+    const diagramState =
+        useDiagramModel(
+            sourceCode,
+            application.store
         );
 
-        initializeBridge();
-
-        return () =>
-            window.removeEventListener(
-                "message",
-                listener
-            );
-
-    }, []);
-
-
-
-    //--------------------------------------------------
-    // Construcción del AST
-    //--------------------------------------------------
-
-    const model = useMemo(() => {
-
-        if (!sourceCode.trim()) {
-            return DEFAULT_DIAGRAM;
-        }
-
-        try {
-
-            const ast = getAST(sourceCode);
-
-            if (!ast) {
-                return DEFAULT_DIAGRAM;
-            }
-
-            return build(ast);
-
-        }
-        catch {
-
-            return DEFAULT_DIAGRAM;
-
-        }
-
-    }, [sourceCode]);
-
-    //--------------------------------------------------
-    // Modelo mostrado
-    //--------------------------------------------------
+    useEffect(
+        () =>
+            bridge.connect({
+                onSource: setSourceCode
+            }),
+        [bridge]
+    );
 
     return (
+        <main className="flow-app">
+            <DiagramPreview
+                model={diagramState.model}
+            />
 
-        <DiagramPreview
-
-            model={model}
-
-        />
+            <DiagramDiagnostics
+                status={
+                    diagramState.status
+                }
+                errors={
+                    diagramState.errors
+                }
+            />
+        </main>
     );
 }
