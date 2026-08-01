@@ -1,0 +1,3 @@
+PRINCIPAL()
+    dato <- 1
+    escribir dato

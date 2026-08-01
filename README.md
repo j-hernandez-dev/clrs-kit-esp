@@ -23,11 +23,11 @@
 | Generar código JavaScript | Transpila el código a un archivo `.js` listo para usar, sin ejecutarlo. |
 | Mostrar/ocultar costo algorítmico | Muestra u oculta el costo algorítmico de cada instrucción mediante expresiones simbólicas basadas en operaciones elementales. |
 | Mostrar diagrama de flujo | Genera automáticamente un diagrama de flujo del código y lo muestra en un panel interactivo junto al editor. |
-| Exportar diagrama de flujo PNG | Exporta el diagrama de flujo generado como una imagen PNG de alta resolución para su uso en documentación, reportes o presentaciones. |
+| Exportar diagrama de flujo SVG | Exporta el diagrama como un SVG autónomo y escalable, compatible con visores de imágenes y herramientas de documentación. |
 
 ---
 
-## ⚙️ Estado actual (versión 1.2.9)
+## ⚙️ Estado actual (versión 1.3.1)
 
 - Parser completo de CLRS construido con Chevrotain.
 - Generación automática del Árbol de Sintaxis Abstracta (AST).
@@ -38,12 +38,16 @@
 - Configuración del lenguaje con indentación automática y plegado de código.
 - Snippets integrados para la sintaxis de CLRS.
 - Biblioteca estándar para manejo de archivos, cadenas, arreglos y funciones matemáticas.
-- Reporte de errores de sintaxis y de ejecución.
+- Reporte estructurado de errores de sintaxis, semántica y ejecución.
+- Diagnósticos estáticos en línea, con subrayado, mensajes en español y presencia en el panel Problemas.
+- Análisis semántico de ámbitos, declaraciones implícitas, funciones y referencias.
+- Clasificación asintótica Big O, análisis simbólico de iteraciones y resolución conservadora de recurrencias.
 - Soporte para funciones, arreglos, expresiones, condicionales, ciclos y operaciones de entrada/salida.
 - Soporte para el uso de botón para ejecutar y construir.
 - Soporte para muestreo de costo algorítmico.
 - Soporte para muestreo de diagrama de flujo en tiempo real.
-- Exportación de diagrama de flujo en formato PNG.
+- Exportación de diagramas de flujo en formato SVG autónomo.
+- Tema de diagramas integrado con la paleta activa de VS Code y seleccionado de manera predeterminada.
 
 ---
 
@@ -74,8 +78,30 @@ Este proyecto es de código abierto. Puede ser modificado y extendido libremente
 
 ## ⚠️ Problemas conocidos
 
-* No hay soporte para el análisis semántico. Por lo que todo es realizado en el análisis de JavaScript sin especificar la localización del error.
+* El análisis semántico comprueba bindings, referencias y reglas estructurales, pero no intenta inferir tipos ni valores en tiempo de compilación.
 * Es posible que determinado código se genere de manera incorrecta por el transpilador.
+
+---
+
+## 🩺 Diagnósticos
+
+Los errores causados por el código CLRS se muestran en español y conservan la ubicación obtenida del AST o de Chevrotain cuando está disponible.
+
+```text
+CLRS Runtime
+────────────────────────
+▶ programa.clrs
+
+✕ Error de sintaxis
+
+  Se esperaba «)», pero se encontró «escribir».
+  Línea 2, columna 5
+
+────────────────────────
+Estado: No ejecutado
+```
+
+Los errores internos no exponen detalles de implementación en la salida normal. Para diagnóstico durante el desarrollo puede establecerse `CLRS_DEBUG=1`; este modo añade el stack y la causa técnica original en inglés bajo una sección `[developer]`.
 
 ---
 
@@ -113,7 +139,16 @@ variable1 <- variable2
 
 </details>
 
-Las variables son siempre mutables; el lenguaje no dispone de constantes. Su ámbito es local a la función donde se definen y la asignación se realiza mediante el operador `<-`.
+Las variables son siempre mutables; el lenguaje no dispone de constantes. La primera asignación con `<-` declara la variable implícitamente.
+
+Las variables conservan la semántica `var` del JavaScript generado:
+
+- Tienen ámbito global o de función; los bloques `si`, `mientras` y `para` no crean un ámbito de variables adicional.
+- La declaración implícita se eleva al inicio de su ámbito, por lo que una referencia puede aparecer antes de la primera asignación textual.
+- Las asignaciones posteriores reutilizan el mismo binding y la redeclaración está permitida.
+- Una asignación dentro de una función crea o reutiliza un binding local de esa función, incluso cuando existe otro con el mismo nombre en un ámbito exterior.
+
+La instrucción `leer` asigna un valor, pero no declara por sí misma una variable. Por ello, su destino debe tener una asignación declarativa dentro del mismo ámbito o existir en uno exterior.
 
 ![Código](extension/images/screenshots/code3.png)
 
@@ -207,7 +242,7 @@ leer variable1, variable2, variable3
 
 ## Estructuras de selección
 
-La única estructura de selección es `si`, junto con las variantes `sino si` y `sino`. Los bloques de código se delimitan mediante indentación, por lo que es importante mantener una indentación consistente.
+La única estructura de selección es `si`, junto con las variantes `sino si` y `sino`. Los bloques de código se delimitan mediante indentación, por lo que es importante mantener una indentación consistente. Las tabulaciones avanzan a intervalos de cuatro columnas y pueden alinearse con espacios; dentro de paréntesis o corchetes, la sangría se considera continuación de una expresión y no crea un bloque nuevo.
 
 ![Código](extension/images/screenshots/code9.png)
 
@@ -436,6 +471,8 @@ PRINCIPAL()
 
 La biblioteca estándar de CLRS proporciona funciones integradas para manejo de archivos, operaciones matemáticas, cadenas y arreglos.
 
+Sus funciones disponen de un catálogo semántico compartido que declara el costo, el tipo de retorno y, cuando puede demostrarse con seguridad, su efecto simbólico. Este catálogo es utilizado por el análisis semántico, el análisis de iteraciones, las recurrencias y el clasificador Big O; no modifica el comportamiento del runtime.
+
 ---
 
 ## 📁 Archivos
@@ -455,7 +492,7 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 
 | Función CLRS | Descripción | Retorno |
 |--------------|-------------|---------|
-| `ASB(x)` | Valor absoluto de un número. | Número |
+| `ABS(x)` | Valor absoluto de un número. | Número |
 | `MIN(a, b)` | Devuelve el menor de dos valores. | Número |
 | `MAX(a, b)` | Devuelve el mayor de dos valores. | Número |
 | `REDONDEA(x)` | Redondea al entero más cercano. | Número |
@@ -491,7 +528,7 @@ La biblioteca estándar de CLRS proporciona funciones integradas para manejo de 
 | `CAR_EN(cadena, posición)` | Obtiene un carácter en una posición. | Cadena |
 | `SUBCAD(cadena, inicio, fin)` | Extrae una subcadena. | Cadena |
 | `MAYUS(cadena)` | Convierte a mayúsculas. | Cadena |
-| `MAYUS(cadena)` | Convierte a minúsculas. | Cadena |
+| `MINUS(cadena)` | Convierte a minúsculas. | Cadena |
 | `RECORTA(cadena)` | Elimina espacios en blanco. | Cadena |
 | `REEMP(cadena, viejo, nuevo)` | Reemplaza texto. | Cadena |
 | `DIV(cadena, separador)` | Divide en arreglo. | Arreglo |
@@ -547,12 +584,29 @@ El análisis de costo permite visualizar cómo se construye la función de costo
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | **Expresión de costo de bloque** | Muestra la expresión de costo encima de funciones y estructuras de control.                                        |
 | **Expresión de costo de línea**  | Muestra el costo individual de cada instrucción al final de la línea correspondiente.                              |
+| **Clasificación Big O**     | Muestra `⟶ O(...)` al final de la línea de cada función o estructura de control.                                     |
 | **Copiar expresión**       | Permite copiar cualquier expresión de costo al portapapeles mediante un clic.                                      |
 | **Mostrar/Ocultar**        | Activa o desactiva toda la visualización del análisis desde un botón en el editor.                                 |
 
-La herramienta de análisis de costo genera expresiones de costo a partir del Árbol de Sintaxis Abstracta (AST). El análisis se basa únicamente en la estructura sintáctica del código y no realiza un análisis semántico avanzado.
+La herramienta de análisis de costo genera expresiones de costo a partir del Árbol de Sintaxis Abstracta (AST). Internamente, estas expresiones se representan mediante un modelo algebraico estructurado e inmutable y cuentan con una simplificación conservadora de identidades seguras.
 
-Por ello, estructuras cuya complejidad depende del comportamiento de las variables, de la reducción del problema en bucles o de la recursión no pueden resolverse automáticamente. Estos son los casos en los que la herramienta no puede determinar el costo de forma exacta.
+El análisis de iteraciones sigue asignaciones simbólicas simples y reconoce límites numéricos, simbólicos y polinómicos. Los ciclos `para` ascendentes y descendentes obtienen su cantidad de iteraciones a partir de la inicialización y el límite. En ciclos `mientras` también se reconocen progresiones aditivas, como `i <- i + 1`, y multiplicativas, como `i <- i / 2`.
+
+Las transformaciones declaradas por la biblioteca estándar también participan en este análisis. Por ejemplo, `i <- PISO(i / 2)` y `i <- REDONDEA(i / 2)` conservan la progresión geométrica y se clasifican como `O(log n)`. `ABS` sólo se simplifica cuando la condición del ciclo garantiza que no habrá un cambio de signo; las funciones opacas o desconocidas permanecen como `O(?)`.
+
+Cuando el límite cambia dentro del ciclo, la actualización es condicional, el paso no es constante o no puede demostrarse la terminación, la cantidad se representa como desconocida (`?`) en lugar de asumir siempre `n`.
+
+El clasificador asintótico elimina constantes y coeficientes, combina productos y ciclos anidados, y selecciona términos dominantes en sumas, condicionales y máximos. También conserva términos incomparables en problemas multivariables y propaga el costo de llamadas entre funciones.
+
+Las funciones de costo conservan los parámetros declarados y los argumentos simbólicos reales de cada llamada. Por ejemplo, `BURBUJA(A)` se representa como `TBURBUJA(A)` y una llamada con ese arreglo se muestra como `TBURBUJA(A)`, en lugar de sustituir ambos casos artificialmente por `n`.
+
+La clasificación Big O normaliza únicamente las medidas estructurales: si `n = LONG(A)`, el editor muestra `O(n²)` aunque la expresión exacta conserve `LONG(A)`. Cuando existen varias medidas independientes se asignan alias distintos, como `n` y `m`, para preservar resultados multivariables como `O(n + m)`.
+
+Las funciones recursivas se analizan conservando, como metadatos internos, el argumento simbólico real de cada llamada. Esto permite distinguir reducciones como `T(n - 1)`, `T(n / 2)` o particiones de intervalos calculadas mediante variables auxiliares.
+
+El resolvedor aplica sustitución a reducciones aditivas, el Teorema Maestro a subproblemas de igual tamaño, Akra–Bazzi a particiones desiguales, raíces características a ramificaciones como Fibonacci y productos factoriales cuando el número de llamadas por nivel depende de `n`. También puede inferir que el tamaño de un subarreglo es `r - p + 1`, incluso cuando sus límites recursivos pasan por una asignación como `q <- PISO((p + r) / 2)`.
+
+Si el argumento no disminuye, se mezclan familias de reducción incompatibles, aparece una ecuación no lineal o existe recursión mutua, el resultado permanece como `O(?)`. El analizador emite un motivo estructurado en lugar de asumir una solución potencialmente incorrecta.
 
 | Complejidad                                  | Determina el costo | Observaciones                                                                                     |
 | -------------------------------------------- | :------------------: | ------------------------------------------------------------------------------------------------- |
@@ -561,13 +615,13 @@ Por ello, estructuras cuya complejidad depende del comportamiento de las variabl
 | **O(n²)**                                    |           ✅          | Dos niveles de iteración anidados.                                                                |
 | **O(n³)**                                    |           ✅          | Tres niveles de iteración anidados.                                                               |
 | **O(nᵏ)**                                    |           ✅          | Cualquier número fijo de ciclos anidados puede deducirse estructuralmente.                        |
-| **O(log n)**                                 |           ❌          | Requiere identificar reducciones del problema (por ejemplo, dividir entre dos en cada iteración). |
-| **O(n log n)**                               |           ❌          | Generalmente implica recursión o una combinación de iteración con reducción del problema.         |
-| **O(2ⁿ)**                                    |           ❌          | Requiere analizar recursión múltiple o crecimiento exponencial.                                   |
-| **O(n!)**                                    |           ❌          | Depende de estructuras recursivas o permutaciones, no sólo de la sintaxis.                        |
-| **Complejidades definidas por recurrencias** |           ❌          | Es necesario resolver ecuaciones de recurrencia mediante técnicas matemáticas.                    |
+| **O(log n)**                                 |           ✅          | Reconoce progresiones multiplicativas y selecciona su orden logarítmico.                            |
+| **O(n log n)**                               |           ✅          | Combina automáticamente factores lineales y logarítmicos.                                          |
+| **O(2ⁿ)**                                    |           ✅          | Clasifica expresiones explícitas y recurrencias con ramificación constante.                         |
+| **O(n!)**                                    |           ✅          | Clasifica expresiones explícitas y recurrencias con ramificación variable demostrable.              |
+| **Complejidades definidas por recurrencias** |       ✅ Parcial       | Resuelve familias estructuradas; los casos no demostrables conservan `O(?)`.                        |
 
-Aunque no calcula automáticamente la notación asintótica, sí genera la función de costo correspondiente, la cual puede simplificarse algebraicamente para obtener la notación Big O.
+La función de costo completa se mantiene en CodeLens y puede copiarse desde el editor. Su clasificación asintótica se presenta por separado como un decorador al final de la línea de apertura, por ejemplo `⟶ O(n log n)`, con la misma estética de los costos individuales.
 
 No sustituye el análisis manual, pero proporciona una referencia visual que facilita el análisis de costo en una amplia variedad de casos.
 
@@ -628,11 +682,11 @@ Las funciones se representan automáticamente como **subgrafos independientes**,
 
 La vista previa incluye una barra de herramientas para adaptar la apariencia del diagrama.
 
-Es posible cambiar el tema visual del diagrama sin necesidad de volver a generarlo.
+El tema predeterminado es **VS Code**. Obtiene del editor los colores efectivos del fondo, texto, paneles, controles, bordes y acentos semánticos, por lo que se adapta automáticamente a temas claros, oscuros y de alto contraste.
 
-Los cambios se aplican inmediatamente sobre la vista previa.
+Los colores se resuelven antes de generar el diagrama. Por ello también se conservan como valores autónomos al exportar a SVG, sin depender de que el archivo se abra dentro de VS Code.
 
-> 💡 Si tienes sugerencias para nuevos temas o combinaciones de colores, serán bienvenidas.
+También permanecen disponibles los temas **Clásico**, **Moderno**, **Pastel**, **Sobrio** y **Oscuro**. Los cambios se aplican inmediatamente sobre la vista previa, que utiliza una malla visual independiente de la paleta seleccionada.
 
 ---
 
@@ -664,15 +718,15 @@ Estas herramientas permiten trabajar cómodamente incluso con diagramas de gran 
 
 # 🖼️ Exportar el diagrama
 
-El diagrama puede exportarse como una imagen **PNG** de alta resolución.
+El diagrama puede exportarse como una imagen vectorial **SVG** autónoma. El archivo utiliza elementos SVG nativos y no depende de propiedades HTML exclusivas del navegador.
 
 Para ello utiliza:
 
-- **Paleta de comandos → `Exportar diagrama de flujo PNG`**
+- **Paleta de comandos → `Exportar diagrama de flujo SVG`**
 
 Después únicamente selecciona la ubicación y el nombre del archivo.
 
-La imagen generada es adecuada para:
+La imagen generada puede ampliarse sin perder calidad y es adecuada para:
 
 - Documentación técnica.
 - Reportes.

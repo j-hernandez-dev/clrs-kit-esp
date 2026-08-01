@@ -1,8 +1,8 @@
 {
   "name": "clrs-kit-esp",
   "displayName": "CLRS Kit Español",
-  "description": "Soporte de lenguaje y herramientas para el lenguaje de pseudocódigo CRLS.",
-  "version": "1.2.9",
+  "description": "Soporte de lenguaje y herramientas para el lenguaje de pseudocódigo CLRS.",
+  "version": "1.3.1",
   "publisher": "j-hernandez-dev",
   "icon": "./extension/images/icon.png",
   "engines": {
@@ -15,9 +15,25 @@
     "type": "git",
     "url": "https://github.com/j-hernandez-dev/clrs-kit-esp.git"
   },
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:clrs-es",
+    "onCommand:CLRS.runCode",
+    "onCommand:CLRS.copyCostExpression",
+    "onCommand:CLRS.toggleCost",
+    "onCommand:CLRS.generateCodeDiagram",
+    "onCommand:CLRS.generateCode",
+    "onCommand:CLRS.toggleDiagram",
+    "onCommand:CLRS.exportSVG"
+  ],
   "main": "./extension/extension.js",
   "contributes": {
+    "configurationDefaults": {
+      "[clrs-es]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+      }
+    },
     "menus": {
       "editor/title": [
         {
@@ -41,7 +57,7 @@
           "when": "resourceLangId == clrs-es"
         },
         {
-          "command": "CLRS.exportPNG",
+          "command": "CLRS.exportSVG",
           "group": "navigation@5",
           "when": "resourceLangId == clrs-es"
         }
@@ -69,8 +85,8 @@
         "icon": "$(file-code)"
       },
       {
-        "command": "CLRS.exportPNG",
-        "title": "Exportar diagrama de flujo PNG",
+        "command": "CLRS.exportSVG",
+        "title": "Exportar diagrama de flujo SVG",
         "icon": "$(file-media)"
       }
     ],
@@ -128,7 +144,15 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "vscode-test"
+    "test": "npm run test:extension",
+    "test:unit": "node --test test/frontend.characterization.test.js test/ast.validation.test.js test/ast.consumers.test.js test/ast.visitor.test.js test/cost.algebra.test.js test/cost.presentation.test.js test/standard.library.catalog.test.js test/iteration.analysis.test.js test/asymptotic.analysis.test.js test/recurrence.analysis.test.js test/transpiler.characterization.test.js test/transpiler.visitors.test.js test/pipeline.characterization.test.js test/compilation.service.test.js test/semantic.analysis.test.js test/language.diagnostics.test.js test/static.diagnostics.provider.test.js test/error.localization.test.js test/diagram.characterization.test.js test/diagram.visitors.test.js test/diagram.application.test.js test/diagram.themes.test.js test/svg.export.test.js test/application.controllers.test.js test/application.composition.test.js",
+    "test:extension": "vscode-test",
+    "build:webview": "npm --prefix flow run build",
+    "test:all": "npm run lint && npm run test:unit && npm run build:webview && npm run test:extension",
+    "release:check": "npm run test:all",
+    "prepackage:vsix": "npm run release:check",
+    "package:vsix": "node scripts/package-vsix.mjs",
+    "package:list": "vsce ls"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
@@ -136,6 +160,7 @@
     "@types/vscode": "^1.125.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.9.2",
     "eslint": "^9.39.3"
   },
   "dependencies": {
@@ -143,6 +168,6 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "GPL-2.0-only",
   "type": "module"
 }

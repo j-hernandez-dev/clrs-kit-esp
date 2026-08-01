@@ -1,21 +1,49 @@
-import * as vscode from "vscode";
-import { cost } from "../../src/compiler/Pipeline.js";
-import { ViewState } from "./ViewState.js";
+import {
+    requireObject,
+    requirePort
+} from "../../src/application/ports/ApplicationPorts.js";
 
 export class CLRSCodeLensProvider {
 
-    _onDidChangeCodeLenses = new vscode.EventEmitter();
-
-    onDidChangeCodeLenses =
-        this._onDidChangeCodeLenses.event;
+    constructor(options = {}) {
+        this.analyzeCostUseCase =
+            requirePort(
+                options.analyzeCostUseCase,
+                "analyzeCostUseCase",
+                ["execute"]
+            );
+        this.vscode =
+            requireObject(
+                options.vscodeApi,
+                "vscodeApi"
+            );
+        this.viewState =
+            requireObject(
+                options.viewState,
+                "viewState"
+            );
+        this.languageId =
+            options.languageId;
+        this.eventEmitter =
+            new this.vscode.EventEmitter();
+        this.onDidChangeCodeLenses =
+            this.eventEmitter.event;
+    }
 
     refresh() {
-        this._onDidChangeCodeLenses.fire();
+        this.eventEmitter.fire();
+    }
+
+    dispose() {
+        this.eventEmitter.dispose();
     }
 
     provideCodeLenses(document) {
 
-        if (document.languageId !== "clrs-es") {
+        if (
+            document.languageId !==
+            this.languageId
+        ) {
             return [];
         }
 
@@ -25,14 +53,20 @@ export class CLRSCodeLensProvider {
         // ANÁLISIS DE COSTO
         //========================================
 
-        if (!ViewState.showCost) {
+        if (!this.viewState.showCost) {
             return lenses;
         }
 
+        const result =
+            this.analyzeCostUseCase
+                .execute({
+                    sourceCode:
+                        document.getText()
+                });
         const tree =
-            cost(
-                document.getText()
-            );
+            result.ok
+                ? result.value
+                : null;
 
         if (tree !== null) {
             this.visit(
@@ -44,7 +78,10 @@ export class CLRSCodeLensProvider {
         return lenses;
     }
 
-    visit(nodes, lenses) {
+    visit(
+        nodes,
+        lenses
+    ) {
 
         for (const node of nodes) {
 
@@ -59,25 +96,42 @@ export class CLRSCodeLensProvider {
             if (isLensNode) {
 
                 lenses.push(
-                    new vscode.CodeLens(
-                        new vscode.Range(
-                            node.location.startLine - 1,
-                            0,
-                            node.location.startLine - 1,
-                            0
-                        ),
-                        {
-                            title: `${node.expression}`,
-                            command: "CLRS.copyCostExpression",
-                            arguments: [node.expression]
-                        }
+                    this.createLens(
+                        node.location
+                            .startLine - 1,
+                        node.expression,
+                        node.expression
                     )
                 );
             }
 
             if (node.instructions) {
-                this.visit(node.instructions, lenses);
+                this.visit(
+                    node.instructions,
+                    lenses
+                );
             }
         }
+    }
+
+    createLens(
+        line,
+        title,
+        copyValue
+    ) {
+        return new this.vscode.CodeLens(
+            new this.vscode.Range(
+                Math.max(0, line),
+                0,
+                Math.max(0, line),
+                0
+            ),
+            {
+                title,
+                command:
+                    "CLRS.copyCostExpression",
+                arguments: [copyValue]
+            }
+        );
     }
 }

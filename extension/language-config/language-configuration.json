@@ -42,9 +42,9 @@
     ]
   ],
   "indentationRules": {
-    "increaseIndentPattern": "^\\s*(si\\b.*|sino\\s+si\\b.*|para\\b.*|mientras\\b.*)$",
+    "increaseIndentPattern": "^\\s*(si\\b.*|sino(?:\\s+si\\b.*)?|para\\b.*|mientras\\b.*)$",
     "decreaseIndentPattern": "^\\s*sino(\\s+si)?\\b",
-    "indentNextLinePattern": "^\\s*(si\\b.*|para\\b.*|mientras\\b.*)$"
+    "indentNextLinePattern": "^\\s*(si\\b.*|sino(?:\\s+si\\b.*)?|para\\b.*|mientras\\b.*)$"
   },
   "onEnterRules": [
     {

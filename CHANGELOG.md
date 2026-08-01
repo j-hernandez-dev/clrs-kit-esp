@@ -2,6 +2,61 @@
 
 All notable changes to the "clrs-kit-esp" extension will be documented in this file.
 
+## [Unreleased]
+
+## [1.3.1] - 2026-07-31
+
+- Read statement fixed
+
+## [1.3.0] - 2026-07-31
+
+- Added Spanish lexer and parser diagnostics with deduplicated expected-token alternatives.
+- Added localized semantic, compilation, and runtime presentation.
+- Added a minimal CLRS Runtime error layout with Spanish execution states.
+- Separated user-facing diagnostics from English implementation details and development logs.
+- Added `CLRS_DEBUG=1` support for native runtime stacks and causes.
+- Added live lexer, indentation, parser, and semantic diagnostics for CLRS documents in VS Code.
+- Added Spanish inline error messages, source ranges, stable error codes, and automatic cleanup after corrections.
+- Added debounce and document-version guards so stale analyses cannot overwrite current diagnostics.
+- Fixed indentation analysis so tabs use four-column tab stops and can align with spaces.
+- Treated indentation inside parentheses and brackets as expression continuation instead of nested blocks.
+- Improved inconsistent-indentation diagnostics with actual and expected indentation levels.
+- Added an immutable algebraic model for cost expressions, including sums, products, powers, logarithms, calls, maxima, equations, recurrences, and unknown costs.
+- Migrated cost analysis and standard-library substitutions to the structured model while preserving the existing editor output.
+- Added a conservative algebraic simplifier and non-enumerable structured metadata to cost report nodes.
+- Added characterization tests for conditionals, loops, library costs, formatting, simplification, and legacy JSON compatibility.
+- Added ordered symbolic-value tracking for loop bounds and initial values.
+- Added semantic iteration analysis for ascending and descending `para` loops.
+- Added additive and multiplicative progression recognition for `mientras`, including logarithmic division and multiplication patterns.
+- Added conservative unknown iteration results when control updates, bounds, steps, or termination cannot be demonstrated.
+- Integrated inferred iteration expressions and non-enumerable iteration metadata into cost reports.
+- Added a conservative asymptotic classifier for constants, logarithms, polynomials, exponentials, factorials, sums, products, quotients, and maxima.
+- Added dominant-term reduction with support for incomparable multivariable growth terms.
+- Added non-recursive inter-function cost resolution and explicit `O(?)` results for unresolved recurrences.
+- Added non-enumerable Big O metadata to cost nodes and reports.
+- Displayed cost expressions in CodeLens and Big O classifications in editor decorators.
+- Added symbolic recursive-call argument tracking and exposed real parameters and arguments in cost expressions.
+- Added recurrence size inference for single parameters and interval measures such as `r - p + 1`.
+- Added recurrence solving by substitution, the Master theorem, Akra–Bazzi, characteristic roots, and factorial products.
+- Added structured, non-enumerable recurrence results and conservative `O(?)` reasons for unsupported reductions and mutual recursion.
+- Moved Big O from CodeLens to end-of-line decorators, reusing the `⟶ O(...)` style of individual costs.
+- Preserved source parameter names in cost-function signatures, such as `TBURBUJA(A)`.
+- Normalized structural measures such as `LONG(A)` to `n`, `m`, and subsequent aliases only in Big O output.
+- Added a shared declarative standard-library catalog for costs, return types, and symbolic effects.
+- Migrated semantic built-ins, library cost substitutions, recurrence rounding rules, size normalization, and asymptotic calls to the shared catalog.
+- Recognized `PISO` and `REDONDEA` around additive or multiplicative loop updates, including `PISO(i / 2)` as logarithmic.
+- Added domain-guarded symbolic handling for `ABS` and preserved `O(?)` for functions without a declared safe transformation.
+- Fixed flowchart label sizing after web-font loading and preserved complete compound loop bounds such as `n - 1`.
+- Replaced PNG flowchart export with standalone SVG export using native SVG text instead of browser-only HTML labels.
+- Removed the theme-colored seam around the flowchart webview by applying the selected canvas background to every root layer.
+- Made Mermaid measure long labels with the same wrapping constraints used by their symbols.
+- Normalized double-encoded label entities in standalone SVG exports.
+- Added a theme-independent dotted workspace grid to the flowchart preview.
+- Added an adaptive flowchart theme that resolves the active VS Code palette and is selected by default.
+- Added live light, dark, and high-contrast theme synchronization using portable hexadecimal colors.
+- Integrated VS Code dropdown colors into the flowchart toolbar.
+- Updated the extension metadata, README, package manifests, and license declaration for version 1.3.0.
+
 ## [1.2.9] - 2026-07-22
 
 - Visual correction for conditional structure edge labels.

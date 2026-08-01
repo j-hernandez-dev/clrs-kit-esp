@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import fs from "fs";
 
 /**
@@ -11,8 +10,10 @@ import fs from "fs";
  */
 export function loadWebviewHtml(
     webview,
-    extensionUri
+    extensionUri,
+    vscodeApi
 ) {
+    const vscode = vscodeApi;
 
     //--------------------------------------------------
     // Ruta del build

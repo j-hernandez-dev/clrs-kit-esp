@@ -1,24 +1,45 @@
-import * as vscode from "vscode";
-import { cost } from "../../src/compiler/Pipeline.js";
-import { ViewState } from "./ViewState.js";
+import {
+    requireObject,
+    requirePort
+} from "../../src/application/ports/ApplicationPorts.js";
 
 export class CLRSCostDecorator {
 
-    constructor() {
-        this.decoration = vscode.window.createTextEditorDecorationType({
+    constructor(options = {}) {
+        this.analyzeCostUseCase =
+            requirePort(
+                options.analyzeCostUseCase,
+                "analyzeCostUseCase",
+                ["execute"]
+            );
+        this.vscode =
+            requireObject(
+                options.vscodeApi,
+                "vscodeApi"
+            );
+        this.viewState =
+            requireObject(
+                options.viewState,
+                "viewState"
+            );
+        this.languageId =
+            options.languageId;
+        this.decoration = this.vscode.window.createTextEditorDecorationType({
             after: {
                 margin: "0 0 0 2em",
-                color: new vscode.ThemeColor("editorCodeLens.foreground"),
+                color: new this.vscode.ThemeColor("editorCodeLens.foreground"),
                 fontStyle: "normal",
                 fontWeight: "normal"
             },
-            rangeBehavior: vscode.DecorationRangeBehavior.OpenClosed
+            rangeBehavior: this.vscode.DecorationRangeBehavior.OpenClosed
         });
     }
 
     update(editor) {
 
-        if (!ViewState.showCost) {
+        if (!editor) return;
+
+        if (!this.viewState.showCost) {
             editor.setDecorations(
                 this.decoration,
                 []
@@ -26,10 +47,22 @@ export class CLRSCostDecorator {
             return;
         }
 
-        if (!editor) return;
-        if (editor.document.languageId !== "clrs-es") return;
+        if (
+            editor.document.languageId !==
+            this.languageId
+        ) return;
 
-        const tree = cost(editor.document.getText());
+        const result =
+            this.analyzeCostUseCase
+                .execute({
+                    sourceCode:
+                        editor.document
+                            .getText()
+                });
+        const tree =
+            result.ok
+                ? result.value
+                : null;
         if (!tree) {
             editor.setDecorations(
                 this.decoration,
@@ -70,31 +103,35 @@ export class CLRSCostDecorator {
 
         for (const node of nodes) {
 
+            const isSummaryNode =
+                node.type === "FunctionDeclaration" ||
+                node.type === "IfStatement" ||
+                node.type === "ElseIfStatement" ||
+                node.type === "ElseStatement" ||
+                node.type === "WhileStatement" ||
+                node.type === "ForStatement";
             const isLeaf =
                 !node.instructions ||
                 node.instructions.length === 0;
 
-            if (isLeaf) {
+            if (
+                isSummaryNode &&
+                node.bigO != null
+            ) {
+                this.addDecoration(
+                    decorations,
+                    node.location.startLine - 1,
+                    maxLength,
+                    node.bigO
+                );
+            } else if (isLeaf) {
 
-                const line =
-                    node.location.endLine - 1;
-
-                decorations.push({
-
-                    range: new vscode.Range(
-                        line,
-                        maxLength,
-                        line,
-                        maxLength
-                    ),
-
-                    renderOptions: {
-                        after: {
-                            contentText:
-                                ` ⟶ ${node.expression}`
-                        }
-                    }
-                });
+                this.addDecoration(
+                    decorations,
+                    node.location.endLine - 1,
+                    maxLength,
+                    node.expression
+                );
             }
 
             if (node.instructions) {
@@ -106,5 +143,31 @@ export class CLRSCostDecorator {
                 );
             }
         }
+    }
+
+    addDecoration(
+        decorations,
+        line,
+        maxLength,
+        value
+    ) {
+        decorations.push({
+            range: new this.vscode.Range(
+                line,
+                maxLength,
+                line,
+                maxLength
+            ),
+            renderOptions: {
+                after: {
+                    contentText:
+                        ` ⟶ ${value}`
+                }
+            }
+        });
+    }
+
+    dispose() {
+        this.decoration.dispose();
     }
 }

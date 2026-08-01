@@ -1,14 +1,29 @@
-import { registerCodeCommands } from './commands/CodeCommands.js';
-import { registerDiagramCommands } from './commands/DiagramCommands.js';
+import * as vscode from "vscode";
+
+import {
+    createExtensionApplication
+} from "./composition/createExtensionApplication.js";
+
+let activeApplication = null;
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 export function activate(context) {
-    console.log('CLRS Kit actived successfully');
+    activeApplication =
+        createExtensionApplication({
+            vscodeApi: vscode,
+            context
+        });
 
-    registerCodeCommands(context);
-    registerDiagramCommands(context);
+    console.log(
+        "CLRS Kit activated successfully"
+    );
+
+    return activeApplication;
 }
 
-export function deactivate() { }
+export function deactivate() {
+    activeApplication?.dispose();
+    activeApplication = null;
+}
