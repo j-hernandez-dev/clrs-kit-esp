@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="820" height="365"
+     viewBox="0 0 820 365"
+     role="img"
+     aria-label="CLRS Runtime terminal">
+
+  <defs>
+    <linearGradient id="runtimeGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#15191d"/>
+      <stop offset="100%" stop-color="#171b1f"/>
+    </linearGradient>
+
+    <!-- Sombra similar a la referencia, con espacio suficiente abajo para no recortarse -->
+    <filter id="runtimeShadow"
+            x="-14%" y="-18%" width="128%" height="155%"
+            color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="9"
+                    flood-color="#000000"
+                    flood-opacity=".27"/>
+    </filter>
+
+    <filter id="dotGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feDropShadow dx="0" dy="0" stdDeviation="2"
+                    flood-color="#9fce73" flood-opacity=".18"/>
+    </filter>
+
+    <style>
+      .ui{
+        font-family:"Segoe UI",Arial,sans-serif;
+      }
+      .mono{
+        font-family:"JetBrains Mono","Cascadia Mono",Consolas,"Courier New",monospace;
+      }
+      .tab{
+        font-size:14px;
+        font-weight:400;
+        fill:#939ba7;
+      }
+      .tab-active{
+        font-size:14px;
+        font-weight:500;
+        fill:#dbe3ee;
+      }
+      .terminal{
+        font-size:16px;
+        font-weight:400;
+        fill:#aeb5bf;
+      }
+    </style>
+  </defs>
+
+  <!-- Panel principal -->
+  <g filter="url(#runtimeShadow)">
+    <rect x="30" y="25" width="760" height="280" rx="16"
+          fill="url(#runtimeGrad)"
+          stroke="#2d333b"
+          stroke-width="1"/>
+  </g>
+
+  <!-- Barra de pestañas -->
+  <path d="M46 25H774
+           Q790 25 790 41
+           V73
+           H30
+           V41
+           Q30 25 46 25Z"
+        fill="#161a1e"/>
+
+  <line x1="30" y1="73" x2="790" y2="73"
+        stroke="#2d333b" stroke-width="1"/>
+
+  <text x="50" y="55" class="ui tab">Problemas</text>
+  <text x="131" y="55" class="ui tab">Salida</text>
+  <text x="188" y="55" class="ui tab">Consola de depuración</text>
+  <text x="357" y="55" class="ui tab-active">Terminal</text>
+  <rect x="357" y="70" width="58" height="3" rx="1.5" fill="#66b7f3"/>
+
+  <!-- Encabezado de terminal -->
+  <circle cx="58" cy="102" r="5"
+          fill="#9fce73"
+          filter="url(#dotGlow)"/>
+
+  <text x="73" y="108"
+        class="mono"
+        font-size="16"
+        font-weight="600"
+        fill="#c8ced7">CLRS Runtime</text>
+
+  <!-- Separador de texto -->
+  <text x="56" y="137"
+        class="mono"
+        font-size="15"
+        fill="#8f98a5">────────────────────────────────────────────────────────────</text>
+
+  <!-- Ejecutar -->
+  <g transform="translate(56 154)" fill="#d5dbe4">
+    <path d="M3 2L17 10L3 18Z"/>
+  </g>
+
+  <text x="84" y="170"
+        class="mono"
+        font-size="16"
+        fill="#bfc6d0">programa.clrs</text>
+
+  <!-- Salida -->
+  <text x="56" y="207"
+        class="mono terminal">Hola, CLRS</text>
+
+  <!-- Separador de texto -->
+  <text x="56" y="236"
+        class="mono"
+        font-size="15"
+        fill="#8f98a5">────────────────────────────────────────────────────────────</text>
+
+  <!-- Estado -->
+  <text x="56" y="272"
+        class="mono"
+        font-size="16"
+        fill="#b6bdc7">Estado:</text>
+
+  <text x="127" y="272"
+        class="mono"
+        font-size="16"
+        font-weight="500"
+        fill="#9fce73">Correcto</text>
+
+</svg>
