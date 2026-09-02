@@ -1,124 +1,128 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="640" viewBox="0 0 1420 640" role="img" aria-labelledby="title desc">
-  <title id="title">Editor CLRS con interfaz de depuración</title>
-  <desc id="desc">Conversión vectorial del editor CLRS, con barra de depuración, línea activa y resaltado de sintaxis.</desc>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="820" height="365"
+     viewBox="0 0 820 365"
+     role="img"
+     aria-label="CLRS Runtime terminal">
+
   <defs>
-    <linearGradient id="editorBg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#15191d"/>
-      <stop offset="1" stop-color="#171b1f"/>
+    <linearGradient id="runtimeGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#15191d"/>
+      <stop offset="100%" stop-color="#171b1f"/>
     </linearGradient>
-    <linearGradient id="toolbarBg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#252b31"/>
-      <stop offset="1" stop-color="#20252b"/>
-    </linearGradient>
-    <filter id="editorShadow"
-            filterUnits="userSpaceOnUse"
-            x="-150" y="-150" width="1520" height="800"
+
+    <!-- Sombra similar a la referencia, con espacio suficiente abajo para no recortarse -->
+    <filter id="runtimeShadow"
+            x="-14%" y="-18%" width="128%" height="155%"
             color-interpolation-filters="sRGB">
-      <feGaussianBlur stdDeviation="20"/>
+      <feDropShadow dx="0" dy="12" stdDeviation="9"
+                    flood-color="#000000"
+                    flood-opacity=".27"/>
     </filter>
-    <filter id="toolbarShadow" x="-20%" y="-30%" width="140%" height="180%">
-      <feDropShadow dx="0" dy="18" stdDeviation="14" flood-color="#000" flood-opacity=".34"/>
+
+    <filter id="dotGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feDropShadow dx="0" dy="0" stdDeviation="2"
+                    flood-color="#9fce73" flood-opacity=".18"/>
     </filter>
+
+    <style>
+      .ui{
+        font-family:"Segoe UI",Arial,sans-serif;
+      }
+      .mono{
+        font-family:"JetBrains Mono","Cascadia Mono",Consolas,"Courier New",monospace;
+      }
+      .tab{
+        font-size:14px;
+        font-weight:400;
+        fill:#939ba7;
+      }
+      .tab-active{
+        font-size:14px;
+        font-weight:500;
+        fill:#dbe3ee;
+      }
+      .terminal{
+        font-size:16px;
+        font-weight:400;
+        fill:#aeb5bf;
+      }
+    </style>
   </defs>
 
-  <g transform="translate(100 60)">
-
-  <!-- Editor -->
-  <!-- Sombra exterior independiente: no se recorta en la parte inferior -->
-  <rect x="0.5" y="76.5" width="1219" height="370" rx="18"
-        fill="#000000" fill-opacity=".32"
-        filter="url(#editorShadow)"/>
-
-  <!-- Editor original -->
-  <rect x="0.5" y="58.5" width="1219" height="370" rx="18"
-        fill="url(#editorBg)" stroke="#ffffff" stroke-opacity=".045"/>
-
-  <!-- Controles tipo ventana -->
-  <circle cx="69" cy="117" r="21" fill="#ff5f57"/>
-  <circle cx="135" cy="117" r="21" fill="#ffbd2e"/>
-  <circle cx="201" cy="117" r="21" fill="#28c840"/>
-
-  <!-- Línea 1 -->
-  <text x="48" y="236.72" dominant-baseline="middle" fill="#667084"
-        font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-        font-size="52" font-weight="400" letter-spacing="0.78">1</text>
-  <text x="218" y="236.72" dominant-baseline="middle"
-        font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-        font-size="52" font-weight="400" letter-spacing="0.78"><tspan fill="#66b7f3">PRINCIPAL</tspan><tspan fill="#c9ced8">()</tspan></text>
-
-  <!-- Línea activa -->
-  <path d="M140 281.44H218V370.88H140Q132 370.88 132 362.88V289.44Q132 281.44 140 281.44Z" fill="#9a8a00" fill-opacity=".38"/>
-  <path d="M218 281.44H1182Q1190 281.44 1190 289.44V362.88Q1190 370.88 1182 370.88H218Z" fill="#827400" fill-opacity=".47"/>
-
-  <text x="48" y="326.16" dominant-baseline="middle" fill="#667084"
-        font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-        font-size="52" font-weight="400" letter-spacing="0.78">2</text>
-
-  <!-- Flecha amarilla de ejecución -->
-  <g transform="translate(153 304.16)" fill="none" stroke="#ffc400" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8 24H36"/>
-    <path d="M27 14L38 24L27 34"/>
+  <!-- Panel principal -->
+  <g filter="url(#runtimeShadow)">
+    <rect x="30" y="25" width="760" height="280" rx="16"
+          fill="url(#runtimeGrad)"
+          stroke="#2d333b"
+          stroke-width="1"/>
   </g>
 
-  <text x="252" y="326.16" dominant-baseline="middle"
-        font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-        font-size="52" font-weight="400" letter-spacing="0.78"><tspan fill="#c277dd">escribir</tspan><tspan fill="#c9ced8"> </tspan><tspan fill="#9fce73">&quot;Hola, CLRS&quot;</tspan></text>
+  <!-- Barra de pestañas -->
+  <path d="M46 25H774
+           Q790 25 790 41
+           V73
+           H30
+           V41
+           Q30 25 46 25Z"
+        fill="#161a1e"/>
 
-  <!-- Barra de depuración -->
-  <rect x="329" y="0.5" width="562" height="91" rx="28" fill="url(#toolbarBg)" stroke="#ffffff" stroke-opacity=".035" filter="url(#toolbarShadow)"/>
+  <line x1="30" y1="73" x2="790" y2="73"
+        stroke="#2d333b" stroke-width="1"/>
 
-  <!-- Asa de arrastre -->
-  <g fill="#b7bec8" opacity=".9">
-    <circle cx="354.5" cy="34.5" r="3.5"/><circle cx="368.5" cy="34.5" r="3.5"/>
-    <circle cx="354.5" cy="48.5" r="3.5"/><circle cx="368.5" cy="48.5" r="3.5"/>
-    <circle cx="354.5" cy="62.5" r="3.5"/><circle cx="368.5" cy="62.5" r="3.5"/>
+  <text x="50" y="55" class="ui tab">Problemas</text>
+  <text x="131" y="55" class="ui tab">Salida</text>
+  <text x="188" y="55" class="ui tab">Consola de depuración</text>
+  <text x="357" y="55" class="ui tab-active">Terminal</text>
+  <rect x="357" y="70" width="58" height="3" rx="1.5" fill="#66b7f3"/>
+
+  <!-- Encabezado de terminal -->
+  <circle cx="58" cy="102" r="5"
+          fill="#9fce73"
+          filter="url(#dotGlow)"/>
+
+  <text x="73" y="108"
+        class="mono"
+        font-size="16"
+        font-weight="600"
+        fill="#c8ced7">CLRS Runtime</text>
+
+  <!-- Separador de texto -->
+  <text x="56" y="137"
+        class="mono"
+        font-size="15"
+        fill="#8f98a5">────────────────────────────────────────────────────────────</text>
+
+  <!-- Ejecutar -->
+  <g transform="translate(56 154)" fill="#d5dbe4">
+    <path d="M3 2L17 10L3 18Z"/>
   </g>
 
-  <!-- Continuar -->
-  <g transform="translate(402 25) scale(.875)" fill="none" stroke="#55aef7">
-    <path d="M8 9V39" stroke-width="5" stroke-linecap="round"/>
-    <path d="M17 8L39 24L17 40V8Z" stroke-width="4.6" stroke-linejoin="round"/>
-  </g>
+  <text x="84" y="170"
+        class="mono"
+        font-size="16"
+        fill="#bfc6d0">programa.clrs</text>
 
-  <!-- Paso sobre -->
-  <g transform="translate(472 25) scale(.875)" fill="none" stroke="#55aef7">
-    <path d="M7.5 23 C8.8 14.6 15.7 9 24.5 9 C31.8 9 37.7 12.3 40.8 17.2"
-          stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M32.8 16.2 L41.2 17.4 L39.9 9"
-          stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="24" cy="36.5" r="5.5" fill="#55aef7" stroke="none"/>
-  </g>
+  <!-- Salida -->
+  <text x="56" y="207"
+        class="mono terminal">Hola, CLRS</text>
 
-  <!-- Entrar -->
-  <g transform="translate(542 25) scale(.875)" fill="none" stroke="#55aef7">
-    <path d="M24 5V29" stroke-width="5" stroke-linecap="round"/>
-    <path d="M14 19L24 29L34 19" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="24" cy="40" r="5" fill="#55aef7" stroke="none"/>
-  </g>
+  <!-- Separador de texto -->
+  <text x="56" y="236"
+        class="mono"
+        font-size="15"
+        fill="#8f98a5">────────────────────────────────────────────────────────────</text>
 
-  <!-- Salir -->
-  <g transform="translate(612 25) scale(.875)" fill="none" stroke="#55aef7">
-    <path d="M24 30V6" stroke-width="5" stroke-linecap="round"/>
-    <path d="M14 16L24 6L34 16" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="24" cy="40" r="5" fill="#55aef7" stroke="none"/>
-  </g>
+  <!-- Estado -->
+  <text x="56" y="272"
+        class="mono"
+        font-size="16"
+        fill="#b6bdc7">Estado:</text>
 
-  <!-- Reiniciar -->
-  <g transform="translate(682 25) scale(.875)" fill="none" stroke="#6bdc73">
-    <path d="M12 15H4V7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M6 14C10 8 16 5 24 5C35 5 44 13 44 24C44 35 35 43 24 43C16 43 9 39 6 33"
-          stroke-width="5" stroke-linecap="round"/>
-  </g>
+  <text x="127" y="272"
+        class="mono"
+        font-size="16"
+        font-weight="500"
+        fill="#9fce73">Correcto</text>
 
-  <!-- Detener -->
-  <g transform="translate(752 25) scale(.875)" fill="none" stroke="#ff6b68">
-    <rect x="10" y="10" width="28" height="28" rx="1" stroke-width="5"/>
-  </g>
-
-  <!-- Más opciones -->
-  <g transform="translate(822 25) scale(.875)" fill="none" stroke="#d2d7df">
-    <path d="M13 19L24 30L35 19" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
-
-  </g>
 </svg>
