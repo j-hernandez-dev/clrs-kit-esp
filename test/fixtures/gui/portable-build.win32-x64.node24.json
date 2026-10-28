@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "platform": "win32",
+  "arch": "x64",
+  "node": "24.16.0",
+  "abi": "137",
+  "npm": "11.13.0",
+  "checks": [
+    "five-file-export-with-dynamic-normalized-name",
+    "real-npm-ci-before-host-build",
+    "host-build-created-packable-with-normal-entry-intact",
+    "host-executable-in-dist-dynamic-project-directory",
+    "first-run-extracted-native-runtime-and-started-gtk",
+    "second-run-reused-byte-identical-runtime"
+  ],
+  "notValidated": [
+    "cross-compilation",
+    "otros hosts, arquitecturas o ABI",
+    "firma y distribución del ejecutable",
+    "GTK exactamente 4.10",
+    "interacción manual o apariencia visual"
+  ],
+  "executable": {
+    "name": "punto-venta-agil.exe",
+    "size": 183765541,
+    "buildScript": "build:win"
+  },
+  "runtime": {
+    "bindingName": "node-v137-win32-x64",
+    "marker": ".punto-venta-agil-runtime",
+    "digest": "f161b802127f050385d971c41cac83bb272a615dad426c0c9a8d6019a3dc688c"
+  },
+  "gtk": "loaded-by-packaged-application",
+  "cleaned": true
+}

@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "date": "2026-09-10",
+  "node": "24.16.0",
+  "binding": "4.1.1",
+  "platform": "win32",
+  "arch": "x64",
+  "gtk": [4, 22, 4],
+  "scope": "Validación nativa parcial del bloque 6 con la factory productiva y JavaScript generado; no certifica reproducción multimedia ni todas las plataformas.",
+  "checks": [
+    "17-native-controls-and-readable-properties",
+    "curated-properties-text-buffers-enums-and-null",
+    "real-string-models-selection-modes-row-width-and-listbox-wrapper",
+    "groups-calendar-actions-and-equal-range",
+    "native-column-factories-render-and-node-timer",
+    "missing-media-backend-rejected-before-native-abort",
+    "generated-clrs-dropdown-table-and-textview",
+    "generated-clrs-missing-media-localized-error"
+  ],
+  "limitations": ["CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE"],
+  "nativeMediaFinding": "El paquete nativo probado contiene bibliotecas y typelibs de GStreamer, pero ElementFactory.find no encuentra playbin3 ni playbin. Realizar Gtk.Video sin esa comprobación abortaba el proceso. Ahora VIDEO rechaza la creación con un diagnóstico localizado; los demás controles no requieren GStreamer.",
+  "warnings": ["Aviso no fatal de GLib-GIO: win32 session dbus binary not found."],
+  "notValidated": [
+    "Reproducción, pausa, desplazamiento y reinicio con un backend multimedia nativo completo. Cubiertos con dobles, no certificados nativamente en este entorno.",
+    "Linux y macOS; Node 22/26; GTK exactamente 4.10.",
+    "Eventos públicos y diálogos del bloque 7, excepto cerrar del bloque 5.",
+    "Equivalencia con exportación autónoma y corpus integral de los bloques finales."
+  ]
+}

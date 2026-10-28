@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "suite": "CLRS array literals integral acceptance corpus",
+  "areas": [
+    {
+      "id": "contract-parser-ast",
+      "name": "Contrato, parser y AST",
+      "evidence": [
+        {
+          "file": "test/frontend.characterization.test.js",
+          "testNeedle": "los literales de arreglo admiten vacío, expresiones y anidamiento arbitrario"
+        },
+        {
+          "file": "test/ast.validation.test.js",
+          "testNeedle": "la fábrica construye literales de arreglo vacíos, heterogéneos y anidados"
+        }
+      ]
+    },
+    {
+      "id": "semantics",
+      "name": "Semántica",
+      "evidence": [
+        {
+          "file": "test/semantic.analysis.test.js",
+          "testNeedle": "la semántica resuelve referencias dentro de literales de arreglo anidados"
+        },
+        {
+          "file": "test/language.diagnostics.test.js",
+          "testNeedle": "diagnostica identificadores indefinidos dentro de arreglos literales"
+        }
+      ]
+    },
+    {
+      "id": "transpilation-execution",
+      "name": "Transpilación y ejecución",
+      "evidence": [
+        {
+          "file": "test/transpiler.characterization.test.js",
+          "testNeedle": "transpila literales de arreglo vacíos, anidados y con expresiones"
+        },
+        {
+          "file": "test/compilation.service.test.js",
+          "testNeedle": "ejecuta literales de arreglo en asignaciones, argumentos y retornos"
+        }
+      ]
+    },
+    {
+      "id": "debugging-editor",
+      "name": "Depuración e inteligencia del editor",
+      "evidence": [
+        {
+          "file": "test/debug.execution.control.test.js",
+          "testNeedle": "depura arreglos literales anidados y conserva el origen de sus llamadas"
+        },
+        {
+          "file": "test/language.intelligence.test.js",
+          "testNeedle": "ofrece hover, firmas y completado dentro de arreglos literales"
+        },
+        {
+          "file": "test/rename.service.test.js",
+          "testNeedle": "renombra todas las referencias dentro de arreglos literales anidados"
+        }
+      ]
+    },
+    {
+      "id": "formatter-diagram",
+      "name": "Formateador y diagramador",
+      "evidence": [
+        {
+          "file": "test/language.formatting.test.js",
+          "testNeedle": "formatea arreglos literales compactos y multidimensionales"
+        },
+        {
+          "file": "test/diagram.characterization.test.js",
+          "testNeedle": "proyecta literales de arreglo en etiquetas y editores sincronizados"
+        },
+        {
+          "file": "test/diagram.application.test.js",
+          "testNeedle": "edita un arreglo literal multilínea sin dejar líneas residuales"
+        }
+      ]
+    },
+    {
+      "id": "complexity",
+      "name": "Costo y complejidad",
+      "evidence": [
+        {
+          "file": "test/complexity.domain.test.js",
+          "testNeedle": "conserva el costo de llamadas anidadas en literales de arreglo"
+        }
+      ]
+    },
+    {
+      "id": "broker95",
+      "name": "BROKER.95",
+      "evidence": [
+        {
+          "file": "test/broker95.static.evidence.test.js",
+          "testNeedle": "recorre arreglos literales al construir evidencia estática"
+        },
+        {
+          "file": "test/broker95.test.execution.test.js",
+          "testNeedle": "ejecuta contratos que inicializan arreglos literales anidados"
+        },
+        {
+          "file": "test/broker95.learning.catalog.test.js",
+          "testNeedle": "conserva la sintaxis vigente de asignación e igualdad"
+        }
+      ]
+    }
+  ]
+}

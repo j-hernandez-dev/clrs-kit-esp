@@ -1,0 +1,5 @@
+BOTON(texto)
+    retornar texto
+PRINCIPAL()
+    // VENTANA("v", "Esto es un comentario")
+    escribir BOTON("sin GTK")

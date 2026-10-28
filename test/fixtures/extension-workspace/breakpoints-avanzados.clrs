@@ -1,0 +1,4 @@
+PRINCIPAL()
+    para i = 1 hasta 4
+        valor = i * 10
+        escribir valor

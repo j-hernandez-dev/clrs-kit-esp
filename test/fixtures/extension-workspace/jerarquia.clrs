@@ -1,0 +1,6 @@
+BASE(n)
+    retornar n
+DOBLE(x)
+    retornar BASE(x) + BASE(x)
+PRINCIPAL()
+    resultado = DOBLE(2)

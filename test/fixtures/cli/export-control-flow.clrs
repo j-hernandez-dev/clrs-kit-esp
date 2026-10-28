@@ -1,0 +1,13 @@
+SUMAR(a, b)
+    retornar a + b
+
+PRINCIPAL()
+    contador = 0
+    total = 0
+    mientras contador < 3
+        total = SUMAR(total, contador)
+        contador = contador + 1
+    si total > 0
+        escribir total
+    sino
+        escribir 0

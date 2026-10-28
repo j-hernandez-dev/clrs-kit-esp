@@ -1,0 +1,339 @@
+{
+  "schemaVersion": 1,
+  "suite": "BROKER.95 deterministic acceptance corpus",
+  "academicPolicy": {
+    "dimensions": [
+      "functionality",
+      "robustness",
+      "design"
+    ],
+    "forbiddenDimensions": [
+      "efficiency"
+    ]
+  },
+  "catalog": {
+    "familyCount": 39,
+    "categoryCount": 151,
+    "clientCategoryCount": 139,
+    "learningCategoryCount": 12,
+    "families": {
+      "FND": 12,
+      "NUM": 10,
+      "CTRL": 3,
+      "GEOFORM": 2,
+      "ARRAY": 4,
+      "MATRIX": 4,
+      "STRING": 6,
+      "SEARCH": 2,
+      "SORT": 2,
+      "SELECT": 3,
+      "LINEAR": 3,
+      "HASH": 2,
+      "TREE": 5,
+      "MATHD": 6,
+      "NUMERIC": 4,
+      "LINALG": 2,
+      "DP": 4,
+      "OPT": 5,
+      "CSP": 1,
+      "GRAPH-F": 4,
+      "GRAPH-O": 3,
+      "GRAPH-S": 4,
+      "GRAPH-N": 2,
+      "GEO": 5,
+      "CRYPTO": 3,
+      "COMP": 5,
+      "DATA": 6,
+      "RAND": 4,
+      "STREAM": 5,
+      "SYS": 2,
+      "ADAPT": 3,
+      "ML": 4,
+      "SIGNAL": 5,
+      "BIO": 3,
+      "STATE": 3,
+      "GAME": 2,
+      "NETWORK": 2,
+      "VOTE": 3,
+      "FIN": 3
+    },
+    "compatibleCategoryCountByRisk": {
+      "low": 10,
+      "medium": 39,
+      "high": 79,
+      "extreme": 139
+    },
+    "baseCategoryCountByRisk": {
+      "low": 10,
+      "medium": 29,
+      "high": 40,
+      "extreme": 60
+    }
+  },
+  "riskRules": [
+    {
+      "id": "risk-low",
+      "risk": "low",
+      "alertIncrement": 0,
+      "payRange": [100, 250],
+      "weights": {
+        "functionality": 1
+      }
+    },
+    {
+      "id": "risk-medium",
+      "risk": "medium",
+      "alertIncrement": 1,
+      "payRange": [300, 650],
+      "weights": {
+        "functionality": 0.7,
+        "robustness": 0.3
+      }
+    },
+    {
+      "id": "risk-high",
+      "risk": "high",
+      "alertIncrement": 2,
+      "payRange": [800, 1500],
+      "weights": {
+        "functionality": 0.5,
+        "robustness": 0.2,
+        "design": 0.3
+      }
+    },
+    {
+      "id": "risk-extreme",
+      "risk": "extreme",
+      "alertIncrement": 4,
+      "payRange": [2000, 4000],
+      "weights": {
+        "functionality": 0.5,
+        "robustness": 0.125,
+        "design": 0.375
+      }
+    }
+  ],
+  "payoutCases": [
+    { "id": "payout-100", "potential": 200, "score": 100, "expected": 200 },
+    { "id": "payout-90", "potential": 200, "score": 90, "expected": 200 },
+    { "id": "payout-89", "potential": 200, "score": 89, "expected": 180 },
+    { "id": "payout-80", "potential": 200, "score": 80, "expected": 180 },
+    { "id": "payout-79", "potential": 200, "score": 79, "expected": 150 },
+    { "id": "payout-70", "potential": 200, "score": 70, "expected": 150 },
+    { "id": "payout-69", "potential": 200, "score": 69, "expected": 100 },
+    { "id": "payout-60", "potential": 200, "score": 60, "expected": 100 },
+    { "id": "payout-59", "potential": 200, "score": 59, "expected": 0 }
+  ],
+  "terminal": {
+    "valid": [
+      { "id": "terminal-root", "input": "ai", "type": "root", "requiresLlm": false, "requiresActiveDocument": false },
+      { "id": "terminal-help", "input": "ai -?", "type": "help", "requiresLlm": false, "requiresActiveDocument": false },
+      { "id": "terminal-new-auto", "input": "ai -new", "type": "new_contract", "risk": null, "requiresLlm": true, "requiresActiveDocument": false },
+      { "id": "terminal-new-low", "input": "ai -new low", "type": "new_contract", "risk": "low", "requiresLlm": true, "requiresActiveDocument": false },
+      { "id": "terminal-new-medium", "input": "AI -NEW MEDIUM", "type": "new_contract", "risk": "medium", "requiresLlm": true, "requiresActiveDocument": false },
+      { "id": "terminal-new-high", "input": "ai -new high", "type": "new_contract", "risk": "high", "requiresLlm": true, "requiresActiveDocument": false },
+      { "id": "terminal-new-extreme", "input": "ai -new extreme", "type": "new_contract", "risk": "extreme", "requiresLlm": true, "requiresActiveDocument": false },
+      { "id": "terminal-delete", "input": "ai -delete 12", "type": "delete_contract", "contractId": 12, "requiresLlm": false, "requiresActiveDocument": false },
+      { "id": "terminal-set", "input": "ai -set 7", "type": "accept_contract", "contractId": 7, "requiresLlm": false, "requiresActiveDocument": false },
+      { "id": "terminal-purge", "input": "ai -purge", "type": "purge_contracts", "requiresLlm": false, "requiresActiveDocument": false },
+      { "id": "terminal-get", "input": "ai -get", "type": "list_contracts", "requiresLlm": false, "requiresActiveDocument": false },
+      { "id": "terminal-read", "input": "ai -read 95", "type": "read_contract", "contractId": 95, "requiresLlm": false, "requiresActiveDocument": false },
+      { "id": "terminal-review", "input": "ai -review", "type": "review_code", "requiresLlm": true, "requiresActiveDocument": true },
+      { "id": "terminal-review-selector", "input": "ai -review curso/reto.clrs", "type": "review_code", "documentSelector": "curso/reto.clrs", "requiresLlm": true, "requiresActiveDocument": true },
+      { "id": "terminal-review-selector-spaces", "input": "ai -review carpeta con espacios/reto.clrs", "type": "review_code", "documentSelector": "carpeta con espacios/reto.clrs", "requiresLlm": true, "requiresActiveDocument": true },
+      { "id": "terminal-ask", "input": "ai -ask", "type": "ask_code", "requiresLlm": true, "requiresActiveDocument": true },
+      { "id": "terminal-ask-question", "input": "ai -ask ¿Por qué mi ciclo no termina?", "type": "ask_code", "question": "¿Por qué mi ciclo no termina?", "requiresLlm": true, "requiresActiveDocument": true },
+      { "id": "terminal-push", "input": "ai -push", "type": "push_code", "requiresLlm": true, "requiresActiveDocument": true },
+      { "id": "terminal-push-selector-workspace", "input": "ai -push \"curso uno/entregas/reto final.clrs\"", "type": "push_code", "documentSelector": "curso uno/entregas/reto final.clrs", "requiresLlm": true, "requiresActiveDocument": true },
+      { "id": "terminal-info", "input": "ai -info", "type": "info", "requiresLlm": false, "requiresActiveDocument": false },
+      { "id": "terminal-gameinfo", "input": "ai -gameinfo", "type": "game_info", "requiresLlm": false, "requiresActiveDocument": false }
+    ],
+    "invalid": [
+      { "id": "terminal-empty", "input": "   \n\t", "errorCode": "BROKER95_TERMINAL_INPUT_EMPTY" },
+      { "id": "terminal-root-invalid", "input": "cipher -get", "errorCode": "BROKER95_TERMINAL_ROOT_INVALID" },
+      { "id": "terminal-option-unknown", "input": "ai -unknown", "errorCode": "BROKER95_TERMINAL_OPTION_UNKNOWN" },
+      { "id": "terminal-chat", "input": "ai ¿qué recomienda CIPHER?", "errorCode": "BROKER95_TERMINAL_FREE_MESSAGE_DISABLED" },
+      { "id": "terminal-read-missing", "input": "ai -read", "errorCode": "BROKER95_TERMINAL_ARGUMENT_REQUIRED" },
+      { "id": "terminal-set-missing", "input": "ai -set", "errorCode": "BROKER95_TERMINAL_ARGUMENT_REQUIRED" },
+      { "id": "terminal-delete-missing", "input": "ai -delete", "errorCode": "BROKER95_TERMINAL_ARGUMENT_REQUIRED" },
+      { "id": "terminal-extra-argument", "input": "ai -info ahora", "errorCode": "BROKER95_TERMINAL_ARGUMENT_UNEXPECTED" },
+      { "id": "terminal-risk-invalid", "input": "ai -new impossible", "errorCode": "BROKER95_TERMINAL_RISK_INVALID" },
+      { "id": "terminal-review-selector-empty", "input": "ai -review \"\"", "errorCode": "BROKER95_TERMINAL_DOCUMENT_SELECTOR_INVALID" },
+      { "id": "terminal-push-selector-quote", "input": "ai -push \"curso/reto.clrs", "errorCode": "BROKER95_TERMINAL_DOCUMENT_SELECTOR_INVALID" },
+      { "id": "terminal-id-zero", "input": "ai -read 0", "errorCode": "BROKER95_TERMINAL_CONTRACT_ID_INVALID" },
+      { "id": "terminal-id-leading-zero", "input": "ai -read 01", "errorCode": "BROKER95_TERMINAL_CONTRACT_ID_INVALID" },
+      { "id": "terminal-id-signed", "input": "ai -read +1", "errorCode": "BROKER95_TERMINAL_CONTRACT_ID_INVALID" }
+    ]
+  },
+  "comparisonCases": {
+    "passing": [
+      { "id": "compare-exact-pass", "comparison": "exact", "actual": "hola\n", "expected": "hola\n" },
+      { "id": "compare-trimmed-pass", "comparison": "trimmed", "actual": "  hola\n", "expected": "hola" },
+      { "id": "compare-whitespace-pass", "comparison": "normalized-whitespace", "actual": "uno\n\t dos", "expected": "uno dos" },
+      { "id": "compare-lines-pass", "comparison": "lines", "actual": "uno\r\ndos\r\n", "expected": "uno\ndos" },
+      { "id": "compare-unordered-lines-pass", "comparison": "unordered-lines", "actual": "dos\nuno\ndos\n", "expected": "uno\ndos\ndos" },
+      { "id": "compare-number-pass", "comparison": "number", "actual": "1.25e2\n", "expected": "125" },
+      { "id": "compare-number-negative-zero-pass", "comparison": "number", "actual": "-0", "expected": "0" },
+      { "id": "compare-tolerance-pass", "comparison": "number-tolerance", "actual": "1.1", "expected": "1 +/- 0.1" },
+      { "id": "compare-json-pass", "comparison": "json", "actual": "{\"b\":2,\"a\":1}", "expected": "{\"a\":1,\"b\":2}" },
+      { "id": "compare-json-null-pass", "comparison": "json", "actual": "null", "expected": "null" },
+      { "id": "compare-array-ordered-pass", "comparison": "array-ordered", "actual": "[1,{\"b\":2,\"a\":1}]", "expected": "[1,{\"a\":1,\"b\":2}]" },
+      { "id": "compare-array-unordered-pass", "comparison": "array-unordered", "actual": "[2,1,2]", "expected": "[1,2,2]" },
+      { "id": "compare-boolean-pass", "comparison": "boolean", "actual": "VERDAD\n", "expected": "true" },
+      { "id": "compare-contains-pass", "comparison": "contains", "actual": "resultado: 42\n", "expected": "42" },
+      { "id": "compare-regex-pass", "comparison": "regex-safe", "actual": "item-42", "expected": "^item-\\d+$" }
+    ],
+    "failing": [
+      { "id": "compare-exact-fail", "comparison": "exact", "actual": "hola", "expected": "Hola" },
+      { "id": "compare-trimmed-fail", "comparison": "trimmed", "actual": "uno", "expected": "dos" },
+      { "id": "compare-whitespace-fail", "comparison": "normalized-whitespace", "actual": "uno dos", "expected": "uno tres" },
+      { "id": "compare-lines-fail", "comparison": "lines", "actual": "uno\ndos", "expected": "uno\ntres" },
+      { "id": "compare-unordered-lines-fail", "comparison": "unordered-lines", "actual": "uno\ndos\ndos", "expected": "uno\nuno\ndos" },
+      { "id": "compare-number-fail", "comparison": "number", "actual": "12 datos", "expected": "12" },
+      { "id": "compare-tolerance-fail", "comparison": "number-tolerance", "actual": "10.101", "expected": "10 +/- 0.1" },
+      { "id": "compare-json-fail", "comparison": "json", "actual": "{mal}", "expected": "null" },
+      { "id": "compare-array-ordered-fail", "comparison": "array-ordered", "actual": "[2,1]", "expected": "[1,2]" },
+      { "id": "compare-array-unordered-fail", "comparison": "array-unordered", "actual": "[1,2]", "expected": "[1,2,2]" },
+      { "id": "compare-boolean-fail", "comparison": "boolean", "actual": "si", "expected": "true" },
+      { "id": "compare-contains-fail", "comparison": "contains", "actual": "resultado", "expected": "42" },
+      { "id": "compare-regex-fail", "comparison": "regex-safe", "actual": "item-x", "expected": "^item-\\d+$" }
+    ]
+  },
+  "protocol": {
+    "validWebviewMessages": [
+      { "id": "protocol-ready", "type": "webview/ready", "payload": { "clientVersion": "1.4.0" } },
+      { "id": "protocol-request-state", "type": "game/request-state", "payload": {} },
+      { "id": "protocol-terminal", "type": "terminal/submit", "payload": { "input": "ai -get" } },
+      { "id": "protocol-countermeasure", "type": "alert/purchase-countermeasure", "payload": { "countermeasureId": "scrub" } },
+      { "id": "protocol-model", "type": "settings/set-model", "payload": { "model": "modelo-prueba" } },
+      { "id": "protocol-api-key", "type": "settings/set-api-key", "payload": { "apiKey": "clave-de-prueba" } },
+      { "id": "protocol-delete-api-key", "type": "settings/delete-api-key", "payload": {} },
+      { "id": "protocol-test-llm-connection", "type": "settings/test-llm-connection", "payload": {} },
+      { "id": "protocol-clear-history", "type": "settings/clear-category-history", "payload": {} },
+      { "id": "protocol-reset-progress", "type": "settings/reset-game-progress", "payload": {} }
+    ],
+    "invalidWebviewMessages": [
+      { "id": "protocol-id-invalid", "mutation": "protocol", "value": "otro", "errorCode": "BROKER95_PROTOCOL_ID_INVALID" },
+      { "id": "protocol-version-future", "mutation": "protocolVersion", "value": 99, "errorCode": "BROKER95_PROTOCOL_VERSION_UNSUPPORTED" },
+      { "id": "protocol-direction-invalid", "mutation": "direction", "value": "host_to_webview", "errorCode": "BROKER95_PROTOCOL_DIRECTION_INVALID" },
+      { "id": "protocol-type-unknown", "mutation": "type", "value": "host/execute-shell", "errorCode": "BROKER95_PROTOCOL_MESSAGE_TYPE_UNKNOWN" },
+      { "id": "protocol-request-id-invalid", "mutation": "requestId", "value": "", "errorCode": "BROKER95_PROTOCOL_PAYLOAD_INVALID" },
+      { "id": "protocol-envelope-extra", "mutation": "extraEnvelopeField", "value": true, "errorCode": "BROKER95_PROTOCOL_PAYLOAD_INVALID" },
+      { "id": "protocol-payload-extra", "mutation": "extraPayloadField", "value": true, "errorCode": "BROKER95_PROTOCOL_PAYLOAD_INVALID" }
+    ]
+  },
+  "gameScenarios": [
+    {
+      "id": "game-low-perfect",
+      "initial": {},
+      "contract": { "risk": "low", "payPotential": 200 },
+      "operations": [
+        { "type": "add" },
+        { "type": "accept" },
+        { "type": "settle", "dimensionScores": { "functionality": 100 } }
+      ],
+      "expected": { "status": "playing", "revision": 3, "money": 200, "alertLevel": 0, "activeContractId": null, "completed": 1, "failed": 0, "contractState": "completed", "finalScore": 100, "payout": 200 }
+    },
+    {
+      "id": "game-medium-partial",
+      "initial": {},
+      "contract": { "risk": "medium", "payPotential": 400 },
+      "operations": [
+        { "type": "add" },
+        { "type": "accept" },
+        { "type": "settle", "dimensionScores": { "functionality": 80, "robustness": 60 } }
+      ],
+      "expected": { "status": "playing", "revision": 3, "money": 300, "alertLevel": 1, "activeContractId": null, "completed": 1, "failed": 0, "contractState": "completed", "finalScore": 74, "payout": 300 }
+    },
+    {
+      "id": "game-high-failed",
+      "initial": {},
+      "contract": { "risk": "high", "payPotential": 1000 },
+      "operations": [
+        { "type": "add" },
+        { "type": "accept" },
+        { "type": "settle", "dimensionScores": { "functionality": 50, "robustness": 50, "design": 50 } }
+      ],
+      "expected": { "status": "playing", "revision": 3, "money": 0, "alertLevel": 2, "activeContractId": null, "completed": 0, "failed": 1, "contractState": "failed", "finalScore": 50, "payout": 0 }
+    },
+    {
+      "id": "game-extreme-perfect",
+      "initial": {},
+      "contract": { "risk": "extreme", "payPotential": 2500 },
+      "operations": [
+        { "type": "add" },
+        { "type": "accept" },
+        { "type": "settle", "dimensionScores": { "functionality": 100, "robustness": 100, "design": 100 } }
+      ],
+      "expected": { "status": "playing", "revision": 3, "money": 2500, "alertLevel": 4, "activeContractId": null, "completed": 1, "failed": 0, "contractState": "completed", "finalScore": 100, "payout": 2500 }
+    },
+    {
+      "id": "game-countermeasure",
+      "initial": { "money": 1000 },
+      "contract": { "risk": "high", "payPotential": 1000 },
+      "operations": [
+        { "type": "add" },
+        { "type": "accept" },
+        { "type": "countermeasure", "countermeasureId": "scrub" }
+      ],
+      "expected": { "status": "playing", "revision": 3, "money": 750, "alertLevel": 1, "activeContractId": 1, "completed": 0, "failed": 0, "contractState": "active" }
+    },
+    {
+      "id": "game-over-at-eleven",
+      "initial": { "money": 900, "alertLevel": 10 },
+      "contract": { "risk": "medium", "payPotential": 400 },
+      "operations": [
+        { "type": "add" },
+        { "type": "accept" }
+      ],
+      "expected": { "status": "game_over", "revision": 2, "money": 0, "alertLevel": 11, "activeContractId": null, "completed": 0, "failed": 0, "contractState": null }
+    }
+  ],
+  "executionScenarios": [
+    {
+      "id": "execution-increment",
+      "sourceCode": "PRINCIPAL()\n    valor = 0\n    leer valor\n    escribir valor + 1",
+      "expectedStatus": "completed",
+      "testCases": [
+        { "id": "EXEC-1", "kind": "normal", "requirementIds": ["REQ-1"], "stdin": "4\n", "expected": "5\n", "comparison": "exact", "timeoutMs": 1000 },
+        { "id": "EXEC-2", "kind": "boundary", "requirementIds": ["REQ-1"], "stdin": "-1\n", "expected": "0\n", "comparison": "exact", "timeoutMs": 1000 },
+        { "id": "EXEC-3", "kind": "normal", "requirementIds": ["REQ-1"], "stdin": "41\n", "expected": "42\n", "comparison": "number", "timeoutMs": 1000 }
+      ],
+      "expectedSummary": { "total": 3, "passed": 3, "failed": 0, "runtimeErrors": 0, "timedOut": 0, "outputLimited": 0, "startFailed": 0, "invalid": 0, "notRun": 0 }
+    },
+    {
+      "id": "execution-unordered-lines",
+      "sourceCode": "PRINCIPAL()\n    escribir \"uno\"\n    escribir \"dos\"",
+      "expectedStatus": "completed",
+      "testCases": [
+        { "id": "EXEC-4", "kind": "normal", "requirementIds": ["REQ-1"], "stdin": "", "expected": "dos\nuno", "comparison": "unordered-lines", "timeoutMs": 1000 }
+      ],
+      "expectedSummary": { "total": 1, "passed": 1, "failed": 0, "runtimeErrors": 0, "timedOut": 0, "outputLimited": 0, "startFailed": 0, "invalid": 0, "notRun": 0 }
+    },
+    {
+      "id": "execution-source-invalid",
+      "sourceCode": "PRINCIPAL()\n    escribir ,",
+      "expectedStatus": "source-invalid",
+      "testCases": [
+        { "id": "EXEC-5", "kind": "normal", "requirementIds": ["REQ-1"], "stdin": "", "expected": "1\n", "comparison": "exact", "timeoutMs": 1000 }
+      ],
+      "expectedSummary": { "total": 1, "passed": 0, "failed": 0, "runtimeErrors": 0, "timedOut": 0, "outputLimited": 0, "startFailed": 0, "invalid": 0, "notRun": 1 }
+    }
+  ],
+  "operationCases": [
+    { "id": "operation-single-flight", "mode": "single-flight", "expectedExecutions": 1 },
+    { "id": "operation-key-conflict", "mode": "key-conflict", "errorCode": "BROKER95_OPERATION_IDEMPOTENCY_CONFLICT" },
+    { "id": "operation-failure-retry", "mode": "failure-retry", "expectedExecutions": 2 }
+  ],
+  "coverageAreas": {
+    "academic-policy": ["risk-low", "risk-medium", "risk-high", "risk-extreme"],
+    "catalog": ["risk-low", "risk-medium", "risk-high", "risk-extreme"],
+    "terminal": ["terminal-root", "terminal-help", "terminal-new-auto", "terminal-new-low", "terminal-new-medium", "terminal-new-high", "terminal-new-extreme", "terminal-delete", "terminal-set", "terminal-purge", "terminal-get", "terminal-read", "terminal-review", "terminal-review-selector", "terminal-review-selector-spaces", "terminal-ask", "terminal-ask-question", "terminal-push", "terminal-push-selector-workspace", "terminal-info", "terminal-gameinfo", "terminal-chat", "terminal-empty", "terminal-root-invalid", "terminal-option-unknown", "terminal-read-missing", "terminal-set-missing", "terminal-delete-missing", "terminal-extra-argument", "terminal-risk-invalid", "terminal-review-selector-empty", "terminal-push-selector-quote", "terminal-id-zero", "terminal-id-leading-zero", "terminal-id-signed"],
+    "economy": ["payout-100", "payout-90", "payout-89", "payout-80", "payout-79", "payout-70", "payout-69", "payout-60", "payout-59", "game-countermeasure"],
+    "comparison": ["compare-exact-pass", "compare-trimmed-pass", "compare-whitespace-pass", "compare-lines-pass", "compare-unordered-lines-pass", "compare-number-pass", "compare-number-negative-zero-pass", "compare-tolerance-pass", "compare-json-pass", "compare-json-null-pass", "compare-array-ordered-pass", "compare-array-unordered-pass", "compare-boolean-pass", "compare-contains-pass", "compare-regex-pass", "compare-exact-fail", "compare-trimmed-fail", "compare-whitespace-fail", "compare-lines-fail", "compare-unordered-lines-fail", "compare-number-fail", "compare-tolerance-fail", "compare-json-fail", "compare-array-ordered-fail", "compare-array-unordered-fail", "compare-boolean-fail", "compare-contains-fail", "compare-regex-fail"],
+    "protocol": ["protocol-ready", "protocol-request-state", "protocol-terminal", "protocol-countermeasure", "protocol-model", "protocol-api-key", "protocol-delete-api-key", "protocol-test-llm-connection", "protocol-clear-history", "protocol-reset-progress", "protocol-id-invalid", "protocol-version-future", "protocol-direction-invalid", "protocol-type-unknown", "protocol-request-id-invalid", "protocol-envelope-extra", "protocol-payload-extra"],
+    "game-lifecycle": ["game-low-perfect", "game-medium-partial", "game-high-failed", "game-extreme-perfect", "game-countermeasure", "game-over-at-eleven"],
+    "local-execution": ["execution-increment", "execution-unordered-lines", "execution-source-invalid"],
+    "concurrency": ["operation-single-flight", "operation-key-conflict", "operation-failure-retry"]
+  }
+}

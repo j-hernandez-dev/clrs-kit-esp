@@ -1,0 +1,155 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtemp, writeFile, mkdir, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
+import { probeGuiEnvironment, classifyGuiMediaError, guiEnvironmentMessage, decodeGuiProbeResult } from "../src/standard-library/gui/runtime/GuiEnvironmentProbe.js";
+import { GUI_ERROR_MESSAGES } from "../src/standard-library/gui/GuiErrors.js";
+import { parseSource } from "../src/language/LanguageFrontend.js";
+import { SemanticAnalyzer } from "../src/semantic/SemanticAnalyzer.js";
+import { JavaScriptGenerator } from "../src/compiler/JavaScriptGenerator.js";
+import { getGuiRuntimeFactorySource } from "../src/standard-library/gui/runtime/GuiRuntimeSource.js";
+import { GuiRuntimePreparation } from "../src/compiler/gui/GuiRuntimePreparation.js";
+
+function nativeDouble() {
+    const calls = [];
+    const media = { setFile() { calls.push("prepare"); }, isPrepared: () => true,
+        getError: () => null, pause() {}, clear() { calls.push("clear"); } };
+    const Gtk = { getMajorVersion: () => 4, getMinorVersion: () => 10, getMicroVersion: () => 0,
+        initCheck() { calls.push("init"); return true; },
+        Video: class {}, MediaFile: { new: () => media } };
+    const Gio = {
+        File: { newForPath: filename => ({ filename }) },
+        ioErrorQuark: () => 1, IOErrorEnum: { NOT_FOUND: 1, PERMISSION_DENIED: 14, NOT_SUPPORTED: 15 } };
+    const GLib = { Bytes: { new: bytes => bytes }, MainContext: { default: () => ({ pending: () => false }) } };
+    const load = async () => { calls.push("load"); return { default: { require(name) {
+        calls.push(name); if (name === "Gst") { throw new Error("Gst introspection not installed"); }
+        return { Gtk, Gio, GLib }[name];
+    } } }; };
+    return { Gtk, Gio, GLib, load, calls, media };
+}
+const analyze = source => { const ast = parseSource(source).ast; return { ast, semanticModel: new SemanticAnalyzer().analyze(ast) }; };
+
+test("GUI entorno: capacidades semánticas, homónimos y texto sin falsos positivos", () => {
+    for (const source of ['escribir "VIDEO(a,b)"', 'VIDEO(a,b)\n    retornar a\nPRINCIPAL()\n    VIDEO(1,2)']) {
+        assert.deepEqual(analyze(source).semanticModel.gui.usage.capabilities, []);
+    }
+    assert.deepEqual(analyze('BOTON("b","x")').semanticModel.gui.usage.capabilities, ["gui"]);
+    assert.deepEqual(analyze('VIDEO("v","x.avi")').semanticModel.gui.usage.capabilities, ["gui", "gui.video"]);
+});
+
+test("GUI entorno: sin GUI no carga nada; GUI sin VIDEO no consulta multimedia", async () => {
+    const fake = nativeDouble();
+    assert.equal((await probeGuiEnvironment("binding", [], fake.load)).ok, true);
+    assert.deepEqual(fake.calls, []);
+    assert.equal((await probeGuiEnvironment("binding", ["gui"], fake.load)).ok, true);
+    assert.deepEqual(fake.calls, ["load", "Gtk"]);
+});
+
+test("GUI entorno: VIDEO prepara Gtk.MediaFile real del adaptador sin exigir Gst ni abrir ventanas", async () => {
+    const fake = nativeDouble();
+    assert.equal((await probeGuiEnvironment("binding", ["gui", "gui.video"], fake.load)).ok, true);
+    assert.deepEqual(fake.calls, ["load", "Gtk", "init", "Gio", "GLib", "prepare", "clear"]);
+});
+
+test("GUI entorno: distingue carga del binding, GTK antiguo, GTK ausente y fallback multimedia", async () => {
+    const fake = nativeDouble();
+    assert.equal((await probeGuiEnvironment("binding", ["gui"], async () => { throw new Error("ABI private"); })).code, "CLRS_GUI_DEP_NATIVE_LOAD_FAILED");
+    assert.equal((await probeGuiEnvironment("binding", ["gui"], async () => ({ require() { throw new Error("typelib"); } }))).code, "CLRS_GUI_DEP_GTK_NOT_FOUND");
+    fake.Gtk.getMinorVersion = () => 8;
+    assert.equal((await probeGuiEnvironment("binding", ["gui"], fake.load)).code, "CLRS_GUI_DEP_GTK_TOO_OLD");
+    fake.Gtk.getMinorVersion = () => 10;
+    fake.Gtk.MediaFile.new = () => ({ constructor: { name: "GtkNoMediaFile" } });
+    assert.equal((await probeGuiEnvironment("binding", ["gui", "gui.video"], fake.load)).code, "CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE");
+});
+
+test("GUI entorno: la muestra fallida no se atribuye a un backend inexistente ni expone detalles", async () => {
+    const fake = nativeDouble();
+    fake.media.getError = () => ({ domain: 1, code: 15, message: "private-path" });
+    const result = await probeGuiEnvironment("binding", ["gui", "gui.video"], fake.load);
+    assert.equal(result.code, "CLRS_GUI_MEDIA_LOAD_FAILED");
+    assert.ok(fake.calls.includes("clear"));
+    assert.equal(classifyGuiMediaError({ domain: 1, code: 15 }, fake.Gio, fake.GLib, true), "CLRS_GUI_MEDIA_FORMAT_UNSUPPORTED");
+    assert.equal(classifyGuiMediaError({ domain: 1, code: 1 }, fake.Gio, fake.GLib, true), "CLRS_GUI_MEDIA_RESOURCE_UNAVAILABLE");
+    assert.equal(classifyGuiMediaError({ domain: 999, code: 15 }, fake.Gio, fake.GLib, true), "CLRS_GUI_MEDIA_LOAD_FAILED");
+    assert.equal(decodeGuiProbeResult({ code: 134, stdout: '{"phase":"media"}', stderr: "private" }).code, "CLRS_GUI_MEDIA_LOAD_FAILED");
+});
+
+test("GUI entorno: mensajes por plataforma y capacidad, sin afirmar ausencia de GStreamer", () => {
+    const message = platform => guiEnvironmentMessage("CLRS_GUI_DEP_GTK_NOT_FOUND", GUI_ERROR_MESSAGES, platform);
+    assert.match(message("win32"), /empaquetadas/); assert.doesNotMatch(message("win32"), /Instala GTK/);
+    assert.match(message("linux"), /gestor de paquetes de tu distribución/);
+    assert.match(message("darwin"), /macOS/);
+    assert.match(guiEnvironmentMessage("CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE", GUI_ERROR_MESSAGES, "linux"), /pueden ser necesarios GStreamer/);
+});
+
+test("GUI diagnósticos: Windows orienta al usuario final sin atribuir instalación o PATH como causa", () => {
+    for (const code of ["CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE", "CLRS_GUI_MEDIA_LOAD_FAILED"]) {
+        const message = guiEnvironmentMessage(code, GUI_ERROR_MESSAGES, "win32");
+        assert.match(message, /GStreamer Runtime para MSVC de 64 bits \(x86_64\)/);
+        assert.match(message, /Only runtime/);
+        assert.match(message, /no necesitas Development\/SDK, Debug symbols ni Debugger/);
+        assert.match(message, /Si GStreamer ya está instalado.*bin.*PATH.*antes de reinstalarlo/);
+        assert.match(message, /Cierra completamente VS Code/);
+        assert.match(message, /fuera de VS Code.*terminal/);
+        assert.match(message, /no demuestra que GStreamer esté ausente ni que PATH sea la causa/);
+        assert.match(message, /no instala automáticamente/);
+        for (const platform of ["linux", "darwin"]) {
+            const other = guiEnvironmentMessage(code, GUI_ERROR_MESSAGES, platform);
+            assert.doesNotMatch(other, /MSVC|x86_64|Only runtime|Development\/SDK|PATH/);
+            assert.match(other, /runtime multimedia de GTK/);
+            assert.match(other, /no instala automáticamente/);
+        }
+    }
+    for (const code of ["CLRS_GUI_MEDIA_FORMAT_UNSUPPORTED", "CLRS_GUI_MEDIA_RESOURCE_UNAVAILABLE"]) {
+        assert.doesNotMatch(guiEnvironmentMessage(code, GUI_ERROR_MESSAGES, "win32"), /instalar|MSVC|PATH/);
+    }
+});
+
+test("GUI probe: inicializa GTK antes de MediaFile y no confunde ausencia de escritorio con multimedia", async () => {
+    const fake = nativeDouble();
+    fake.Gtk.MediaFile.new = () => { assert.ok(fake.calls.includes("init")); return fake.media; };
+    assert.equal((await probeGuiEnvironment("binding", ["gui", "gui.video"], fake.load)).ok, true);
+    fake.calls.length = 0;
+    fake.Gtk.initCheck = () => false;
+    const failure = await probeGuiEnvironment("binding", ["gui", "gui.video"], fake.load);
+    assert.equal(failure.code, "CLRS_GUI_RUNTIME_NOT_READY");
+    assert.deepEqual(fake.calls, ["load", "Gtk"]);
+});
+
+test("GUI preparación: sólo VIDEO solicita la capacidad multimedia después de asegurar npm/GTK", async () => {
+    const calls = [];
+    const preparation = new GuiRuntimePreparation({ dependencyManager: {
+        async ensure() { calls.push("ensure"); return { entryUrl: "file:///binding.js" }; },
+        async checkCapabilities(_dependency, capabilities) { calls.push(capabilities); }
+    }, getFactorySource: () => "factory" });
+    await preparation.prepare(analyze("escribir 1")); assert.deepEqual(calls, []);
+    await preparation.prepare(analyze('BOTON("b","x")')); assert.deepEqual(calls, ["ensure"]);
+    calls.length = 0;
+    await preparation.prepare(analyze('VIDEO("v","x")')); assert.deepEqual(calls, ["ensure", ["gui", "gui.video"]]);
+});
+
+test("GUI exportada: resuelve node-gtk local y comunica GTK/multimedia a stderr sin VS Code", async t => {
+    const root = await mkdtemp(path.join(tmpdir(), "clrs-export-environment-"));
+    t.after(() => rm(root, { recursive: true, force: true }));
+    await writeFile(path.join(root, "package.json"), JSON.stringify({ private: true, type: "module", scripts: { start: "node programa.js" }, dependencies: { "node-gtk": "4.1.1" } }));
+    const dependency = path.join(root, "node_modules/node-gtk"); await mkdir(dependency, { recursive: true });
+    await writeFile(path.join(dependency, "package.json"), '{"name":"node-gtk","version":"4.1.1","type":"module","exports":"./index.js"}');
+    const context = { gui: { moduleUrl: "node-gtk", factorySource: getGuiRuntimeFactorySource() } };
+    for (const [source, binding, expected] of [
+        ['BOTON("b","x")', 'export default {require(){throw new Error("private GTK typelib")}}', "CLRS_GUI_DEP_GTK_NOT_FOUND"],
+        ['VIDEO("v","x")', 'export default {require(){return {getMajorVersion:()=>4,getMinorVersion:()=>10,getMicroVersion:()=>0,initCheck:()=>true}}}', "CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE"]
+    ]) {
+        await writeFile(path.join(dependency, "index.js"), binding);
+        const generated = new JavaScriptGenerator().generate(analyze(source).ast, { runtimeContext: context }).generatedCode;
+        assert.doesNotMatch(generated, /\.runtime[\\/]|from ["']vscode/);
+        await writeFile(path.join(root, "programa.js"), generated);
+        const result = spawnSync(process.execPath, ["programa.js"], { cwd: root, encoding: "utf8", windowsHide: true, timeout: 15000 });
+        assert.equal(result.status, 70, result.stderr); assert.match(result.stderr, new RegExp(expected));
+        assert.doesNotMatch(result.stderr, /private GTK|at probeGuiEnvironment|UnhandledPromise/);
+        if (expected === "CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE") {
+            assert.ok(result.stderr.includes(guiEnvironmentMessage(expected, GUI_ERROR_MESSAGES, process.platform)));
+        }
+    }
+});

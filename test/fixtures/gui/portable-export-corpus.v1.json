@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "areas": [
+    "identity",
+    "console-boundary",
+    "gui-transaction",
+    "normal-start",
+    "packable-preparation",
+    "failure-atomicity",
+    "native-boundary"
+  ],
+  "sources": {
+    "console": "test/fixtures/gui/portable-export-console.clrs",
+    "gui": "test/fixtures/gui/portable-export-gui.clrs"
+  },
+  "identityCases": [
+    {
+      "file": "Inventario.clrs",
+      "name": "inventario"
+    },
+    {
+      "file": "Punto Venta.clrs",
+      "name": "punto-venta"
+    },
+    {
+      "file": "Árbol-Útil.clrs",
+      "name": "arbol-util"
+    },
+    {
+      "file": "CON.clrs",
+      "name": "clrs-con"
+    },
+    {
+      "file": "a&calc.clrs",
+      "name": "a-calc"
+    },
+    {
+      "file": "漢字.clrs",
+      "name": "clrs-exported-program"
+    }
+  ],
+  "cliFiles": [
+    "<program>.js",
+    "package.json",
+    "package-lock.json"
+  ],
+  "guiFiles": [
+    "<program>.js",
+    "prepare-packable.cjs",
+    "bootstrap.cjs",
+    "package.json",
+    "package-lock.json"
+  ],
+  "initiallyAbsent": [
+    "<program>.packable.js",
+    "node_modules",
+    "dist",
+    "bin"
+  ],
+  "manifest": {
+    "nodeGtk": "4.1.1",
+    "pkg": "^6.22.0",
+    "asset": "node_modules/node-gtk/lib/binding/**/*",
+    "generatedAsset": "<program>.packable.js",
+    "target": "host"
+  },
+  "failureCases": [
+    {
+      "id": "prepare-factory",
+      "code": "CLRS_JS_EXPORT_WRITE_FAILED"
+    },
+    {
+      "id": "bootstrap-factory",
+      "code": "CLRS_JS_EXPORT_WRITE_FAILED"
+    },
+    {
+      "id": "lock-generation",
+      "code": "CLRS_JS_EXPORT_LOCK_FAILED"
+    },
+    {
+      "id": "lock-validation",
+      "code": "CLRS_JS_EXPORT_LOCK_INVALID"
+    },
+    {
+      "id": "cancellation",
+      "code": "CLRS_JS_EXPORT_CANCELLED"
+    }
+  ],
+  "nativeChecks": [
+    "npm ci with node-gtk install script",
+    "host pkg build",
+    "native GTK startup",
+    "first-run runtime extraction",
+    "second-run runtime reuse"
+  ]
+}

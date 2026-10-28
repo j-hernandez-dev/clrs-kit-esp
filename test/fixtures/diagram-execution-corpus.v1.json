@@ -1,0 +1,309 @@
+{
+  "schemaVersion": 1,
+  "suite": "CLRS diagram visual execution A-Q regression corpus",
+  "runtimeStepTuple": ["startLine", "startColumn", "flowKind?", "functionName?", "frameId?", "parentFrameId?"],
+  "visualStepTuple": ["nodeModelId", "label", "presentationKind", "frameId", "incomingEdges"],
+  "edgeTuple": ["edgeModelId", "relation", "label"],
+  "requiredCases": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q"],
+  "requiredCompatibility": [
+    "editing-identities-insertion",
+    "minimap-svg-export",
+    "code-navigation-fragments",
+    "selection-hover-animation",
+    "diagnostics",
+    "gui-callbacks-dap"
+  ],
+  "compatibilityEvidence": [
+    {
+      "id": "editing-identities-insertion",
+      "evidence": [
+        ["test/diagram.editing.corpus.test.js", "recorre actualización, inserción, eliminación y creación de función"],
+        ["test/diagram.characterization.test.js", "dos generaciones consecutivas conservan IDs deterministas"]
+      ]
+    },
+    {
+      "id": "minimap-svg-export",
+      "evidence": [
+        ["test/diagram.navigation.test.js", "calcula el área visible y la navegación por minimapa"],
+        ["test/svg.export.test.js", "la exportación vuelve a renderizar etiquetas SVG nativas"]
+      ]
+    },
+    {
+      "id": "code-navigation-fragments",
+      "evidence": [
+        ["test/diagram.synchronization.test.js", "traslada únicamente la primera columna de un fragmento seleccionado"],
+        ["test/diagram.synchronization.test.js", "selecciona el nodo más específico para el cursor del editor"]
+      ]
+    },
+    {
+      "id": "selection-hover-animation",
+      "evidence": [
+        ["test/diagram.synchronization.test.js", "selecciona figuras y flechas editables sin navegar al código"],
+        ["test/diagram.synchronization.test.js", "el hover conserva el grosor y color de las flechas ejecutadas"],
+        ["test/diagram.synchronization.test.js", "la reproducción manual y automática consultan la misma velocidad visual"]
+      ]
+    },
+    {
+      "id": "diagnostics",
+      "evidence": [
+        ["test/diagram.synchronization.test.js", "resalta con error las figuras asociadas a diagnósticos localizables"]
+      ]
+    },
+    {
+      "id": "gui-callbacks-dap",
+      "evidence": [
+        ["test/gui.diagram.trace.test.js", "callback durante un diálogo devuelve el foco al flujo suspendido"],
+        ["test/gui.diagram.trace.test.js", "pausa y reanudación DAP se conservan en el historial"]
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "A",
+      "name": "Flujo lineal",
+      "source": ["dato = NULO", "leer dato", "escribir dato"],
+      "runtime": [[1, 1], [2, 1], [3, 1]],
+      "expected": [
+        ["N1", "Inicio", "entry", null, []],
+        ["N2", "dato = NULO", "runtime", null, [["E1", "sequence", null]]],
+        ["N3", "Entrada dato", "runtime", null, [["E2", "sequence", null]]],
+        ["N4", "Salida dato", "runtime", null, [["E3", "sequence", null]]],
+        ["N5", "Fin", "end", null, [["E4", "exit", null]]]
+      ]
+    },
+    {
+      "id": "B",
+      "name": "si con Sí",
+      "source": ["si VERDAD", "    escribir \"sí\"", "sino", "    escribir \"no\"", "escribir \"continúa\""],
+      "runtime": [[1, 1], [2, 5], [5, 1]],
+      "absentLines": [4],
+      "expected": [
+        ["N1", "Inicio", "entry", null, []],
+        ["N2", "VERDAD", "runtime", null, [["E5", "sequence", null]]],
+        ["N3", "Salida \"sí\"", "runtime", null, [["E1", "branch", "Sí"]]],
+        ["N6", "Salida \"continúa\"", "runtime", null, [["E2", "merge", null], ["E6", "sequence", null]]],
+        ["N7", "Fin", "end", null, [["E7", "exit", null]]]
+      ]
+    },
+    {
+      "id": "C",
+      "name": "si con No y sin sino",
+      "source": ["si FALSO", "    escribir \"omitida\"", "escribir \"continúa\""],
+      "runtime": [[1, 1], [3, 1]],
+      "absentLines": [2],
+      "expected": [
+        ["N1", "Inicio", "entry", null, []],
+        ["N2", "FALSO", "runtime", null, [["E4", "sequence", null]]],
+        ["N5", "Salida \"continúa\"", "runtime", null, [["E3", "branch", "No"], ["E5", "sequence", null]]],
+        ["N6", "Fin", "end", null, [["E6", "exit", null]]]
+      ]
+    },
+    {
+      "id": "D",
+      "name": "si final",
+      "source": ["si VERDAD", "    escribir \"sí\"", "sino", "    escribir \"no\""],
+      "runtime": [[1, 1], [2, 5]],
+      "absentLines": [4],
+      "expected": [
+        ["N1", "Inicio", "entry", null, []],
+        ["N2", "VERDAD", "runtime", null, [["E5", "sequence", null]]],
+        ["N3", "Salida \"sí\"", "runtime", null, [["E1", "branch", "Sí"]]],
+        ["N6", "Fin", "end", null, [["E2", "merge", null], ["E6", "exit", null]]]
+      ]
+    },
+    {
+      "id": "E",
+      "name": "mientras con varias iteraciones",
+      "source": ["i = 0", "mientras i < 2", "    escribir i", "    i = i + 1", "escribir \"fin\""],
+      "runtime": [[1, 1], [2, 1], [3, 5], [4, 5], [2, 1], [3, 5], [4, 5], [2, 1], [5, 1]],
+      "expected": [
+        ["N1", "Inicio", "entry", null, []],
+        ["N2", "i = 0", "runtime", null, [["E1", "sequence", null]]],
+        ["N3", "i < 2", "loop-decision", null, [["E5", "sequence", null]]],
+        ["N4", "Salida i", "runtime", null, [["E3", "loop-entry", "Sí"]]],
+        ["N5", "i = i + 1", "runtime", null, [["E2", "sequence", null]]],
+        ["N3", "i < 2", "loop-decision", null, [["E4", "loop-back", null]]],
+        ["N4", "Salida i", "runtime", null, [["E3", "loop-entry", "Sí"]]],
+        ["N5", "i = i + 1", "runtime", null, [["E2", "sequence", null]]],
+        ["N3", "i < 2", "loop-decision", null, [["E4", "loop-back", null]]],
+        ["N6", "Salida \"fin\"", "runtime", null, [["E6", "loop-exit", "No"]]],
+        ["N7", "Fin", "end", null, [["E7", "exit", null]]]
+      ]
+    },
+    {
+      "id": "F",
+      "name": "para ascendente",
+      "source": ["para i = 0 hasta 1", "    escribir i", "escribir \"fin\""],
+      "runtime": [[1, 10], [1, 18], [2, 5], [1, 18], [1, 18], [2, 5], [1, 18], [1, 18], [3, 1]],
+      "expected": [
+        ["N1", "Inicio", "entry", null, []],
+        ["N2", "Para i = 0 hasta 1", "for-preparation", null, [["E4", "sequence", null]]],
+        ["N3", "i <= 1", "loop-decision", null, [["E1", "sequence", null]]],
+        ["N4", "Salida i", "runtime", null, [["E2", "loop-entry", "Sí"]]],
+        ["N2", "Para i = 0 hasta 1", "for-preparation", null, [["E3", "loop-back", null]]],
+        ["N3", "i <= 1", "loop-decision", null, [["E1", "sequence", null]]],
+        ["N4", "Salida i", "runtime", null, [["E2", "loop-entry", "Sí"]]],
+        ["N2", "Para i = 0 hasta 1", "for-preparation", null, [["E3", "loop-back", null]]],
+        ["N3", "i <= 1", "loop-decision", null, [["E1", "sequence", null]]],
+        ["N5", "Salida \"fin\"", "runtime", null, [["E5", "loop-exit", "No"]]],
+        ["N6", "Fin", "end", null, [["E6", "exit", null]]]
+      ]
+    },
+    {
+      "id": "G",
+      "name": "para descendente",
+      "source": ["para i = 2 bajando 1", "    escribir i"],
+      "runtime": [[1, 10], [1, 20], [2, 5], [1, 20], [1, 20], [2, 5], [1, 20], [1, 20]],
+      "expected": [
+        ["N1", "Inicio", "entry", null, []],
+        ["N2", "Para i = 2 bajando 1", "for-preparation", null, [["E4", "sequence", null]]],
+        ["N3", "i >= 1", "loop-decision", null, [["E1", "sequence", null]]],
+        ["N4", "Salida i", "runtime", null, [["E2", "loop-entry", "Sí"]]],
+        ["N2", "Para i = 2 bajando 1", "for-preparation", null, [["E3", "loop-back", null]]],
+        ["N3", "i >= 1", "loop-decision", null, [["E1", "sequence", null]]],
+        ["N4", "Salida i", "runtime", null, [["E2", "loop-entry", "Sí"]]],
+        ["N2", "Para i = 2 bajando 1", "for-preparation", null, [["E3", "loop-back", null]]],
+        ["N3", "i >= 1", "loop-decision", null, [["E1", "sequence", null]]],
+        ["N5", "Fin", "end", null, [["E5", "loop-exit", "No"]]]
+      ]
+    },
+    {
+      "id": "H",
+      "name": "función natural",
+      "source": ["AUX()", "    escribir \"aux\"", "PRINCIPAL()", "    AUX()", "    escribir \"después\""],
+      "runtime": [[3, 1], [3, 1, "enter", "PRINCIPAL", 1, null], [4, 5], [1, 1, "enter", "AUX", 2, 1], [2, 5], [4, 5, "return", "AUX", 2, 1], [5, 5], [3, 1, "return", "PRINCIPAL", 1, null]],
+      "expected": [
+        ["N8", "Inicio", "entry", null, []], ["N9", "PRINCIPAL()", "runtime", null, [["E6", "sequence", null]]],
+        ["N4", "PRINCIPAL()", "function-entry", 1, []], ["N5", "AUX()", "runtime", 1, [["E4", "entry", null]]],
+        ["N1", "AUX()", "function-entry", 2, []], ["N2", "Salida \"aux\"", "runtime", 2, [["E1", "entry", null]]],
+        ["N3", "Fin", "function-end", 2, [["E2", "exit", null]]], ["N6", "Salida \"después\"", "runtime", 1, [["E3", "sequence", null]]],
+        ["N7", "Fin", "function-end", 1, [["E5", "exit", null]]], ["N10", "Fin", "end", null, [["E7", "exit", null]]]
+      ]
+    },
+    {
+      "id": "I",
+      "name": "función con retornar",
+      "source": ["AUX()", "    retornar 1", "PRINCIPAL()", "    dato = AUX()", "    escribir \"después\""],
+      "runtime": [[3, 1], [3, 1, "enter", "PRINCIPAL", 1, null], [4, 5], [1, 1, "enter", "AUX", 2, 1], [2, 5], [4, 5, "return", "AUX", 2, 1], [5, 5], [3, 1, "return", "PRINCIPAL", 1, null]],
+      "expected": [
+        ["N7", "Inicio", "entry", null, []], ["N8", "PRINCIPAL()", "runtime", null, [["E5", "sequence", null]]],
+        ["N3", "PRINCIPAL()", "function-entry", 1, []], ["N4", "dato = AUX()", "runtime", 1, [["E3", "entry", null]]],
+        ["N1", "AUX()", "function-entry", 2, []], ["N2", "Retornar 1", "return", 2, [["E1", "entry", null]]],
+        ["N5", "Salida \"después\"", "runtime", 1, [["E2", "sequence", null]]], ["N6", "Fin", "function-end", 1, [["E4", "exit", null]]],
+        ["N9", "Fin", "end", null, [["E6", "exit", null]]]
+      ]
+    },
+    {
+      "id": "J",
+      "name": "retornar dentro de si",
+      "status": "running",
+      "source": ["DETENER()", "    si VERDAD", "        retornar 1", "    escribir \"omitida\""],
+      "runtime": [[1, 1, "enter", "DETENER", 1, null], [2, 8], [3, 9], [3, 9, "return", "DETENER", 1, null]],
+      "absentLines": [4],
+      "expected": [
+        ["N7", "Inicio", "entry", null, []], ["N1", "DETENER()", "function-entry", 1, []],
+        ["N2", "VERDAD", "runtime", 1, [["E4", "entry", null]]], ["N3", "Retornar 1", "return", 1, [["E1", "branch", "Sí"]]]
+      ]
+    },
+    {
+      "id": "K",
+      "name": "retornar dentro de mientras",
+      "status": "running",
+      "source": ["DETENER()", "    mientras VERDAD", "        retornar 1", "        escribir \"omitida\""],
+      "runtime": [[1, 1, "enter", "DETENER", 1, null], [2, 15], [3, 9], [3, 9, "return", "DETENER", 1, null]],
+      "absentLines": [4],
+      "absentRelations": ["loop-back", "loop-exit"],
+      "expected": [
+        ["N6", "Inicio", "entry", null, []], ["N1", "DETENER()", "function-entry", 1, []],
+        ["N2", "VERDAD", "loop-decision", 1, [["E2", "entry", null]]], ["N3", "Retornar 1", "return", 1, [["E1", "loop-entry", "Sí"]]]
+      ]
+    },
+    {
+      "id": "L",
+      "name": "retornar dentro de para",
+      "status": "running",
+      "source": ["DETENER()", "    para i = 0 hasta 1", "        retornar i", "    escribir \"omitida\""],
+      "runtime": [[1, 1, "enter", "DETENER", 1, null], [2, 14], [2, 22], [3, 9], [3, 9, "return", "DETENER", 1, null]],
+      "absentLines": [4],
+      "absentRelations": ["loop-back", "loop-exit"],
+      "expected": [
+        ["N7", "Inicio", "entry", null, []], ["N1", "DETENER()", "function-entry", 1, []],
+        ["N2", "Para i = 0 hasta 1", "for-preparation", 1, [["E4", "entry", null]]],
+        ["N3", "i <= 1", "loop-decision", 1, [["E1", "sequence", null]]], ["N4", "Retornar i", "return", 1, [["E2", "loop-entry", "Sí"]]]
+      ]
+    },
+    {
+      "id": "M",
+      "name": "llamada dentro de ciclo",
+      "source": ["AUX()", "    retornar 1", "PRINCIPAL()", "    i = 0", "    mientras i < 1", "        AUX()", "        i = i + 1", "    escribir \"fin\""],
+      "runtime": [[3, 1], [3, 1, "enter", "PRINCIPAL", 1, null], [4, 5], [5, 5], [6, 9], [1, 1, "enter", "AUX", 2, 1], [2, 5], [6, 9, "return", "AUX", 2, 1], [7, 9], [5, 5], [8, 5], [3, 1, "return", "PRINCIPAL", 1, null]],
+      "expected": [
+        ["N10", "Inicio", "entry", null, []], ["N11", "PRINCIPAL()", "runtime", null, [["E9", "sequence", null]]],
+        ["N3", "PRINCIPAL()", "function-entry", 1, []], ["N4", "i = 0", "runtime", 1, [["E7", "entry", null]]],
+        ["N5", "i < 1", "loop-decision", 1, [["E5", "sequence", null]]], ["N6", "AUX()", "runtime", 1, [["E3", "loop-entry", "Sí"]]],
+        ["N1", "AUX()", "function-entry", 2, []], ["N2", "Retornar 1", "return", 2, [["E1", "entry", null]]],
+        ["N7", "i = i + 1", "runtime", 1, [["E2", "sequence", null]]], ["N5", "i < 1", "loop-decision", 1, [["E4", "loop-back", null]]],
+        ["N8", "Salida \"fin\"", "runtime", 1, [["E6", "loop-exit", "No"]]], ["N9", "Fin", "function-end", 1, [["E8", "exit", null]]],
+        ["N12", "Fin", "end", null, [["E10", "exit", null]]]
+      ]
+    },
+    {
+      "id": "N",
+      "name": "llamadas anidadas",
+      "source": ["C()", "    escribir \"c\"", "B()", "    C()", "    escribir \"b\"", "A()", "    B()", "    escribir \"a\"", "PRINCIPAL()", "    A()", "    escribir \"p\""],
+      "runtime": [[9, 1], [9, 1, "enter", "PRINCIPAL", 1, null], [10, 5], [6, 1, "enter", "A", 2, 1], [7, 5], [3, 1, "enter", "B", 3, 2], [4, 5], [1, 1, "enter", "C", 4, 3], [2, 5], [4, 5, "return", "C", 4, 3], [5, 5], [7, 5, "return", "B", 3, 2], [8, 5], [10, 5, "return", "A", 2, 1], [11, 5], [9, 1, "return", "PRINCIPAL", 1, null]],
+      "expected": [
+        ["N16", "Inicio", "entry", null, []], ["N17", "PRINCIPAL()", "runtime", null, [["E12", "sequence", null]]],
+        ["N12", "PRINCIPAL()", "function-entry", 1, []], ["N13", "A()", "runtime", 1, [["E10", "entry", null]]],
+        ["N8", "A()", "function-entry", 2, []], ["N9", "B()", "runtime", 2, [["E7", "entry", null]]],
+        ["N4", "B()", "function-entry", 3, []], ["N5", "C()", "runtime", 3, [["E4", "entry", null]]],
+        ["N1", "C()", "function-entry", 4, []], ["N2", "Salida \"c\"", "runtime", 4, [["E1", "entry", null]]],
+        ["N3", "Fin", "function-end", 4, [["E2", "exit", null]]], ["N6", "Salida \"b\"", "runtime", 3, [["E3", "sequence", null]]],
+        ["N7", "Fin", "function-end", 3, [["E5", "exit", null]]], ["N10", "Salida \"a\"", "runtime", 2, [["E6", "sequence", null]]],
+        ["N11", "Fin", "function-end", 2, [["E8", "exit", null]]], ["N14", "Salida \"p\"", "runtime", 1, [["E9", "sequence", null]]],
+        ["N15", "Fin", "function-end", 1, [["E11", "exit", null]]], ["N18", "Fin", "end", null, [["E13", "exit", null]]]
+      ]
+    },
+    {
+      "id": "O",
+      "name": "misma función desde dos callsites",
+      "source": ["AUX()", "    retornar 1", "PRINCIPAL()", "    AUX()", "    AUX()", "    escribir \"fin\""],
+      "runtime": [[3, 1], [3, 1, "enter", "PRINCIPAL", 10, null], [4, 5], [1, 1, "enter", "AUX", 11, 10], [2, 5], [4, 5, "return", "AUX", 11, 10], [5, 5], [1, 1, "enter", "AUX", 12, 10], [2, 5], [5, 5, "return", "AUX", 12, 10], [6, 5], [3, 1, "return", "PRINCIPAL", 10, null]],
+      "expected": [
+        ["N8", "Inicio", "entry", null, []], ["N9", "PRINCIPAL()", "runtime", null, [["E6", "sequence", null]]],
+        ["N3", "PRINCIPAL()", "function-entry", 10, []], ["N4", "AUX()", "runtime", 10, [["E4", "entry", null]]],
+        ["N1", "AUX()", "function-entry", 11, []], ["N2", "Retornar 1", "return", 11, [["E1", "entry", null]]],
+        ["N5", "AUX()", "runtime", 10, [["E2", "sequence", null]]], ["N1", "AUX()", "function-entry", 12, []],
+        ["N2", "Retornar 1", "return", 12, [["E1", "entry", null]]], ["N6", "Salida \"fin\"", "runtime", 10, [["E3", "sequence", null]]],
+        ["N7", "Fin", "function-end", 10, [["E5", "exit", null]]], ["N10", "Fin", "end", null, [["E7", "exit", null]]]
+      ]
+    },
+    {
+      "id": "P",
+      "name": "recursión",
+      "source": ["CONTAR(n)", "    si n > 0", "        CONTAR(n - 1)", "    escribir n", "PRINCIPAL()", "    CONTAR(1)", "    escribir \"fin\""],
+      "runtime": [[5, 1], [5, 1, "enter", "PRINCIPAL", 1, null], [6, 5], [1, 1, "enter", "CONTAR", 2, 1], [2, 5], [3, 9], [1, 1, "enter", "CONTAR", 3, 2], [2, 5], [4, 5], [3, 9, "return", "CONTAR", 3, 2], [4, 5], [6, 5, "return", "CONTAR", 2, 1], [7, 5], [5, 1, "return", "PRINCIPAL", 1, null]],
+      "expected": [
+        ["N11", "Inicio", "entry", null, []], ["N12", "PRINCIPAL()", "runtime", null, [["E10", "sequence", null]]],
+        ["N7", "PRINCIPAL()", "function-entry", 1, []], ["N8", "CONTAR(1)", "runtime", 1, [["E8", "entry", null]]],
+        ["N1", "CONTAR(n)", "function-entry", 2, []], ["N2", "n > 0", "runtime", 2, [["E5", "entry", null]]],
+        ["N3", "CONTAR(n - 1)", "runtime", 2, [["E1", "branch", "Sí"]]], ["N1", "CONTAR(n)", "function-entry", 3, []],
+        ["N2", "n > 0", "runtime", 3, [["E5", "entry", null]]], ["N5", "Salida n", "runtime", 3, [["E3", "branch", "No"], ["E4", "sequence", null]]],
+        ["N6", "Fin", "function-end", 3, [["E6", "exit", null]]], ["N5", "Salida n", "runtime", 2, [["E2", "merge", null], ["E4", "sequence", null]]],
+        ["N6", "Fin", "function-end", 2, [["E6", "exit", null]]], ["N9", "Salida \"fin\"", "runtime", 1, [["E7", "sequence", null]]],
+        ["N10", "Fin", "function-end", 1, [["E9", "exit", null]]], ["N13", "Fin", "end", null, [["E11", "exit", null]]]
+      ]
+    },
+    {
+      "id": "Q",
+      "name": "Fin global",
+      "source": ["escribir \"último\""],
+      "runtime": [[1, 1]],
+      "expected": [
+        ["N1", "Inicio", "entry", null, []],
+        ["N2", "Salida \"último\"", "runtime", null, [["E1", "sequence", null]]],
+        ["N3", "Fin", "end", null, [["E2", "exit", null]]]
+      ]
+    }
+  ]
+}

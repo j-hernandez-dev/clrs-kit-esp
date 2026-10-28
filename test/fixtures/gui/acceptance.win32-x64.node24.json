@@ -1,0 +1,153 @@
+{
+  "ok": true,
+  "platform": "win32",
+  "arch": "x64",
+  "node": "24.16.0",
+  "binding": "4.1.1",
+  "checks": [
+    "isolated-private-install-schema-probe-and-reuse",
+    "native-base",
+    "native-controls",
+    "native-events",
+    "native-file-dialog",
+    "private-staging-and-locks-clean"
+  ],
+  "cases": {
+    "base": {
+      "node": "24.16.0",
+      "platform": "win32",
+      "arch": "x64",
+      "gtk": [
+        4,
+        22,
+        4
+      ],
+      "checks": [
+        "theme-baseline-mode-and-name",
+        "native-containment-and-private-viewport-detach",
+        "curated-properties-enums-and-requested-size",
+        "all-base-properties-and-theme-after-widget-creation",
+        "close-veto-hide-not-destroy-and-last-window-lifetime",
+        "generated-clrs-theme-only-window-callback-and-localized-error"
+      ]
+    },
+    "controls": {
+      "ok": true,
+      "node": "24.16.0",
+      "platform": "win32",
+      "arch": "x64",
+      "gtk": [
+        4,
+        22,
+        4
+      ],
+      "checks": [
+        "17-native-controls-and-readable-properties",
+        "curated-properties-text-buffers-enums-and-null",
+        "image-file-clear-reload-without-media",
+        "real-string-models-selection-modes-row-width-and-listbox-wrapper",
+        "groups-calendar-actions-and-equal-range",
+        "native-column-factories-render-and-node-timer",
+        "generated-clrs-dropdown-table-and-textview"
+      ]
+    },
+    "events": {
+      "ok": true,
+      "gtk": [
+        4,
+        22,
+        4
+      ],
+      "node": "24.16.0",
+      "platform": "win32",
+      "arch": "x64",
+      "checks": [
+        "all-181-catalogued-event-connections",
+        "async-callback-node-io-and-timers",
+        "motion-and-immediate-key",
+        "text-calendar-and-selection-snapshots",
+        "dialog-properties-and-filters",
+        "native-alert-button-choice",
+        "five-file-dialog-cancellations",
+        "application-window-parent-close-cancels-dialog",
+        "dispose-drains-native-dialog-cancellations",
+        "standalone-generated-event-success-and-localized-failure"
+      ],
+      "observed": [
+        [
+          "io-completed"
+        ],
+        [
+          "puntero_entro",
+          "b",
+          1.5,
+          2.5
+        ],
+        [
+          "cambio",
+          "e",
+          "España"
+        ],
+        [
+          "fecha_cambiada",
+          "c",
+          [
+            2024,
+            2,
+            29
+          ]
+        ],
+        [
+          "seleccion_cambiada",
+          "d",
+          -1,
+          null
+        ],
+        [
+          "seleccion_cambiada",
+          "t",
+          []
+        ],
+        [
+          "seleccion_cambiada",
+          "t",
+          [
+            0,
+            1
+          ]
+        ]
+      ],
+      "connectedEvents": 181,
+      "hasFileDialogResources": true,
+      "generatedChecks": [
+        "event-success",
+        "event-failure"
+      ]
+    },
+    "file-dialog": {
+      "ok": true,
+      "schemaResolved": true,
+      "realDialogsCreated": 8,
+      "checks": [
+        "ABRIR_ARCHIVO",
+        "ABRIR_ARCHIVOS",
+        "GUARDAR_ARCHIVO",
+        "ELEGIR_CARPETA",
+        "ELEGIR_CARPETAS",
+        "dispose-cancels-pending-dialog"
+      ],
+      "selectionOfRealPathVerified": false
+    }
+  },
+  "notValidated": [
+    "Otras plataformas, arquitecturas y versiones de Node/GTK no se certifican por este ensayo.",
+    "Selección manual de una ruta real y apariencia visual.",
+    "GTK exactamente 4.10."
+  ],
+  "gtk": [
+    4,
+    22,
+    4
+  ],
+  "isolatedRuntimeRemoved": true
+}

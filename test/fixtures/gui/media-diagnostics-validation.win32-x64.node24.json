@@ -1,0 +1,38 @@
+{
+  "date": "2026-09-10",
+  "scope": "Corrección de diagnósticos y preflight multimedia del bloque 6. No certifica reproducción nativa de VIDEO.",
+  "node": "24.16.0",
+  "binding": "4.1.1",
+  "platform": "win32",
+  "arch": "x64",
+  "gtk": [4, 22, 4],
+  "gstreamerRuntimeInstalled": "MSVC x86_64 1.28.6",
+  "build": "passed",
+  "unitTests": { "passed": 1016, "failed": 0 },
+  "lint": { "errors": 0, "existingWarnings": 6 },
+  "nativeBase": "passed",
+  "environments": [
+    {
+      "name": "Entorno heredado; raíz MSVC declarada sin bin/plugins en las rutas del proceso",
+      "gui": "passed",
+      "nativeControls": 17,
+      "videoPlayback": "not-validated",
+      "videoDiagnostic": "CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE",
+      "generatedClrsControlledError": "passed"
+    },
+    {
+      "name": "bin añadido a PATH y plugins a GST_PLUGIN_SYSTEM_PATH_1_0 sólo en el proceso de ensayo",
+      "gui": "passed",
+      "nativeControls": 17,
+      "videoPlayback": "not-validated",
+      "videoDiagnostic": "CLRS_GUI_MEDIA_LOAD_FAILED",
+      "generatedClrsControlledError": "passed",
+      "technicalEvidence": "El hijo del probe termina anormalmente con errores GLib-GObject y GstPadTemplate/caps. Las DLL de GTK importan nombres con prefijo lib; los plugins MSVC importan nombres sin ese prefijo. La evidencia apunta a incompatibilidad de distribuciones nativas, no certifica un problema de PATH ni ausencia de GStreamer."
+    }
+  ],
+  "notValidated": [
+    "Preparación, reproducción, pausa, desplazamiento y reinicio de VIDEO con un backend nativo compatible.",
+    "Linux, macOS, Node 22/26 y GTK exactamente 4.10."
+  ],
+  "policy": "Sin instalación nativa automática, cambios globales de entorno, cambios de versión o VSIX. No se avanza al bloque 7."
+}

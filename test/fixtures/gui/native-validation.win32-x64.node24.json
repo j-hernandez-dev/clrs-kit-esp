@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "validatedOn": "2026-09-09",
+  "command": "npm run test:gui:native -- <directorio-aislado-con-node-gtk-4.1.1>",
+  "installation": "Dependencia temporal aislada; addon precompilado oficial, sin compilación nativa ni cambios de dependencias del proyecto.",
+  "native": {
+    "ok": true,
+    "node": "24.16.0",
+    "abi": "137",
+    "platform": "win32",
+    "arch": "x64",
+    "binding": "4.1.1",
+    "gtk": [4, 22, 4],
+    "checks": [
+      "application-window-present",
+      "window-and-application-window",
+      "esm-loop-timers-and-async-callback",
+      "synchronous-close-link-key-return",
+      "alert-cancelled",
+      "alert-file-dialog-async-cancellation",
+      "gtk-settings-theme-baseline"
+    ],
+    "nativeModuleInHost": false
+  },
+  "generated": {
+    "ok": true,
+    "check": "clrs-generated-esm-native-callback",
+    "capabilities": ["gui"]
+  },
+  "conditions": [
+    "Resolución pública import.meta.resolve('node-gtk') desde el directorio aislado.",
+    "Importación ESM y carga de GTK exclusivamente en procesos hijos.",
+    "Gtk.Application y GLib.MainLoop explícito; timers de Node activos.",
+    "Diálogos iniciados desde macrotareas y cancelados con un Gio.Cancellable independiente por operación.",
+    "Callback CLRS generado devuelve LONG(id) > 0 y OBTENER(id, visible) de manera síncrona a close-request."
+  ],
+  "nonFatalWarnings": ["GLib-GIO: win32 session dbus binary not found"],
+  "notValidated": [
+    "Linux y macOS",
+    "Node 22 y Node 26",
+    "GTK exactamente 4.10",
+    "Corpus de los 25 componentes, instalación automática y ciclo de vida completo de producción",
+    "Temas instalados por el usuario, accesibilidad y renderizado multiplataforma"
+  ]
+}

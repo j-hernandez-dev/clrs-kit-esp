@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "areas": [
+    "minimum-program",
+    "dynamic-identity",
+    "clean-lock",
+    "profile-isolation",
+    "gui-non-regression",
+    "temporary-execution-boundary"
+  ],
+  "cases": [
+    {
+      "id": "minimum",
+      "source": "test/fixtures/cli/export-minimum.clrs",
+      "file": "Programa Mínimo.clrs",
+      "name": "programa-minimo"
+    },
+    {
+      "id": "input-output",
+      "source": "test/fixtures/cli/export-input-output.clrs",
+      "file": "Punto Venta.clrs",
+      "name": "punto-venta"
+    },
+    {
+      "id": "control-flow",
+      "source": "test/fixtures/cli/export-control-flow.clrs",
+      "file": "Árbol Control.clrs",
+      "name": "arbol-control"
+    },
+    {
+      "id": "gui-words-as-data",
+      "source": "test/fixtures/cli/export-gui-words-as-data.clrs",
+      "file": "GUI literal.clrs",
+      "name": "gui-literal"
+    }
+  ],
+  "guiSource": "test/fixtures/gui/portable-export-gui.clrs",
+  "cliFiles": [
+    "<program>.js",
+    "package.json",
+    "package-lock.json"
+  ],
+  "guiFiles": [
+    "<program>.js",
+    "prepare-packable.cjs",
+    "bootstrap.cjs",
+    "package.json",
+    "package-lock.json"
+  ],
+  "cliForbiddenEntries": [
+    "prepare-packable.cjs",
+    "bootstrap.cjs",
+    "<program>.packable.js",
+    "node_modules",
+    "dist",
+    "bin"
+  ],
+  "cliForbiddenManifestFields": [
+    "dependencies",
+    "allowScripts",
+    "pkg"
+  ],
+  "cliForbiddenInfrastructure": [
+    "node-gtk",
+    "prepare-packable.cjs",
+    "bootstrap.cjs",
+    ".packable.js",
+    "gtk-assets",
+    "private-clrs-runtime"
+  ],
+  "nativeChecksDeferred": [
+    "npm ci",
+    "npm start",
+    "host pkg build",
+    "stdin stdout stderr",
+    "process argv",
+    "exit codes"
+  ]
+}

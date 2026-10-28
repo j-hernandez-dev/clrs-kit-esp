@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "platform": "win32",
+  "arch": "x64",
+  "node": "24.16.0",
+  "gtk": [4, 22, 4],
+  "nodeGtk": "4.1.1",
+  "command": "npm run test:gui:debug:native",
+  "checks": [
+    "native-close-callback-step-in-out-and-normal-termination",
+    "native-change-callback-locals-and-file-dialog-step-over-pause-terminate",
+    "native-gui-dialog-wait-flow-and-dap-pause"
+  ],
+  "isolatedRuntimeRemoved": true,
+  "browserValidation": {
+    "renderer": "DiagramPreview real, modelo derivado del parser, historia de prueba sintética",
+    "widths": [910, 520],
+    "checks": [
+      "Espera del diálogo en la figura sintáctica existente, sin animación de avance",
+      "Ventana abierta sin figura activa ficticia",
+      "Retorno y reanudación al recorrer la historia",
+      "Retorno al diagrama completo al saltar a un callback fuera del flujo filtrado",
+      "Barra de ejecución y estado de espera reordenados en espacio reducido"
+    ]
+  },
+  "warnings": ["GLib-GIO: win32 session dbus binary not found; aviso no fatal en esta validación"],
+  "notValidated": [
+    "Ejecución nativa en Linux/macOS, Node 22/26 o GTK exactamente 4.10",
+    "Interacción manual con IntelliSense o el frontend DAP dentro de VS Code",
+    "Selección interactiva de una ruta real o clic manual en Cancelar en FileDialog",
+    "La vista del navegador usa una historia sintética; el transporte y la generación se verifican aparte con procesos Node y GTK doble, más el ensayo GTK real indicado"
+  ]
+}

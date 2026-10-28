@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pruebas de programa CLRS",
+  "description": "Casos declarativos de entrada y salida para un programa CLRS.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "id",
+    "name",
+    "program",
+    "cases"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Referencia opcional al JSON Schema del formato."
+    },
+    "version": {
+      "const": 1,
+      "description": "Versión del formato declarativo de pruebas CLRS."
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+      "description": "Identificador estable y único de la suite."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^(?!\\s*$)[^\\r\\n]+$",
+      "description": "Nombre legible mostrado en el Explorador de pruebas."
+    },
+    "program": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32768,
+      "pattern": "\\.[cC][lL][rR][sS]$",
+      "description": "Ruta relativa al programa CLRS que ejecutará la suite."
+    },
+    "cases": {
+      "type": "array",
+      "maxItems": 10000,
+      "description": "Casos de prueba pertenecientes a la suite.",
+      "items": {
+        "$ref": "#/$defs/testCase"
+      }
+    }
+  },
+  "$defs": {
+    "line": {
+      "type": "string",
+      "maxLength": 65536,
+      "pattern": "^[^\\r\\n\\u0000]*$"
+    },
+    "lines": {
+      "type": "array",
+      "maxItems": 65536,
+      "items": {
+        "$ref": "#/$defs/line"
+      }
+    },
+    "testCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "input",
+        "expectedOutput"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+          "description": "Identificador estable y único dentro de la suite."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^(?!\\s*$)[^\\r\\n]+$",
+          "description": "Nombre legible del caso de prueba."
+        },
+        "input": {
+          "$ref": "#/$defs/lines",
+          "description": "Líneas entregadas, en orden, a las instrucciones leer."
+        },
+        "expectedOutput": {
+          "$ref": "#/$defs/lines",
+          "description": "Líneas que el programa debe producir mediante escribir."
+        },
+        "comparison": {
+          "type": "string",
+          "enum": [
+            "exact",
+            "trimmed",
+            "normalized-whitespace",
+            "lines",
+            "unordered-lines",
+            "number",
+            "number-tolerance",
+            "json",
+            "array-ordered",
+            "array-unordered",
+            "boolean",
+            "contains",
+            "regex-safe"
+          ],
+          "default": "exact",
+          "description": "Forma en que se compara la salida obtenida con expectedOutput. Los comparadores JSON y de arreglos interpretan la salida estructuralmente."
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60000,
+          "default": 5000,
+          "description": "Tiempo máximo de ejecución del caso en milisegundos."
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "version": 1,
+      "id": "suma",
+      "name": "Pruebas de suma",
+      "program": "suma.clrs",
+      "cases": [
+        {
+          "id": "positivos",
+          "name": "Suma dos positivos",
+          "input": ["5", "8"],
+          "expectedOutput": ["13"],
+          "comparison": "number",
+          "timeoutMs": 5000
+        }
+      ]
+    }
+  ]
+}

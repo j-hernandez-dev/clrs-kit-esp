@@ -1,0 +1,201 @@
+{
+    "Absoluto": {
+        "prefix": "abs",
+        "body": [
+            "ABS(${1:numero})"
+        ],
+        "description": "Obtiene el valor absoluto de un número. Devuelve Número."
+    },
+
+    "Minimo": {
+        "prefix": "min",
+        "body": [
+            "MIN(${1:a}, ${2:b})"
+        ],
+        "description": "Obtiene el menor de dos números. Devuelve Número."
+    },
+
+    "Maximo": {
+        "prefix": "max",
+        "body": [
+            "MAX(${1:a}, ${2:b})"
+        ],
+        "description": "Obtiene el mayor de dos números. Devuelve Número."
+    },
+
+    "Redondeo": {
+        "prefix": "redo",
+        "body": [
+            "REDONDEA(${1:numero})"
+        ],
+        "description": "Redondea un número al entero más cercano. Devuelve Número."
+    },
+
+    "Piso": {
+        "prefix": "piso",
+        "body": [
+            "PISO(${1:numero})"
+        ],
+        "description": "Obtiene el entero inferior de un número. Devuelve Número."
+    },
+
+    "Raiz Cuadrada": {
+        "prefix": "raiz",
+        "body": [
+            "RAIZ(${1:numero})"
+        ],
+        "description": "Calcula la raíz cuadrada. Devuelve Número."
+    },
+
+    "Raiz Cubica": {
+        "prefix": "raizCub",
+        "body": [
+            "RAIZCUB(${1:numero})"
+        ],
+        "description": "Calcula la raíz cúbica. Devuelve Número."
+    },
+
+    "Exponencial": {
+        "prefix": "exp",
+        "body": [
+            "EXP(${1:numero})"
+        ],
+        "description": "Calcula e elevado al número indicado. Devuelve Número."
+    },
+
+    "Logaritmo Natural": {
+        "prefix": "log",
+        "body": [
+            "LOGN(${1:numero})"
+        ],
+        "description": "Calcula el logaritmo natural. Devuelve Número."
+    },
+
+    "Logaritmo Base 10": {
+        "prefix": "log10",
+        "body": [
+            "LOG10(${1:numero})"
+        ],
+        "description": "Calcula el logaritmo en base 10. Devuelve Número."
+    },
+
+    "Logaritmo Base 2": {
+        "prefix": "log2",
+        "body": [
+            "LOG2(${1:numero})"
+        ],
+        "description": "Calcula el logaritmo en base 2. Devuelve Número."
+    },
+
+    "Seno": {
+        "prefix": "sen",
+        "body": [
+            "SEN(${1:radianes})"
+        ],
+        "description": "Calcula el seno de un ángulo en radianes. Devuelve Número."
+    },
+
+    "Coseno": {
+        "prefix": "cos",
+        "body": [
+            "COS(${1:radianes})"
+        ],
+        "description": "Calcula el coseno de un ángulo en radianes. Devuelve Número."
+    },
+
+    "Tangente": {
+        "prefix": "tan",
+        "body": [
+            "TAN(${1:radianes})"
+        ],
+        "description": "Calcula la tangente de un ángulo en radianes. Devuelve Número."
+    },
+
+    "Arcoseno": {
+        "prefix": "arc",
+        "body": [
+            "ARC(${1:numero})"
+        ],
+        "description": "Calcula el arcoseno. Devuelve Número."
+    },
+
+    "Arcocoseno": {
+        "prefix": "arcoCos",
+        "body": [
+            "ARCOCOS(${1:numero})"
+        ],
+        "description": "Calcula el arcocoseno. Devuelve Número."
+    },
+
+    "A Radianes": {
+        "prefix": "rad",
+        "body": [
+            "RAD(${1:grados})"
+        ],
+        "description": "Convierte grados a radianes. Devuelve Número."
+    },
+
+    "A Grados": {
+        "prefix": "gra",
+        "body": [
+            "GRAD(${1:radianes})"
+        ],
+        "description": "Convierte radianes a grados. Devuelve Número."
+    },
+
+    "PI": {
+        "prefix": "pi",
+        "body": [
+            "PI()"
+        ],
+        "description": "Obtiene el valor de π. Devuelve Número."
+    },
+
+    "Euler": {
+        "prefix": "e",
+        "body": [
+            "E()"
+        ],
+        "description": "Obtiene el número de Euler. Devuelve Número."
+    },
+
+    "Aleatorio": {
+        "prefix": "alea",
+        "body": [
+            "ALEAT(${1:minimo}, ${2:maximo})"
+        ],
+        "description": "Genera un número aleatorio entre un mínimo y un máximo. Devuelve Número."
+    },
+
+    "Promedio": {
+        "prefix": "prom",
+        "body": [
+            "PROM(${1:arreglo})"
+        ],
+        "description": "Calcula el promedio de un arreglo de números. Devuelve Número."
+    },
+
+    "Sumatoria": {
+        "prefix": "sum",
+        "body": [
+            "SUM(${1:arreglo})"
+        ],
+        "description": "Calcula la suma de un arreglo de números. Devuelve Número."
+    },
+
+    "Mediana": {
+        "prefix": "med",
+        "body": [
+            "MED(${1:arreglo})"
+        ],
+        "description": "Calcula la mediana de un arreglo de números. Devuelve Número."
+    },
+
+    "Varianza": {
+        "prefix": "var",
+        "body": [
+            "VAR(${1:arreglo})"
+        ],
+        "description": "Calcula la varianza de un arreglo de números. Devuelve Número."
+    }
+}

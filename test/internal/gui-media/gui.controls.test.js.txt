@@ -1,0 +1,338 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { createGuiModelsAdapter } from "../src/standard-library/gui/runtime/GuiModelsAdapter.js";
+import { createGuiMediaAdapter } from "../src/standard-library/gui/runtime/GuiMediaAdapter.js";
+import { createGuiControlsAdapter } from "../src/standard-library/gui/runtime/GuiControlsAdapter.js";
+import { GuiContractError } from "../src/standard-library/gui/GuiErrors.js";
+import { getGuiRuntimeFactorySource } from "../src/standard-library/gui/runtime/GuiRuntimeSource.js";
+import { fakeModelsMedia } from "./fixtures/gui/FakeModelsMedia.js";
+import { fakeGtk } from "./fixtures/gui/FakeGtk.js";
+import { classifyGuiMediaError } from "../src/standard-library/gui/runtime/GuiEnvironmentProbe.js";
+
+const fail = code => { throw new GuiContractError(code); };
+function setup(kind = "models") {
+    const fake = fakeModelsMedia();
+    const adapter = (kind === "models" ? createGuiModelsAdapter : createGuiMediaAdapter)({ ...fake, fail, classifyGuiMediaError });
+    const make = (type, args) => ({ type, id: type, children: new Set(["a", "b", "c"]),
+        ...adapter.create(...(kind === "models" ? [type, [type, ...args]] : [[type, ...args]])) });
+    return { ...fake, adapter, make,
+        read: (record, name) => adapter.property(record, name, undefined, false).value,
+        write: (record, name, value) => adapter.property(record, name, value, true),
+        action: (record, name, ...args) => adapter.action(record, name, [record.id, ...args]) };
+}
+
+test("GUI controles: DropDown conserva opciones e índices públicos con selección vacía real", () => {
+    const { make, read, write } = setup();
+    const options = ["", "Pera", "Uva"];
+    const record = make("DropDown", [options]);
+    options[1] = "Cambio externo";
+    assert.deepEqual(read(record, "opciones"), ["", "Pera", "Uva"]);
+    assert.equal(read(record, "seleccion"), 0);
+    assert.equal(read(record, "valor"), "");
+    write(record, "seleccion", 2); assert.equal(read(record, "valor"), "Uva");
+    write(record, "seleccion", -1);
+    assert.equal(read(record, "seleccion"), -1); assert.equal(read(record, "valor"), null);
+    assert.equal(record.native.getSelected(), 0); // Fila privada en GTK, no una selección ficticia en CLRS.
+    assert.throws(() => write(record, "seleccion", 3), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+    write(record, "seleccion", 1); write(record, "opciones", ["A", "B"]);
+    assert.equal(read(record, "valor"), "B");
+    write(record, "opciones", ["A"]); assert.equal(read(record, "seleccion"), -1);
+    write(record, "opciones", []); assert.deepEqual(read(record, "opciones"), []);
+    assert.equal(read(record, "valor"), null);
+});
+
+test("GUI controles: ColumnView copia filas, valida ancho antes de mutar y usa factories reales", () => {
+    const { make, read, write, subscriptions } = setup();
+    const record = make("ColumnView", [["Texto", "Valor", "Estado"]]);
+    const rows = [["<b>Sin markup</b>", null, true]];
+    write(record, "datos", rows); rows[0][0] = "Mutación externa";
+    const result = read(record, "datos"); result[0][0] = "Mutación devuelta";
+    assert.equal(read(record, "datos")[0][0], "<b>Sin markup</b>");
+    assert.throws(() => write(record, "datos", [[1]]), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+    assert.throws(() => write(record, "columnas", ["Una"]), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+    assert.deepEqual(read(record, "columnas"), ["Texto", "Valor", "Estado"]);
+    for (const [index, expected] of ["<b>Sin markup</b>", "NULO", "Verdadero"].entries()) {
+        const factory = record.native.columns[index].factory;
+        const item = { setChild(child) { this.child = child; }, getChild() { return this.child; },
+            getItem: () => ({ getString: () => record.state.model.getString(0) }) };
+        [...factory.callbacks.get("setup")][0](item); [...factory.callbacks.get("bind")][0](item);
+        assert.equal(item.child.text, expected);
+    }
+    const previous = record.native.columns.map(column => column.factory);
+    write(record, "columnas", ["A", "B", "C"]);
+    assert.equal(subscriptions.size, 6);
+    assert.ok(previous.every(factory => [...factory.callbacks.values()].every(set => set.size === 0)));
+});
+
+for (const type of ["ColumnView", "ListBox"]) {
+    test(`GUI controles: ${type} adapta modos y rechaza selección inválida sin perder la anterior`, () => {
+        const { make, read, write } = setup();
+        const record = make(type, type === "ColumnView" ? [["Número"]] : []);
+        if (type === "ColumnView") { write(record, "datos", [[1], [2], [3]]); }
+        write(record, "seleccion", 1);
+        assert.throws(() => write(record, "seleccion", 3), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+        assert.equal(read(record, "seleccion"), 1);
+        write(record, "modo_seleccion", "multiple"); assert.deepEqual(read(record, "seleccion"), [1]);
+        write(record, "seleccion", [2, 0, 2]); assert.deepEqual(read(record, "seleccion"), [0, 2]);
+        assert.throws(() => write(record, "seleccion", 0), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+        write(record, "modo_seleccion", "explorar"); write(record, "seleccion", -1);
+        assert.equal(read(record, "seleccion"), -1);
+        write(record, "modo_seleccion", "ninguno"); assert.equal(read(record, "seleccion"), null);
+        assert.throws(() => write(record, "seleccion", 0), { code: "CLRS_GUI_ACTION_NOT_SUPPORTED" });
+    });
+}
+
+test("GUI controles: acciones de tabla no recrean columnas y limpieza suelta señales/modelos", () => {
+    const { make, read, write, action, adapter, subscriptions } = setup();
+    const record = make("ColumnView", [["N"]]);
+    write(record, "datos", [[1], [2], [3]]); write(record, "seleccion", 2);
+    write(record, "datos", [[4]]); assert.equal(read(record, "seleccion"), -1);
+    const columns = [...record.native.columns];
+    const row = [5]; action(record, "ANEXAR_FILA", row); row[0] = 9;
+    assert.deepEqual(read(record, "datos"), [[4], [5]]);
+    assert.throws(() => action(record, "ANEXAR_FILA", [1, 2]), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+    assert.throws(() => action(record, "QUITAR_FILA", 2), { code: "CLRS_GUI_INVALID_ARGUMENT" });
+    action(record, "QUITAR_FILA", 0); assert.deepEqual(read(record, "datos"), [[5]]);
+    action(record, "LIMPIAR_FILAS"); assert.deepEqual(read(record, "datos"), []);
+    assert.deepEqual(record.native.columns, columns);
+    adapter.dispose(); adapter.dispose();
+    assert.equal(subscriptions.size, 0); assert.equal(record.native.model, null);
+});
+
+test("GUI controles: QUITAR libera GtkListBoxRow antes de reutilizar el hijo", () => {
+    const { make, adapter } = setup();
+    const parent = make("ListBox", []);
+    const row = { setChild(value) { this.child = value; } };
+    adapter.detachListChild(parent, { native: { getParent: () => row } });
+    assert.equal(parent.native.removed, row); assert.equal(row.child, null);
+});
+
+test("GUI multimedia: dependencias se comprueban bajo demanda antes de crear un reproductor", () => {
+    const { backend, make, videos } = setup("media");
+    assert.equal(backend.imports, 0);
+    backend.available = false;
+    assert.throws(() => make("Video", ["a.avi"]), { code: "CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE" });
+    assert.equal(videos.length, 0);
+    backend.available = true; make("Video", ["a.avi"]); make("Video", ["b.avi"]);
+    assert.equal(backend.imports, 2); // Un fallo no queda guardado como disponible; el éxito sí se reutiliza.
+});
+
+test("GUI multimedia: backend GTK alternativo no exige GStreamer", () => {
+    const fake = fakeModelsMedia();
+    fake.Gtk.MediaFile.new = () => ({ constructor: { name: "GtkFfmpegMediaFile" } });
+    const adapter = createGuiMediaAdapter({ ...fake, fail, verifyMedia() {}, classifyGuiMediaError });
+    adapter.create(["v", "a.avi"]); assert.equal(fake.backend.imports, 0);
+    adapter.dispose();
+});
+
+test("GUI multimedia: GTK sin backend rechaza VIDEO antes de construir el widget", () => {
+    const fake = fakeModelsMedia();
+    const adapter = createGuiMediaAdapter({ ...fake, fail, classifyGuiMediaError,
+        verifyMedia() { fail("CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE"); } });
+    assert.throws(() => adapter.create(["v", "a.avi"]), { code: "CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE" });
+    assert.equal(fake.videos.length, 0);
+    assert.equal(fake.backend.imports, 0);
+    adapter.dispose();
+});
+
+test("GUI multimedia: un rechazo conserva la sesión y no reserva un ID fantasma", async () => {
+    const native = fakeGtk();
+    native.Gtk.MediaFile = { new: () => ({ constructor: { name: "GtkNoMediaFile" } }) };
+    const factory = Function(`return (${getGuiRuntimeFactorySource()})`)();
+    const session = await factory(native.binding, {});
+    try {
+        assert.throws(() => session.invoke("VIDEO", ["elemento", "ruta-privada.avi"]), error =>
+            error.name === "CLRSUserError" && error.code === "CLRS_GUI_RUNTIME_NOT_READY"
+            && !error.message.includes("ruta-privada"));
+        session.invoke("CAJA", ["elemento", "vertical", 0]);
+        assert.equal(session.invoke("OBTENER", ["elemento", "orientacion"]), "vertical");
+        await session.waitForIdle();
+    } finally { await session.dispose(); }
+    assert.equal(native.apps[0].holds, 0);
+    assert.equal(native.loop.stopped, true);
+});
+
+test("GUI multimedia: preferencias antes de preparado no llaman al backend prematuramente", () => {
+    const { make, read, write } = setup("media");
+    const record = make("Video", ["a.avi"]);
+    const media = record.native.getMediaStream();
+    write(record, "volumen", 0.2); write(record, "silenciado", true); write(record, "bucle", true);
+    assert.deepEqual(media.writes, []); assert.equal(read(record, "volumen"), 0.2);
+    assert.equal(read(record, "silenciado"), true); assert.equal(read(record, "preparado"), false);
+    media.prepare();
+    assert.equal(media.volume, 0.2); assert.equal(media.muted, true); assert.equal(media.loop, true);
+    assert.equal(read(record, "preparado"), true);
+});
+
+test("GUI multimedia: tiempo público en segundos, GI int64 privado y reproducir/pausar/parar", () => {
+    const { make, read, write, action } = setup("media");
+    const record = make("Video", ["a.avi"]); const media = record.native.getMediaStream(); media.prepare();
+    assert.equal(read(record, "duracion"), 3);
+    action(record, "REPRODUCIR"); assert.equal(read(record, "reproduciendo"), true);
+    action(record, "PAUSAR"); assert.equal(read(record, "reproduciendo"), false);
+    write(record, "posicion", 1.234567); assert.equal(media.timestamp, 1234567n);
+    assert.equal(read(record, "posicion"), 1.234567);
+    assert.throws(() => write(record, "posicion", Number.MAX_SAFE_INTEGER), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+    action(record, "PARAR"); assert.equal(media.timestamp, 0n); assert.equal(media.playing, false);
+});
+
+test("GUI multimedia: no aparenta reinicio si el flujo no se puede desplazar", () => {
+    const { make, write, action } = setup("media");
+    const record = make("Video", ["a.avi"]); const media = record.native.getMediaStream();
+    media.seekable = false; media.timestamp = 1000000n; media.playing = true;
+    assert.throws(() => action(record, "PARAR"), { code: "CLRS_GUI_MEDIA_NOT_SEEKABLE" });
+    assert.equal(media.playing, true); assert.equal(media.timestamp, 1000000n);
+    assert.throws(() => write(record, "posicion", 2), { code: "CLRS_GUI_MEDIA_NOT_SEEKABLE" });
+    media.timestamp = 0n; action(record, "PARAR"); assert.equal(media.playing, false);
+    media.error = new Error("detalle privado del archivo");
+    assert.throws(() => action(record, "REPRODUCIR"), error => error.code === "CLRS_GUI_MEDIA_LOAD_FAILED"
+        && !error.message.includes("privado"));
+});
+
+test("GUI multimedia: cambiar archivo desconecta stream anterior y conserva preferencias", () => {
+    const { make, read, write, adapter, subscriptions } = setup("media");
+    const record = make("Video", ["a.avi"]); const previous = record.native.getMediaStream();
+    previous.prepare(); previous.play(); write(record, "volumen", 0.4);
+    write(record, "archivo", "ruta con espacios/ñ.avi");
+    assert.equal(previous.playing, false); assert.equal(previous.callbacks.get("notify::prepared").size, 0);
+    assert.equal(subscriptions.size, 3);
+    assert.equal(read(record, "archivo"), "ruta con espacios/ñ.avi");
+    const current = record.native.getMediaStream(); current.prepare(); assert.equal(current.volume, 0.4);
+    adapter.release(record); assert.equal(record.native.getMediaStream(), null);
+    assert.equal(subscriptions.size, 0);
+    adapter.dispose(); adapter.dispose();
+});
+
+function controlsSetup() {
+    const { Gtk, binding } = fakeGtk();
+    const records = new Map();
+    const adapter = createGuiControlsAdapter({ Gtk, gi: binding.default, GLib: {}, fail,
+        get: id => records.get(id) ?? fail("CLRS_GUI_COMPONENT_NOT_FOUND"),
+        createModels: () => ({ property: () => null, action: () => false, release() {}, dispose() {} }),
+        createMedia: () => ({ release() {}, dispose() {} }) });
+    return { adapter, records, read: (record, name) => adapter.property(record, name, undefined, false).value,
+        write: (record, name, value) => adapter.property(record, name, value, true) };
+}
+
+test("GUI controles: grupos homogéneos, unión transitiva y retirada sin IDs muertos", () => {
+    const { adapter, records, read, write } = controlsSetup();
+    for (const id of ["a", "b", "c", "d"]) {
+        records.set(id, { id, type: id === "d" ? "ToggleButton" : "CheckButton", native: { setGroup(value) { this.group = value; } } });
+    }
+    const [a, b, c] = ["a", "b", "c"].map(id => records.get(id));
+    write(b, "grupo", "a"); write(c, "grupo", "b");
+    assert.equal(read(b, "grupo"), "a");
+    assert.throws(() => write(a, "grupo", "d"), { code: "CLRS_GUI_WRONG_COMPONENT_TYPE" });
+    assert.throws(() => write(a, "grupo", "a"), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+    adapter.release(a); assert.equal(read(b, "grupo"), "c");
+    write(b, "grupo", null); assert.equal(read(c, "grupo"), null); assert.equal(read(b, "grupo"), null);
+});
+
+test("GUI controles: límites de rango coherentes antes de mutar y precisión nativa", () => {
+    const { read, write } = controlsSetup();
+    const native = { lower: 0, upper: 10, step: 1, page: 5, getAdjustment() { return this; },
+        getLower() { return this.lower; }, getUpper() { return this.upper; }, getStepIncrement() { return this.step; },
+        getPageIncrement() { return this.page; }, setRange(a, b) { this.lower = a; this.upper = b; },
+        setIncrements(step, page) { this.step = step; this.page = page; } };
+    const record = { type: "Scale", native };
+    write(record, "minimo", 10); assert.equal(read(record, "minimo"), 10);
+    assert.throws(() => write(record, "maximo", 9), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+    assert.equal(read(record, "maximo"), 10);
+    write(record, "paso", 0.5); assert.equal(native.page, 5); assert.equal(read(record, "paso"), 0.5);
+    assert.throws(() => write(record, "decimales", 65), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+    assert.throws(() => write({ type: "SpinButton", native }, "decimales", 21), { code: "CLRS_GUI_INVALID_PROPERTY_VALUE" });
+});
+
+test("GUI controles: TextView usa su buffer y conserva saltos, Unicode y texto literal", () => {
+    const { read, write } = controlsSetup();
+    const buffer = { text: "", setText(text, size) { this.text = text; assert.equal(size, -1); },
+        getBounds: () => ["start", "end"], getText(start, end, hidden) {
+            assert.deepEqual([start, end, hidden], ["start", "end", true]); return this.text;
+        } };
+    const record = { type: "TextView", native: { getBuffer: () => buffer } };
+    write(record, "texto", "<b>á</b>\nSegunda línea"); assert.equal(read(record, "texto"), "<b>á</b>\nSegunda línea");
+});
+
+test("GUI controles: error inicial del adaptador libera hold y loop sin exponer detalles", async () => {
+    const native = fakeGtk();
+    const requireNative = native.binding.default.require;
+    native.binding.default.require = (name, version) => {
+        if (name === "Pango") { throw new Error("private-path"); }
+        return requireNative(name, version);
+    };
+    const factory = Function(`return (${getGuiRuntimeFactorySource()})`)();
+    await assert.rejects(factory(native.binding, {}), error => error.code === "CLRS_GUI_NATIVE_OPERATION_FAILED"
+        && !error.message.includes("private"));
+    assert.equal(native.apps[0].holds, 0); assert.equal(native.loop.stopped, true);
+    assert.equal(native.apps[0].signals.size, 0);
+});
+
+test("GUI VIDEO transaccional: un setFile fallido desconecta señales y permite reutilizar el ID", async () => {
+    const native = fakeGtk();
+    const media = fakeModelsMedia();
+    const gio = native.binding.default.require("Gio"); Object.assign(gio, media.Gio);
+    const BaseVideo = media.Gtk.Video;
+    let reject = true;
+    class Video extends BaseVideo {
+        connect(signal, callback) { return media.connect(this, signal, callback); }
+        disconnect(disconnect) { disconnect(); }
+        setFile(file) {
+            super.setFile(file);
+            if (file && reject) { throw new Error("detalle privado"); }
+        }
+    }
+    native.Gtk.Video = Video;
+    const factory = Function(`return (${getGuiRuntimeFactorySource()})`)();
+    const session = await factory(native.binding, { mediaVerified: true });
+    try {
+        assert.throws(() => session.invoke("VIDEO", ["reutilizable", "a.avi"]), { code: "CLRS_GUI_MEDIA_LOAD_FAILED" });
+        assert.equal(media.subscriptions.size, 0);
+        assert.equal(media.videos[0].getMediaStream(), null);
+        // Reuse the same identifier through the real session registry.
+        session.invoke("CAJA", ["reutilizable", "vertical", 0]);
+        assert.equal(session.invoke("OBTENER", ["reutilizable", "orientacion"]), "vertical");
+        reject = false;
+    } finally { await session.dispose(); }
+    assert.equal(native.apps[0].holds, 0);
+});
+
+test("GUI VIDEO: error inmediato o diferido limpia streams y clasifica el formato sin filtrar detalle", () => {
+    for (const immediate of [true, false]) {
+        const fake = fakeModelsMedia();
+        fake.Gio.ioErrorQuark = () => 42; fake.Gio.IOErrorEnum = { NOT_SUPPORTED: 15 };
+        const Base = fake.Gtk.Video;
+        let last;
+        fake.Gtk.Video = class extends Base {
+            setFile(file) {
+                super.setFile(file);
+                if (file) {
+                    last = this.media;
+                    if (immediate) { this.media.error = { domain: 42, code: 15, message: "private codec" }; }
+                }
+            }
+        };
+        const errors = [];
+        const adapter = createGuiMediaAdapter({ ...fake, fail, classifyGuiMediaError,
+            onMediaFailure(id, error) { errors.push([id, error]); } });
+        if (immediate) {
+            assert.throws(() => adapter.create(["v", "file"]), { code: "CLRS_GUI_MEDIA_FORMAT_UNSUPPORTED" });
+        } else {
+            adapter.create(["v", "file"]);
+            last.error = { domain: 42, code: 15, message: "private codec" }; last.emit("notify::error");
+            assert.equal(errors[0][0], "v"); assert.equal(errors[0][1].code, "CLRS_GUI_MEDIA_FORMAT_UNSUPPORTED");
+            assert.doesNotMatch(errors[0][1].message, /private codec/);
+        }
+        assert.equal(fake.subscriptions.size, 0);
+        assert.equal(fake.videos[0].getMediaStream(), null);
+        adapter.dispose();
+    }
+});
+
+test("GUI VIDEO: un archivo inexistente se rechaza antes de crear objetos GTK", () => {
+    const fake = fakeModelsMedia();
+    fake.Gio.ioErrorQuark = () => 1; fake.Gio.IOErrorEnum = { NOT_FOUND: 1 };
+    fake.Gio.File.newForPath = () => ({ read() { throw { domain: 1, code: 1 }; } });
+    const adapter = createGuiMediaAdapter({ ...fake, fail, classifyGuiMediaError });
+    assert.throws(() => adapter.create(["v", "missing"]), { code: "CLRS_GUI_MEDIA_RESOURCE_UNAVAILABLE" });
+    assert.equal(fake.videos.length, 0); assert.equal(fake.subscriptions.size, 0);
+});

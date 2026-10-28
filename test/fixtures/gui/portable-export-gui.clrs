@@ -1,0 +1,4 @@
+PRINCIPAL()
+    ESTABLECER_TEMA("Adwaita")
+    ESTABLECER_MODO_TEMA("oscuro")
+    escribir OBTENER_MODO_TEMA()

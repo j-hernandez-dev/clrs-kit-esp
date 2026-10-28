@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "platform": "win32",
+  "arch": "x64",
+  "node": "24.16.0",
+  "abi": "137",
+  "npm": "11.13.0",
+  "binding": "4.1.1",
+  "checks": [
+    "real-npm-lock-without-node-modules-or-private-gtk",
+    "exact-node-gtk-install-authorization-and-normal-start-script",
+    "npm-ci-in-relocated-project-without-origin",
+    "npm-ci-no-unapproved-node-gtk-script-and-lock-unchanged",
+    "node-gtk-native-binding-installed",
+    "yao-pkg-cli-available",
+    "native-npm-start-normal-entry-without-portable-build-side-effects",
+    "native-node-entry-independent-of-cwd",
+    "native-semantic-equivalence-private-binding-and-npm-binding"
+  ],
+  "notValidated": [
+    "build real con pkg",
+    "ejecutable portable",
+    "extracción o reutilización de bin/",
+    "otras plataformas/arquitecturas/versiones de Node",
+    "GTK exactamente 4.10",
+    "interacción manual o apariencia visual",
+    "selección manual de archivos"
+  ],
+  "resolved": {
+    "nodeGtk": "4.1.1",
+    "pkg": "6.22.0",
+    "bindingName": "node-v137-win32-x64"
+  },
+  "gtk": "4.22.4",
+  "cleaned": true
+}

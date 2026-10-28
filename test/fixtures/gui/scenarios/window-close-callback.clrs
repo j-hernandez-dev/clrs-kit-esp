@@ -1,0 +1,9 @@
+CERRADA(id)
+    escribir id
+    retornar FALSO
+PRINCIPAL()
+    VENTANA("v", "Cierre")
+    CONECTAR("v", "cerrar", CERRADA)
+    MOSTRAR("v")
+    CERRAR("v")
+    escribir "fin"

@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "platform": "win32",
+  "arch": "x64",
+  "node": "24.16.0",
+  "npm": "11.13.0",
+  "checks": [
+    "three-file-cli-export-with-real-npm-lock",
+    "relocated-project-after-origin-removal",
+    "npm-ci-lock-unchanged-without-gui-dependencies",
+    "yao-pkg-cli-available",
+    "npm-start-normal-entry-without-build-side-effects",
+    "direct-node-entry-independent-of-cwd"
+  ],
+  "notValidated": [
+    "build real con pkg",
+    "ejecutable portable",
+    "stdin interactivo",
+    "stderr",
+    "argumentos",
+    "códigos de salida",
+    "otras plataformas o versiones de Node"
+  ],
+  "resolved": {
+    "pkg": "6.22.0",
+    "lockfileVersion": 3
+  },
+  "cleaned": true
+}

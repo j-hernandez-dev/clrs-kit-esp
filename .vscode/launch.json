@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "clrs",
+            "request": "launch",
+            "name": "Depurar CLRS paso a paso",
+            "program": "${file}",
+            "stopOnEntry": true
+        }
+    ]
+}

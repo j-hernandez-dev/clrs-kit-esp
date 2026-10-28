@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "suite": "BROKER.95 multiroute learning acceptance corpus",
+  "policies": {
+    "legacyPersistence": "reject-without-migration",
+    "routeMap": "vertical-responsive",
+    "algorithmsUnlock": "programming-completed",
+    "learningCriteria": ["functionality"],
+    "tools": "optional-only"
+  },
+  "routes": [
+    {
+      "routeId": "programming",
+      "sectionCount": 8,
+      "lessonCount": 50,
+      "firstLessonId": "lesson-001",
+      "lastLessonId": "lesson-050",
+      "availableInitially": true
+    },
+    {
+      "routeId": "algorithms",
+      "sectionCount": 8,
+      "lessonCount": 57,
+      "firstLessonId": "algorithm-lesson-001",
+      "lastLessonId": "algorithm-lesson-057",
+      "availableInitially": false
+    }
+  ],
+  "sharedLessonFields": [
+    "id",
+    "sectionId",
+    "order",
+    "title",
+    "objective",
+    "problemStatement",
+    "concepts",
+    "explanation",
+    "examples",
+    "formulas",
+    "introducedKnowledge",
+    "comparativeNotes",
+    "expectedContract",
+    "recommendedTools",
+    "familyId",
+    "categoryId",
+    "baseReward"
+  ],
+  "requiredAreas": [
+    "catalog",
+    "persistence",
+    "progression",
+    "curriculum",
+    "contracts",
+    "submission",
+    "lifecycle",
+    "protocol",
+    "webview",
+    "regression"
+  ],
+  "cases": [
+    {
+      "id": "learning-catalog-programming-complete",
+      "area": "catalog",
+      "requirement": "Programación conserva 8 secciones y 50 lecciones completas.",
+      "evidence": [{ "file": "test/broker95.learning.catalog.test.js", "testNeedle": "publica las 8 secciones y las 50 lecciones curriculares" }]
+    },
+    {
+      "id": "learning-catalog-algorithms-complete",
+      "area": "catalog",
+      "requirement": "Algoritmia conserva 8 secciones y 57 lecciones completas.",
+      "evidence": [{ "file": "test/broker95.learning.catalog.test.js", "testNeedle": "publica el catálogo canónico completo de Algoritmia" }]
+    },
+    {
+      "id": "learning-identifiers-cross-route-unique",
+      "area": "catalog",
+      "requirement": "Secciones y lecciones no comparten identificadores entre rutas.",
+      "evidence": [{ "file": "test/broker95.learning.corpus.test.js", "testNeedle": "protege los catálogos completos, sus identificadores y el modelo compartido" }]
+    },
+    {
+      "id": "learning-legacy-state-rejected",
+      "area": "persistence",
+      "requirement": "Los snapshots obsoletos se rechazan sin mantener una capa de migración.",
+      "evidence": [{ "file": "test/broker95.persistence.test.js", "testNeedle": "rechaza una partida antigua sin intentar migrarla" }]
+    },
+    {
+      "id": "learning-algorithms-initially-locked",
+      "area": "progression",
+      "requirement": "Algoritmia comienza bloqueada y Programación disponible.",
+      "evidence": [{ "file": "test/broker95.learning.routes-progress.test.js", "testNeedle": "crea progresos independientes para Programacion y Algoritmia" }]
+    },
+    {
+      "id": "learning-algorithms-unlocked-after-programming",
+      "area": "progression",
+      "requirement": "Completar Programación desbloquea Algoritmia.",
+      "evidence": [{ "file": "test/broker95.learning.routes-progress.test.js", "testNeedle": "desbloquea Algoritmia si y solo si Programacion esta completa" }]
+    },
+    {
+      "id": "learning-no-route-or-lesson-skip",
+      "area": "progression",
+      "requirement": "No se puede abrir una ruta bloqueada ni saltar una lección.",
+      "evidence": [
+        { "file": "test/broker95.learning.progress.test.js", "testNeedle": "rechaza saltar lecciones o crear dos contratos para el mismo intento" },
+        { "file": "test/broker95.learning.multiroute-transitions.test.js", "testNeedle": "rechaza transiciones de Algoritmia mientras la ruta esta bloqueada" }
+      ]
+    },
+    {
+      "id": "learning-cross-route-knowledge",
+      "area": "curriculum",
+      "requirement": "Algoritmia recibe el conocimiento completo de Programación como prerrequisito y suma el conocimiento de su propia ruta.",
+      "evidence": [{ "file": "test/broker95.learning.request.test.js", "testNeedle": "comparte la frontera curricular con Algoritmia" }]
+    },
+    {
+      "id": "learning-theory-versus-practice",
+      "area": "curriculum",
+      "requirement": "Un contrato debe solicitar una práctica CLRS observable y no un cuestionario teórico.",
+      "evidence": [{ "file": "test/broker95.learning.validation.test.js", "testNeedle": "rechaza cuestionarios" }]
+    },
+    {
+      "id": "learning-tools-optional",
+      "area": "curriculum",
+      "requirement": "Las herramientas recomendadas son optativas y nunca forman parte de la evaluación.",
+      "evidence": [{ "file": "test/broker95.learning.validation.test.js", "testNeedle": "las herramientas son contexto opcional y nunca requisitos evaluables" }]
+    },
+    {
+      "id": "learning-algorithms-contract",
+      "area": "contracts",
+      "requirement": "Algoritmia genera, valida y vincula contratos con identidad de ruta propia.",
+      "evidence": [{ "file": "test/broker95.learning.service.test.js", "testNeedle": "obtiene un contrato de Algoritmia resolviendo primero su ruta" }]
+    },
+    {
+      "id": "learning-client-contract-regression",
+      "area": "contracts",
+      "requirement": "Los contratos de cliente conservan su modelo y no aceptan campos learning.",
+      "evidence": [
+        { "file": "test/broker95.learning.contract.test.js", "testNeedle": "construye un contrato client canónico" },
+        { "file": "test/broker95.learning.contract.test.js", "testNeedle": "no permite mezclar campos learning en contratos client" }
+      ]
+    },
+    {
+      "id": "learning-algorithms-review",
+      "area": "submission",
+      "requirement": "Review conserva objetivo, condiciones, paradigmas y conocimiento bloqueado de Algoritmia.",
+      "evidence": [{ "file": "test/broker95.submission.review.test.js", "testNeedle": "ai -review de Algoritmia conserva objetivo, condiciones, paradigma y conceptos bloqueados" }]
+    },
+    {
+      "id": "learning-algorithms-push-approved",
+      "area": "submission",
+      "requirement": "Un push aprobado paga y desbloquea solamente la siguiente lección de Algoritmia.",
+      "evidence": [{ "file": "test/broker95.submission.push.test.js", "testNeedle": "ai -push aprueba Algoritmia, paga y desbloquea sólo su siguiente lección" }]
+    },
+    {
+      "id": "learning-algorithms-push-rejected",
+      "area": "submission",
+      "requirement": "Un push rechazado no paga ni avanza la ruta.",
+      "evidence": [{ "file": "test/broker95.submission.push.test.js", "testNeedle": "ai -push rechazado mantiene disponible la lección de Algoritmia" }]
+    },
+    {
+      "id": "learning-repetition-improvement-payout",
+      "area": "submission",
+      "requirement": "Una repetición paga únicamente la mejora sobre la mejor calificación y no vuelve a desbloquear.",
+      "evidence": [{ "file": "test/broker95.submission.push.test.js", "testNeedle": "una repetición de Algoritmia paga sólo la mejora sin volver a desbloquear" }]
+    },
+    {
+      "id": "learning-delete-and-purge",
+      "area": "lifecycle",
+      "requirement": "Delete y purge liberan vínculos learning sin borrar progreso.",
+      "evidence": [
+        { "file": "test/broker95.learning.terminal.test.js", "testNeedle": "ai -delete libera la lección y permite obtener otro intento" },
+        { "file": "test/broker95.learning.terminal.test.js", "testNeedle": "ai -purge elimina juntos pendientes normales y educativos sin borrar progreso" }
+      ]
+    },
+    {
+      "id": "learning-statistics-economy",
+      "area": "lifecycle",
+      "requirement": "Algoritmia actualiza saldo, estadísticas y perfil técnico generales.",
+      "evidence": [{ "file": "test/broker95.learning.game-integration.test.js", "testNeedle": "Algoritmia usa las estadísticas, el saldo y el perfil técnico generales" }]
+    },
+    {
+      "id": "learning-reset-multiroute",
+      "area": "lifecycle",
+      "requirement": "El reset reinicia las dos rutas en una sola transición.",
+      "evidence": [{ "file": "test/broker95.learning.game-integration.test.js", "testNeedle": "el reset multirruta reinicia Programación y Algoritmia en una sola transición" }]
+    },
+    {
+      "id": "learning-game-over-preserves-progress",
+      "area": "lifecycle",
+      "requirement": "Game over cierra vínculos pero conserva logros educativos.",
+      "evidence": [{ "file": "test/broker95.learning.game-integration.test.js", "testNeedle": "game over y nueva partida conservan los logros alcanzados en Algoritmia" }]
+    },
+    {
+      "id": "learning-protocol-multiroute",
+      "area": "protocol",
+      "requirement": "El protocolo transporta routeId y lessonId sin autoridad adicional del Webview.",
+      "evidence": [{ "file": "test/broker95.learning.protocol.test.js", "testNeedle": "el Webview sólo puede solicitar una lección por su identificador" }]
+    },
+    {
+      "id": "learning-selector-accessible",
+      "area": "webview",
+      "requirement": "El selector anuncia estados y no permite abrir Algoritmia bloqueada.",
+      "evidence": [
+        { "file": "test/broker95.webview.test.js", "testNeedle": "el selector abre Algoritmia sólo cuando el Host la proyecta disponible" },
+        { "file": "test/broker95.webview.test.js", "testNeedle": "el selector de rutas es responsivo y anuncia sus estados" }
+      ]
+    },
+    {
+      "id": "learning-map-vertical-responsive",
+      "area": "webview",
+      "requirement": "Las dos rutas reutilizan el mapa vertical y sus nodos se adaptan al ancho disponible.",
+      "evidence": [
+        { "file": "test/broker95.learning.route.test.js", "testNeedle": "reutiliza el mapa vertical para las 57 lecciones de Algoritmia" },
+        { "file": "test/broker95.learning.accessibility.test.js", "testNeedle": "conserva las salvaguardas declarativas de accesibilidad y render diferido" }
+      ]
+    },
+    {
+      "id": "learning-programming-full-regression",
+      "area": "regression",
+      "requirement": "Programación conserva contenido, contratos esperados, progresión, review, push y presentación compartida.",
+      "evidence": [
+        { "file": "test/broker95.learning.catalog.test.js", "testNeedle": "mantiene contenido curricular completo, estructurado e inmutable" },
+        { "file": "test/broker95.learning.request.test.js", "testNeedle": "prepara la solicitud curricular compacta sin filtrar estado ni recompensa" },
+        { "file": "test/broker95.submission.evaluation.test.js", "testNeedle": "ai -push limita la evaluación educativa a Funcionalidad y al conocimiento acumulado" }
+      ]
+    }
+  ]
+}

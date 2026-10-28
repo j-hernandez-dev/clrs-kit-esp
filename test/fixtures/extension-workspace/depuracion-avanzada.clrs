@@ -1,0 +1,7 @@
+DOBLE(x)
+    temporal = x * 2
+    retornar temporal
+PRINCIPAL()
+    dato = 3
+    resultado = DOBLE(dato)
+    escribir resultado

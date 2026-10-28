@@ -1,0 +1,55 @@
+# Dependencias instaladas
+node_modules/
+frontend/node_modules/
+
+# Salidas reconstruibles de compilacion y empaquetado
+dist/
+extension-dist/
+frontend/dist/
+coverage/
+.nyc_output/
+*.vsix
+*.tgz
+
+# Estado temporal de CLRS, VS Code y las pruebas
+.runtime/
+.clrs/
+.vscode-test/
+
+# Variables locales, credenciales y certificados
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Registros, caches y archivos temporales
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+.cache/
+.tmp/
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# Binarios nativos reconstruibles
+*.node
+*.dll
+*.so
+*.dylib
+*.exe
+
+# Metadatos del sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini

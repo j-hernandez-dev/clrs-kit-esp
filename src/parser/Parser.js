@@ -1,0 +1,197 @@
+// parser.js
+
+import { CstParser, EOF } from "chevrotain";
+
+import { TOKEN_VOCABULARY } from "../lexer/TokenVocabulary.js";
+import {
+  spanishParserErrorMessageProvider
+} from "../language/diagnostics/SpanishParserErrorMessageProvider.js";
+
+/**
+ * Core
+ */
+import { registerProgramRules } from "./core/ProgramRules.js";
+import { registerStatementRules } from "./core/StatementRules.js";
+import { registerBlockRules } from "./core/BlockRules.js";
+
+/**
+ * Expressions
+ */
+import { registerPrimaryRules } from "./expressions/Primary.js";
+import { registerArrayLiteralRules } from "./expressions/ArrayLiteral.js";
+import { registerAccessRules } from "./expressions/Access.js";
+import { registerPowerRules } from "./expressions/Power.js";
+import { registerUnaryRules } from "./expressions/Unary.js";
+import { registerMultiplicativeRules } from "./expressions/Multiplicative.js";
+import { registerAdditiveRules } from "./expressions/Additive.js";
+import { registerComparisonRules } from "./expressions/Comparison.js";
+import { registerLogicalRules } from "./expressions/Logical.js";
+import { registerExpressionRules } from "./expressions/Expression.js";
+
+/**
+ * Declarations
+ */
+import { registerParameterRules } from "./declarations/ParameterRules.js";
+import { registerFunctionDeclarationRules } from "./declarations/FunctionDeclaration.js";
+
+/**
+ * Calls
+ */
+import { registerFunctionCallRules } from "./calls/FunctionCall.js";
+
+/**
+ * Statements
+ */
+import { registerAssignmentRules } from "./statements/AssignmentStatement.js";
+import { registerReturnRules } from "./statements/ReturnStatement.js";
+
+/**
+ * I/O
+ */
+import { registerReadRules } from "./io/ReadStatement.js";
+import { registerWriteRules } from "./io/WriteStatement.js";
+
+/**
+ * Control
+ */
+import { registerIfRules } from "./control/if/IfStatement.js";
+import { registerElseIfRules } from "./control/if/ElseIfClause.js";
+import { registerElseRules } from "./control/if/ElseClause.js";
+
+import { registerWhileRules } from "./control/WhileRules.js";
+import { registerForRules } from "./control/ForRules.js";
+
+export class GaddisParser extends CstParser {
+  /**
+   * Ejecuta la regla raíz y devuelve una copia de los errores producidos.
+   *
+   * @param {import("chevrotain").IToken[]} tokens
+   * @returns {{cst: any, errors: any[]}}
+   */
+  parse(tokens) {
+    this.input = tokens;
+
+    const cst = this.program();
+
+    this.reportTrailingInput();
+
+    return {
+      cst,
+      errors: [...this.errors]
+    };
+  }
+
+  /**
+   * La regla raíz no consume EOF para que el token virtual no altere la
+   * ubicación del nodo Program. Aun así, ningún token real puede quedar sin
+   * reconocer después de un programa completo.
+   */
+  reportTrailingInput() {
+    const firstRedundant = this.LA(1);
+
+    if (
+      this.errors.length === 0 &&
+      firstRedundant?.tokenType !== EOF
+    ) {
+      this.errors.push({
+        message:
+          spanishParserErrorMessageProvider
+            .buildNotAllInputParsedMessage({ firstRedundant }),
+        token: firstRedundant,
+        previousToken: null,
+        context: {
+          ruleStack: ["program"]
+        }
+      });
+    }
+  }
+
+  constructor() {
+
+    super(TOKEN_VOCABULARY, {
+      errorMessageProvider:
+        spanishParserErrorMessageProvider
+    });
+
+    /**
+     * ==================================
+     * EXPRESSIONS
+     * ==================================
+     */
+
+    registerFunctionCallRules(this);
+
+    registerArrayLiteralRules(this);
+    registerPrimaryRules(this);
+    registerAccessRules(this);
+    registerPowerRules(this);
+    registerUnaryRules(this);
+    registerMultiplicativeRules(this);
+    registerAdditiveRules(this);
+    registerComparisonRules(this);
+    registerLogicalRules(this);
+    registerExpressionRules(this);
+
+    /**
+     * ==================================
+     * DECLARATIONS
+     * ==================================
+     */
+
+    registerParameterRules(this);
+
+    registerFunctionDeclarationRules(this);
+
+    /**
+     * ==================================
+     * STATEMENTS
+     * ==================================
+     */
+
+    registerAssignmentRules(this);
+    registerReturnRules(this);
+
+    /**
+     * ==================================
+     * IO
+     * ==================================
+     */
+
+    registerReadRules(this);
+    registerWriteRules(this);
+
+    /**
+     * ==================================
+     * CONTROL FLOW
+     * ==================================
+     */
+
+    registerElseRules(this);
+    registerElseIfRules(this);
+    registerIfRules(this);
+
+    registerWhileRules(this);
+    registerForRules(this);
+
+    /**
+     * ==================================
+     * CORE
+     * ==================================
+     */
+
+    registerStatementRules(this);
+    registerBlockRules(this);
+    registerProgramRules(this);
+
+    /**
+     * ==================================
+     * CHEVROTAIN
+     * ==================================
+     */
+
+    this.performSelfAnalysis();
+  }
+
+}
+
+export const parser = new GaddisParser();

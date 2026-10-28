@@ -1,0 +1,9 @@
+PRINCIPAL()
+    dato = NULO
+    otro = NULO
+    escribir "ENTRADA"
+    leer dato
+    escribir dato
+    escribir "SEGUNDA ENTRADA"
+    leer otro
+    escribir otro

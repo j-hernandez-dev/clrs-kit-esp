@@ -1,0 +1,2 @@
+PRINCIPAL()
+    escribir "VENTANA BOTON node-gtk GTK bootstrap.cjs prepare-packable.cjs"

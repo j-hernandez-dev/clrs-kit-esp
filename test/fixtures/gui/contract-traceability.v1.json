@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "block": "1–14 — Biblioteca GUI, corpus integral, documentación y empaquetado",
+  "hashNormalization": "utf8-lf",
+  "sources": [
+    { "name": "docs/gui/architecture.md", "sha256": "b46bc721447d77be71e429a44e91eb31abb394289cbf9accbb14bfe11d384adb" },
+    { "name": "docs/gui/runtime-pipeline.md", "sha256": "53d316ad9de4943c87fbf0d2f38131c115eebccfefc3800538efc21df4e6295d" },
+    { "name": "docs/gui/javascript-export.md", "sha256": "83a81501cba295f77141783b2f10102b9b4eb45262efd050c75de4cab859ed5f" },
+    { "name": "docs/gui/api-catalog.md", "sha256": "db2f83ce2c65f343631bcd0efd99005a1001f220a8477b1cf8a3464c6d6c076e" }
+  ],
+  "requirements": [
+    {
+      "id": "GUI-01", "source": "docs/gui/architecture.md", "sections": ["4", "5", "6", "7", "17"],
+      "requirement": "Extensión de la biblioteca existente, valores CLRS y registro privado por programKey; no nuevo tipo del lenguaje.",
+      "status": "contract-tested", "implementation": "src/standard-library/StandardLibraryContracts.js",
+      "test": "GUI: catálogo común conserva la proyección ejecutable y declara 61 contratos GUI"
+    },
+    {
+      "id": "GUI-02", "source": "docs/gui/api-catalog.md", "sections": ["2", "10", "11", "18"],
+      "requirement": "24 factories con firmas exactas, retorno vacío e identificadores de cadena no vacíos y únicos.",
+      "status": "contract-tested", "implementation": "src/standard-library/gui/GuiComponentCatalog.js",
+      "test": "GUI: todas las factories tienen firma, tipo, dominio e identidad canónicos"
+    },
+    {
+      "id": "GUI-03", "source": "docs/gui/api-catalog.md", "sections": ["3", "4", "5", "6", "7", "8", "10", "12", "23"],
+      "requirement": "Propiedades, acciones y eventos curados; acceso R/W/RW; sin reflexión GTK ni CSS.",
+      "status": "contract-tested", "implementation": "src/standard-library/gui/GuiComponentCatalog.js",
+      "test": "GUI: propiedades, eventos y acciones coinciden con las 24 fichas normativas"
+    },
+    {
+      "id": "GUI-04", "source": "docs/gui/api-catalog.md", "sections": ["2", "5", "10", "19"],
+      "requirement": "Dominios locales: números, enteros, rangos, enums, fechas, filas, filtros y arreglos; sin coerción ni objetos nativos.",
+      "status": "contract-tested", "implementation": "src/standard-library/gui/GuiContractValidation.js",
+      "test": "GUI: dominios locales validan sin coerciones, arreglos dispersos ni objetos nativos"
+    },
+    {
+      "id": "GUI-05", "source": "docs/gui/api-catalog.md", "sections": ["13", "14", "18"],
+      "requirement": "Identidad libre y única por sesión, sin inferencias a partir de prefijos ni acceso a miembros heredados de objetos JS.",
+      "status": "contract-tested", "implementation": "src/standard-library/gui/GuiContractValidation.js",
+      "test": "GUI: capacidades no se infieren de nombres GTK, prototipos ni prefijos de IDs"
+    },
+    {
+      "id": "GUI-06", "source": "docs/gui/api-catalog.md", "sections": ["13", "14", "15", "9.22"],
+      "requirement": "Declarar las restricciones entre componentes, contención, dominios dependientes de selección, rango y ancho de filas.",
+      "status": "contract-tested", "implementation": "src/standard-library/gui/GuiComponentCatalog.js",
+      "test": "GUI: lectura, escritura y reglas contextuales se distinguen del dominio local"
+    },
+    {
+      "id": "GUI-07", "source": "docs/gui/runtime-pipeline.md", "sections": ["37", "38"],
+      "requirement": "CONECTAR recibe símbolo CLRS resuelto, primer argumento ID; distinguir señales informativas de retornos síncronos de GTK.",
+      "status": "contract-tested", "implementation": "src/standard-library/gui/GuiComponentCatalog.js",
+      "test": "GUI: callbacks declaran normalización, mecanismo real y retorno síncrono"
+    },
+    {
+      "id": "GUI-08", "source": "docs/gui/api-catalog.md", "sections": ["9.23", "9.24", "25"],
+      "requirement": "Diálogos GObject sin capacidades Widget, retornos de elección, cancelación normal, sin leer ni escribir archivos.",
+      "status": "contract-tested", "implementation": "src/standard-library/gui/GuiFunctionCatalog.js",
+      "test": "GUI: diálogos no heredan widgets y cancelación no es error ni acceso al filesystem"
+    },
+    {
+      "id": "GUI-09", "source": "docs/gui/api-catalog.md", "sections": ["9", "22", "25"],
+      "requirement": "Tema por sesión, sistema/claro/oscuro, sin imponer tema inicial ni elevar mínimo GTK.",
+      "status": "contract-tested", "implementation": "src/standard-library/gui/GuiContract.js",
+      "test": "GUI: tema global, dependencias fijadas y contratos profundamente inmutables"
+    },
+    {
+      "id": "GUI-10", "source": "docs/gui/javascript-export.md", "sections": ["6", "9"],
+      "requirement": "Descriptor compartido node-gtk 4.1.1, Node 22/24/26 y límites GTK declarados para ejecución, exportación normal y build host.",
+      "status": "contract-tested", "implementation": "src/standard-library/gui/GuiContract.js",
+      "test": "GUI: tema global, dependencias fijadas y contratos profundamente inmutables"
+    },
+    {
+      "id": "GUI-11", "source": "docs/gui/api-catalog.md", "sections": ["19"],
+      "requirement": "Códigos de uso estables en español sin filtrar valores sensibles; reserva de códigos de provisionamiento y exportación.",
+      "status": "contract-tested", "implementation": "src/standard-library/gui/GuiErrors.js",
+      "test": "GUI: códigos estables en español y pruebas incluidas sin instalar GTK"
+    },
+    {
+      "id": "GUI-12", "source": "docs/gui/architecture.md", "sections": ["20", "21", "27", "31"],
+      "requirement": "Prueba nativa node-gtk/ESM y viabilidad de callbacks con retorno inmediato.",
+      "status": "native-validated", "blocks": [2],
+      "implementation": "scripts/gui/validate-native.mjs",
+      "evidence": "test/fixtures/gui/native-validation.win32-x64.node24.json",
+      "scope": "Windows x64, Node 24, GTK 4.22.4; no constituye aceptación multiplataforma."
+    },
+    {
+      "id": "GUI-13", "source": "docs/gui/runtime-pipeline.md", "sections": ["4", "5", "25", "26", "27", "37", "54", "55"],
+      "requirement": "Resolución semántica GUI, posición especial CONECTAR, detección estructural y generación JavaScript sin parser ni pipeline alternativo.",
+      "status": "compiler-tested", "blocks": [3],
+      "implementation": "src/semantic/gui/GuiSemanticAnalysis.js",
+      "testFile": "test/gui.pipeline.test.js",
+      "test": "GUI generación: callbacks síncronos conservan llamadas, closures y nombres higiénicos"
+    },
+    {
+      "id": "GUI-14", "source": "docs/gui/runtime-pipeline.md", "sections": ["6", "13", "15", "17", "18", "20", "21", "23", "24", "48", "78"],
+      "requirement": "Provisionamiento privado perezoso, resolución pública ESM, probe GTK/GSettings en proceso separado, transacciones, exclusión mutua, reparación y cancelación.",
+      "status": "dependency-tested", "blocks": [4],
+      "implementation": "src/infrastructure/gui/NodeGtkDependencyManager.js",
+      "testFile": "test/gui.dependencies.test.js",
+      "test": "GUI dependencias: primera instalación transaccional y segunda ejecución sin npm"
+    },
+    {
+      "id": "GUI-15", "source": "docs/gui/runtime-pipeline.md", "sections": ["30", "31", "35", "36", "37", "38", "41", "42", "43", "44", "45", "46"],
+      "requirement": "Completar eventos públicos, diálogos y operaciones pendientes sobre el runtime base y sus controles.",
+      "status": "runtime-tested", "blocks": [7],
+      "implementation": "src/standard-library/gui/runtime/GuiEventsAdapter.js",
+      "testFile": "test/gui.events.test.js",
+      "test": "GUI eventos: todos los eventos del catálogo tienen conexión implementada y limpieza",
+      "evidence": "test/fixtures/gui/events-dialogs.win32-x64.node24.json",
+      "evidenceCheck": "all-181-catalogued-event-connections",
+      "scope": "Eventos y alertas con GTK real. La copia incompleta del ensayo original se reparó posteriormente: schema-repair.win32-x64.node24.json registra apertura/cancelación de FileDialog real. Selección de una ruta real pendiente."
+    },
+    {
+      "id": "GUI-16", "source": "docs/gui/architecture.md", "sections": ["17", "29"],
+      "requirement": "Integración mínima con editor, snippets, gramática y diagramador; no cambios al inicio guiado ni nuevo webview. DAP se cubre en GUI-22.",
+      "status": "compiler-tested", "blocks": [9],
+      "implementation": "src/standard-library/gui/GuiEditorCatalog.js",
+      "testFile": "test/gui.editor.test.js",
+      "test": "GUI editor: snippets y gramática publican exactamente las 61 funciones canónicas"
+    },
+    {
+      "id": "GUI-17", "source": "docs/gui/architecture.md", "sections": ["17", "29"],
+      "requirement": "Marco de pruebas funcionales y evidencias BROKER.95 mediante contratos existentes; los costos se cubren en GUI-24.",
+      "status": "compiler-tested", "blocks": [11],
+      "implementation": "src/testing/execution/CLRSTestRuntimePreparation.js",
+      "testFile": "test/gui.testing.test.js",
+      "test": "GUI pruebas: runtime productivo, callbacks, cobertura y aislamiento por caso",
+      "scope": "Generación y procesos Node reales con binding GTK doble. Aprovisionamiento compartido, timeout/cancelación y evidencia conservadora; no certifica apariencia ni interacción humana. Detalle: test/fixtures/gui/testing-evidence.md."
+    },
+    {
+      "id": "GUI-18", "source": "docs/gui/javascript-export.md", "sections": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+      "requirement": "Generar código JavaScript decide desde la capacidad semántica entre un proyecto CLI de tres archivos y un proyecto GUI portable de cinco archivos bajo la raíz app, con lock npm real, publicación transaccional y sin rutas privadas.",
+      "status": "runtime-tested", "blocks": [12],
+      "implementation": "src/compiler/services/CompilationService.js",
+      "testFile": "test/gui.export.test.js",
+      "test": "GUI exportación: Generar código JavaScript decide proyecto o archivo y propaga cancelación",
+      "evidence": "test/fixtures/gui/export.win32-x64.node24.json",
+      "evidenceCheck": "native-npm-start-normal-entry-without-portable-build-side-effects",
+      "scope": "Incluye proyecto trasladado, npm ci, binding node-gtk, CLI pkg, npm start normal y GTK real en Windows x64. No certifica el build o ejecutable portable, otras plataformas/ABI, GTK exactamente 4.10, apariencia ni interacción manual. Detalle: test/fixtures/gui/export-evidence.md."
+    },
+    {
+      "id": "GUI-19", "source": "docs/gui/api-catalog.md", "sections": ["24", "26"],
+      "requirement": "Corpus nativo y multiplataforma, equivalencia ejecución/exportación, documentación pública y publicación.",
+      "status": "runtime-tested", "blocks": [13, 14],
+      "implementation": "scripts/gui/validate-corpus.mjs",
+      "testFile": "test/gui.corpus.test.js",
+      "test": "GUI corpus: todas las áreas y evidencias forman parte del cierre de publicación",
+      "evidence": "test/fixtures/gui/acceptance.win32-x64.node24.json",
+      "evidenceCheck": "native-file-dialog",
+      "scope": "Corpus transversal, gate de release y matriz CI Windows/Linux/macOS Node 22/24/26. GTK real verificado en Windows x64 Node 24.16.0 GTK 4.22.4; otras combinaciones nativas y ejecución remota de CI no certificadas. Publicación: VSIX preparado localmente, no subida al Marketplace. Detalle: docs/gui/acceptance.md."
+    },
+    {
+      "id": "GUI-20", "source": "docs/gui/runtime-pipeline.md", "sections": ["30", "31", "35", "36", "41", "42", "43", "44"],
+      "requirement": "Runtime base productivo: registro privado, ventanas, Box/Grid/ScrolledWindow, propiedades, contención, tema, cerrar síncrono y limpieza.",
+      "status": "runtime-tested", "blocks": [5],
+      "implementation": "src/standard-library/gui/runtime/GuiBaseRuntime.js",
+      "testFile": "test/gui.runtime.test.js",
+      "test": "GUI base: contención única/múltiple, orden, cuadrícula, ciclos y retiro explícito",
+      "evidence": "test/fixtures/gui/base-runtime-validation.win32-x64.node24.json",
+      "evidenceCheck": "generated-clrs-theme-only-window-callback-and-localized-error"
+    },
+    {
+      "id": "GUI-21", "source": "docs/gui/api-catalog.md", "sections": ["9.3", "9.22", "13", "14", "15"],
+      "requirement": "Controles GTK, grupos, rangos, texto, modelos reales, selección normalizada, fechas, imágenes y limpieza de recursos.",
+      "status": "runtime-tested", "blocks": [6],
+      "implementation": "src/standard-library/gui/runtime/GuiControlsAdapter.js",
+      "testFile": "test/gui.controls.test.js",
+      "test": "GUI controles: ColumnView copia filas, valida ancho antes de mutar y usa factories reales",
+      "evidence": "test/fixtures/gui/controls-without-media.win32-x64.node24.json",
+      "evidenceCheck": "generated-clrs-dropdown-table-and-textview",
+      "scope": "17 controles del bloque 6; ventanas y contención del bloque 5. Eventos y diálogos se verifican por separado en GUI-15."
+    },
+    {
+      "id": "GUI-22", "source": "docs/gui/runtime-pipeline.md", "sections": ["39", "40", "40.1", "43"],
+      "requirement": "DAP común con ubicaciones CLRS, breakpoints y pasos en callbacks, pilas asincrónicas aisladas, pausa en espera y terminación con limpieza sin objetos GTK expuestos.",
+      "status": "runtime-tested", "blocks": [8],
+      "implementation": "src/compiler/gui/GuiJavaScriptAssembly.js",
+      "testFile": "test/gui.debug.test.js",
+      "test": "GUI DAP: Step Over de diálogo espera su resultado y no entra en otro callback",
+      "evidence": "test/fixtures/gui/debug.win32-x64.node24.json",
+      "evidenceCheck": "native-change-callback-locals-and-file-dialog-step-over-pause-terminate",
+      "scope": "Adaptador DAP y transporte de control/trazas reales; GTK Windows para callbacks y diálogo pendiente. Durante pausa Node/GTK se congelan; no se certifica interacción manual del frontend ni otras plataformas."
+    },
+    {
+      "id": "GUI-23", "source": "docs/gui/runtime-pipeline.md", "sections": ["39", "40", "40.2"],
+      "requirement": "Trazas GUI y reproducción con espera, reanudación y contextos de callbacks, sin figuras ni conexiones ajenas a la sintaxis.",
+      "status": "runtime-tested", "blocks": [9],
+      "implementation": "src/compiler/gui/GuiExecutionFlow.js",
+      "testFile": "test/gui.diagram.trace.test.js",
+      "test": "GUI diagramador: ejecución sin DAP conserva espera, entrada, retorno y reproducción sin figuras nuevas",
+      "evidence": "test/fixtures/gui/editor-diagram.win32-x64.node24.json",
+      "evidenceCheck": "native-gui-dialog-wait-flow-and-dap-pause",
+      "scope": "Generación, proceso Node, transporte y DAP reales; corpus con GTK doble, espera de FileDialog con GTK Windows y renderer real con historia sintética en navegador. No certifica otras plataformas ni interacción manual de VS Code."
+    },
+    {
+      "id": "GUI-24", "source": "docs/gui/architecture.md", "sections": ["17", "29"],
+      "requirement": "Costos GUI canónicos por función, propiedad y evento; composición estructural, escenarios y recurrencias sin confundir espera/dispatch con trabajo directo ni inventar cotas de estado GTK.",
+      "status": "compiler-tested", "blocks": [10],
+      "implementation": "src/complex/gui/GuiCostAnalysis.js",
+      "testFile": "test/gui.cost.test.js",
+      "test": "GUI costos: recurrencias conservan costo directo y volumen independiente",
+      "scope": "61 funciones y 24 componentes. Análisis estático sin cargar GTK; no es un benchmark nativo ni una cota de la sesión interactiva completa. Detalle: test/fixtures/gui/cost-model.md."
+    }
+  ]
+}

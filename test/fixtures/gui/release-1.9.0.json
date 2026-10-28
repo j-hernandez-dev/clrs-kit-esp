@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "version": "1.9.0",
+  "date": "2026-09-11",
+  "status": "publishable-vsix",
+  "remotePublished": false,
+  "platform": "win32",
+  "arch": "x64",
+  "node": "24.16.0",
+  "publicComponents": 24,
+  "publicFunctions": 61,
+  "releaseGate": {
+    "command": "npm run package:vsix",
+    "prehook": "npm run release:check",
+    "exitCode": 0,
+    "nodeTestExecutions": 1578,
+    "nodeCommandGroups": 18,
+    "mainUnitTests": 1103,
+    "preUnitTests": 97,
+    "extensionHostTests": 25,
+    "failed": 0,
+    "note": "Los comandos del cierre repiten algunas pruebas; nodeTestExecutions no representa pruebas únicas.",
+    "localLog": ".runtime/block14-release.log"
+  },
+  "build": {
+    "extensionHost": true,
+    "cli": true,
+    "webviews": true,
+    "lintErrors": 0,
+    "preexistingLintWarnings": 6
+  },
+  "native": {
+    "gtk": "4.22.4",
+    "nodeGtk": "4.1.1",
+    "corpus": "test/fixtures/gui/acceptance.win32-x64.node24.json",
+    "export": "test/fixtures/gui/export.win32-x64.node24.json",
+    "dapRevalidated": true,
+    "schemaRepairRevalidated": true,
+    "schemaRepairAttempts": 1,
+    "localDapLog": ".runtime/block13-debug-native.log",
+    "localSchemaLog": ".runtime/block13-schema-native.log",
+    "isolatedInstallationsRemoved": true
+  },
+  "package": {
+    "path": "dist/clrs-kit-esp-1.9.0.vsix",
+    "bytes": 10111111,
+    "entries": 201,
+    "sha256": "fe2369a23a32f5b1d7a4526086b005c35e9a0863952a75562da7a1d2ed41b2a5",
+    "verified": [
+      "manifest-1.9.0",
+      "extension-and-cli-bundles",
+      "gui-snippets-and-grammar",
+      "public-readme",
+      "no-docs-tests-scripts-sources-private-runtime-or-native-binaries",
+      "console-cli-without-gtk-provisioning",
+      "shadowed-gui-name-without-gtk-provisioning",
+      "packaged-cli-native-gui-callback-and-clean-exit",
+      "packaged-runtime-staging-and-locks-clean",
+      "isolated-package-copy-removed"
+    ]
+  },
+  "notValidated": [
+    "Ejecución remota de la matriz CI declarada.",
+    "GTK nativo en Linux/macOS, arm64, Node 22/26 y GTK exactamente 4.10.",
+    "Selección manual de rutas reales y certificación de apariencia visual.",
+    "Publicación remota en Visual Studio Marketplace."
+  ]
+}

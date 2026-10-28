@@ -1,0 +1,565 @@
+{
+  "name": "clrs-kit-esp",
+  "displayName": "CLRS Kit Español",
+  "description": "Soporte y herramientas del lenguaje de programación tipo pseudocódigo CLRS.",
+  "version": "2.0.4",
+  "publisher": "j-hernandez-dev",
+  "icon": "./extension/images/icon.png",
+  "engines": {
+    "vscode": "^1.125.0"
+  },
+  "categories": [
+    "Language Packs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/j-hernandez-dev/clrs-kit-esp.git"
+  },
+  "activationEvents": [
+    "onLanguage:clrs-es",
+    "onCommand:CLRS.runCode",
+    "onCommand:CLRS.stopCode",
+    "onCommand:CLRS.copyCostExpression",
+    "onCommand:CLRS.toggleCost",
+    "onCommand:CLRS.showComplexityReport",
+    "onCommand:CLRS.generateCodeDiagram",
+    "onCommand:CLRS.generateCode",
+    "onCommand:CLRS.toggleDiagram",
+    "onCommand:CLRS.exportSVG",
+    "onCommand:CLRS.debugCode",
+    "onCommand:CLRS.playBroker95",
+    "onCommand:CLRS.formatDocument",
+    "onCommand:CLRS.openWalkthrough",
+    "onCommand:CLRS.createFirstProgram",
+    "onCommand:CLRS.createFirstTestSuite",
+    "onCommand:CLRS.createExampleProject",
+    "onCommand:CLRS.createGuiProject",
+    "onCommand:CLRS.openContextualStart",
+    "onCommand:CLRS.installCopilotCliSupport",
+    "workspaceContains:**/*.clrs-tests.json",
+    "onDebug:clrs"
+  ],
+  "main": "./extension-dist/extension.js",
+  "contributes": {
+    "chatInstructions": [
+      {
+        "path": "./copilot/clrs.instructions.md",
+        "when": "editorLangId == clrs-es"
+      }
+    ],
+    "configurationDefaults": {
+      "[clrs-es]": {
+        "editor.detectIndentation": false,
+        "editor.defaultFormatter": "j-hernandez-dev.clrs-kit-esp",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.semanticHighlighting.enabled": true,
+        "editor.inlayHints.enabled": "on"
+      }
+    },
+    "jsonValidation": [
+      {
+        "fileMatch": "*.clrs-tests.json",
+        "url": "./extension/schemas/clrs-tests.schema.json"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "clrsGettingStarted",
+        "title": "Comienza con CLRS Kit Español",
+        "description": "Escribe, ejecuta, observa, depura y comprueba tu primer programa CLRS dentro de VS Code.",
+        "steps": [
+          {
+            "id": "createProgram",
+            "title": "Crea un programa",
+            "description": "[Crear programa CLRS](command:CLRS.createFirstProgram) abre una plantilla lista para editar o también puedes [continuar desde el contexto actual](command:CLRS.openContextualStart).",
+            "completionEvents": [
+              "onCommand:CLRS.createFirstProgram",
+              "onCommand:CLRS.openContextualStart"
+            ],
+            "media": {
+              "markdown": "extension/getting-started/media/create-program.md"
+            }
+          },
+          {
+            "id": "runProgram",
+            "title": "Ejecuta el código",
+            "description": "[Ejecutar código CLRS](command:CLRS.runCode) transpila el documento activo y muestra su salida en la terminal integrada.",
+            "completionEvents": [
+              "onCommand:CLRS.runCode"
+            ],
+            "media": {
+              "markdown": "extension/getting-started/media/run-program.md"
+            }
+          },
+          {
+            "id": "openDiagram",
+            "title": "Observa el diagrama de flujo",
+            "description": "[Mostrar diagrama de flujo](command:CLRS.toggleDiagram) abre una vista enlazada al archivo. Selecciona figuras para navegar o editar el código visualmente.",
+            "completionEvents": [
+              "onCommand:CLRS.toggleDiagram"
+            ],
+            "media": {
+              "markdown": "extension/getting-started/media/open-diagram.md"
+            }
+          },
+          {
+            "id": "debugProgram",
+            "title": "Depura paso a paso",
+            "description": "Coloca un punto de interrupción junto a una línea y [Depura el código CLRS](command:CLRS.debugCode). Usa Continuar, Entrar, Pasar por encima y Salir para seguir la ejecución.",
+            "completionEvents": [
+              "onCommand:CLRS.debugCode"
+            ],
+            "media": {
+              "markdown": "extension/getting-started/media/debug-program.md"
+            }
+          },
+          {
+            "id": "createTests",
+            "title": "Comprueba el comportamiento",
+            "description": "[Crear suite de pruebas CLRS](command:CLRS.createFirstTestSuite) abre un caso inicial. Guárdalo como `programa.clrs-tests.json` junto al programa y [abre el panel Pruebas](command:workbench.view.testing.focus) para ejecutarlo o depurarlo.",
+            "completionEvents": [
+              "onCommand:CLRS.createFirstTestSuite"
+            ],
+            "media": {
+              "markdown": "extension/getting-started/media/create-tests.md"
+            }
+          },
+          {
+            "id": "openLearning",
+            "title": "Elige cómo continuar",
+            "description": "[Abrir BROKER.95](command:CLRS.playBroker95) para aceptar un contrato de cliente o entra en **Aprendizaje** para comenzar la ruta de Programación desde cero.",
+            "completionEvents": [
+              "onCommand:CLRS.playBroker95"
+            ],
+            "media": {
+              "markdown": "extension/getting-started/media/open-learning.md"
+            }
+          }
+        ]
+      }
+    ],
+    "submenus": [
+      {
+        "id": "clrs.editor.execute",
+        "label": "Ejecutar",
+        "icon": "$(play)"
+      },
+      {
+        "id": "clrs.editor.start",
+        "label": "Inicio",
+        "icon": "$(rocket)"
+      },
+      {
+        "id": "clrs.editor.create",
+        "label": "Crear",
+        "icon": "$(diff-added)"
+      },
+      {
+        "id": "clrs.editor.analyze",
+        "label": "Analizar",
+        "icon": "$(graph-line)"
+      },
+      {
+        "id": "clrs.editor.diagram",
+        "label": "Diagrama",
+        "icon": "$(type-hierarchy-sub)"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "CLRS.formatDocument",
+          "group": "1_modification@100",
+          "when": "editorLangId == clrs-es"
+        }
+      ],
+      "editor/title": [
+        {
+          "submenu": "clrs.editor.execute",
+          "group": "navigation@0",
+          "when": "resourceLangId == clrs-es"
+        },
+        {
+          "submenu": "clrs.editor.analyze",
+          "group": "navigation@1",
+          "when": "resourceLangId == clrs-es"
+        },
+        {
+          "submenu": "clrs.editor.diagram",
+          "group": "navigation@2",
+          "when": "resourceLangId == clrs-es"
+        },
+        {
+          "command": "CLRS.playBroker95",
+          "group": "navigation@3",
+          "when": "resourceLangId == clrs-es"
+        },
+        {
+          "submenu": "clrs.editor.create",
+          "group": "navigation@4",
+          "when": "resourceLangId == clrs-es"
+        },
+        {
+          "submenu": "clrs.editor.start",
+          "group": "navigation@5",
+          "when": "resourceLangId == clrs-es"
+        }
+      ],
+      "clrs.editor.execute": [
+        {
+          "command": "CLRS.runCode",
+          "group": "navigation@1"
+        },
+        {
+          "command": "CLRS.stopCode",
+          "group": "navigation@2"
+        },
+        {
+          "command": "CLRS.debugCode",
+          "group": "navigation@3"
+        },
+        {
+          "command": "CLRS.generateCode",
+          "group": "generation@1"
+        }
+      ],
+      "clrs.editor.start": [
+        {
+          "command": "CLRS.openWalkthrough",
+          "group": "navigation@1"
+        },
+        {
+          "command": "CLRS.openContextualStart",
+          "group": "navigation@2"
+        },
+        {
+          "command": "CLRS.installCopilotCliSupport",
+          "group": "copilot@1"
+        }
+      ],
+      "clrs.editor.create": [
+        {
+          "command": "CLRS.createExampleProject",
+          "group": "navigation@1"
+        },
+        {
+          "command": "CLRS.createGuiProject",
+          "group": "navigation@2"
+        },
+        {
+          "command": "CLRS.createFirstProgram",
+          "group": "navigation@3"
+        },
+        {
+          "command": "CLRS.createFirstTestSuite",
+          "group": "navigation@4"
+        }
+      ],
+      "clrs.editor.analyze": [
+        {
+          "command": "CLRS.showComplexityReport",
+          "group": "navigation@1"
+        },
+        {
+          "command": "CLRS.toggleCost",
+          "group": "navigation@2"
+        }
+      ],
+      "clrs.editor.diagram": [
+        {
+          "command": "CLRS.toggleDiagram",
+          "group": "navigation@1"
+        },
+        {
+          "command": "CLRS.exportSVG",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "CLRS.runCode",
+        "title": "Ejecutar código CLRS",
+        "icon": "$(play)"
+      },
+      {
+        "command": "CLRS.stopCode",
+        "title": "Detener ejecución de código CLRS",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "CLRS.toggleCost",
+        "title": "Mostrar/ocultar costo algorítmico",
+        "icon": "$(symbol-numeric)"
+      },
+      {
+        "command": "CLRS.showComplexityReport",
+        "title": "Mostrar complejidad algorítmica",
+        "icon": "$(graph-line)"
+      },
+      {
+        "command": "CLRS.toggleDiagram",
+        "title": "Mostrar diagrama de flujo",
+        "icon": "$(type-hierarchy-sub)"
+      },
+      {
+        "command": "CLRS.generateCode",
+        "title": "Generar código JavaScript",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "CLRS.exportSVG",
+        "title": "Exportar diagrama de flujo SVG",
+        "icon": "$(file-media)"
+      },
+      {
+        "command": "CLRS.debugCode",
+        "title": "Depurar código CLRS",
+        "icon": "$(debug-alt)"
+      },
+      {
+        "command": "CLRS.playBroker95",
+        "title": "Jugar BROKER.95",
+        "icon": "$(game)"
+      },
+      {
+        "command": "CLRS.formatDocument",
+        "title": "Formatear documento CLRS",
+        "enablement": "editorLangId == clrs-es"
+      },
+      {
+        "command": "CLRS.openWalkthrough",
+        "title": "Abrir inicio guiado CLRS",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "CLRS.createFirstProgram",
+        "title": "Crear programa CLRS",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "CLRS.createFirstTestSuite",
+        "title": "Crear suite de pruebas CLRS",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "CLRS.createExampleProject",
+        "title": "Crear proyecto CLRS de CLI",
+        "icon": "$(diff-added)"
+      },
+      {
+        "command": "CLRS.createGuiProject",
+        "title": "Crear proyecto CLRS de GUI",
+        "icon": "$(window)"
+      },
+      {
+        "command": "CLRS.openContextualStart",
+        "title": "Abrir inicio contextual de CLRS",
+        "icon": "$(compass)"
+      },
+      {
+        "command": "CLRS.installCopilotCliSupport",
+        "title": "Instalar soporte para Copilot CLI",
+        "icon": "$(github)"
+      }
+    ],
+    "breakpoints": [
+      {
+        "language": "clrs-es"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "clrs",
+        "label": "Depurador CLRS",
+        "languages": [
+          "clrs-es"
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "required": [
+              "program"
+            ],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Archivo CLRS que se iniciará en la sesión de depuración.",
+                "default": "${file}"
+              },
+              "stopOnEntry": {
+                "type": "boolean",
+                "description": "Detiene la ejecución en el primer punto ejecutable.",
+                "default": true
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "type": "clrs",
+            "request": "launch",
+            "name": "Depurar programa CLRS",
+            "program": "${file}",
+            "stopOnEntry": true
+          }
+        ],
+        "configurationSnippets": [
+          {
+            "label": "CLRS: Depurar programa",
+            "description": "Inicia una sesión de depuración para el archivo CLRS activo.",
+            "body": {
+              "type": "clrs",
+              "request": "launch",
+              "name": "Depurar programa CLRS",
+              "program": "^\"${file}\"",
+              "stopOnEntry": true
+            }
+          }
+        ]
+      }
+    ],
+    "languages": [
+      {
+        "id": "clrs-es",
+        "aliases": [
+          "CLRS Español",
+          "clrs-es"
+        ],
+        "extensions": [
+          ".clrs"
+        ],
+        "configuration": "./extension/language-config/language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "clrs-es",
+        "scopeName": "source.clrs-es",
+        "path": "./extension/syntaxes/clrs.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "clrs-es",
+        "path": "./extension/snippets/clrs-core.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./extension/snippets/clrs-math.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./extension/snippets/clrs-file.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./extension/snippets/clrs-string.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./extension/snippets/clrs-array.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./extension/snippets/clrs-type.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./extension/snippets/clrs-error.code-snippets"
+      },
+      {
+        "language": "clrs-es",
+        "path": "./extension/snippets/clrs-gui.code-snippets"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "npm run test:extension",
+    "pretest:unit": "node --test test/javascript.identifier.resolution.test.js test/clrs.testing.comparison.test.js test/clrs.testing.explanation.test.js test/clrs.testing.declarative.test.js test/clrs.testing.discovery.test.js test/clrs.testing.execution.test.js test/clrs.testing.native-run.test.js test/clrs.testing.results.test.js test/clrs.testing.debug-run.test.js test/clrs.testing.broker95.test.js test/semantic.call.diagnostics.test.js test/getting.started.commands.test.js test/getting.started.project.test.js test/getting.started.context.test.js test/asymptotic.growth.profile.test.js test/performance.monitor.test.js test/document.analysis.service.test.js test/lazy.loading.test.js",
+    "test:unit": "node --test test/gui.export.test.js test/gui.packable.runtime.test.js test/prepare.packable.generator.test.js test/gui.testing.test.js test/gui.cost.test.js test/gui.editor.test.js test/gui.diagram.trace.test.js test/gui.debug.test.js test/gui.events.test.js test/gui.dialogs.test.js test/gui.environment.test.js test/null.literal.test.js test/gui.controls.test.js test/gui.runtime.test.js test/gui.contract.test.js test/gui.pipeline.test.js test/gui.dependencies.test.js test/clrs.testing.domain.test.js test/broker95.game.domain.test.js test/broker95.category.selection.test.js test/broker95.terminal.parser.test.js test/broker95.protocol.test.js test/broker95.concurrency.test.js test/broker95.persistence.test.js test/broker95.configuration.test.js test/broker95.conversation.test.js test/broker95.command.test.js test/broker95.webview.test.js test/broker95.learning.route.test.js test/broker95.learning.accessibility.test.js test/broker95.learning.lesson.test.js test/broker95.kaplay.test.js test/broker95.llm.port.test.js test/broker95.groq.adapter.test.js test/broker95.gemini.adapter.test.js test/broker95.deepseek.adapter.test.js test/broker95.ollama.adapter.test.js test/broker95.openai.adapter.test.js test/broker95.openai-compatible.adapter.test.js test/broker95.remote-openai-compatible.adapter.test.js test/broker95.lmstudio.adapter.test.js test/broker95.llm.resilience.test.js test/broker95.llm.availability.test.js test/broker95.contract.generation.test.js test/broker95.test.cases.test.js test/broker95.contract.cycle.test.js test/broker95.document.capture.test.js test/broker95.test.execution.test.js test/broker95.test.comparison.test.js test/broker95.static.evidence.test.js test/broker95.submission.review.test.js test/broker95.submission.evaluation.test.js test/broker95.submission.push.test.js test/webview.security.test.js test/frontend.characterization.test.js test/ast.validation.test.js test/ast.consumers.test.js test/ast.visitor.test.js test/cost.algebra.test.js test/complexity.domain.test.js test/symbolic.summation.test.js test/scenario.cost.test.js test/function.cost.propagation.test.js test/interprocedural.provenance.test.js test/function.semantic.summary.test.js test/call.graph.analysis.test.js test/semantic.call.graph.test.js test/call.hierarchy.provider.test.js test/recurrence.system.test.js test/unknown.complexity.test.js test/complexity.coverage.test.js test/complexity.soundness.test.js test/control.flow.ssa.test.js test/abstract.domain.test.js test/cost.presentation.test.js test/complexity.report.test.js test/complexity.report.application.test.js test/standard.library.catalog.test.js test/iteration.analysis.test.js test/symbolic.environment.test.js test/termination.analysis.test.js test/asymptotic.analysis.test.js test/asymptotic.conditions.test.js test/recurrence.analysis.test.js test/transpiler.characterization.test.js test/transpiler.visitors.test.js test/pipeline.characterization.test.js test/compilation.service.test.js test/semantic.analysis.test.js test/semantic.navigation.test.js test/language.diagnostics.test.js test/language.corrections.catalog.test.js test/language.corrections.inequivocal.test.js test/language.corrections.explanatory.test.js test/code.action.provider.test.js test/language.formatting.test.js test/language.intelligence.test.js test/semantic.tokens.test.js test/rename.service.test.js test/error.localization.test.js test/execution.trace.test.js test/diagram.characterization.test.js test/diagram.editing.corpus.test.js test/diagram.execution.corpus.test.js test/diagram.visitors.test.js test/diagram.application.test.js test/diagram.synchronization.test.js test/diagram.navigation.test.js test/diagram.themes.test.js test/svg.export.test.js test/application.controllers.test.js test/application.composition.test.js test/debug.breakpoints.test.js test/debug.session.test.js test/debug.execution.control.test.js test/debug.program.state.test.js test/copilot.instructions.test.js test/copilot.cli.installer.test.js",
+    "posttest:unit": "node --test test/bootstrap.generator.test.js test/portable.manifest.lock.test.js",
+    "test:gui:export": "node --test test/gui.export.test.js",
+    "test:gui:packable": "node --test test/gui.packable.runtime.test.js",
+    "test:gui:prepare-packable": "node --test test/prepare.packable.generator.test.js",
+    "test:gui:bootstrap": "node --test test/bootstrap.generator.test.js",
+    "test:gui:portable-manifest": "node --test test/portable.manifest.lock.test.js",
+    "test:gui:portable-corpus": "node --test test/portable.export.corpus.test.js",
+    "test:gui:portable-lock:native": "node scripts/gui/validate-portable-lock.mjs",
+    "test:gui:portable-install:native": "node scripts/gui/validate-export.mjs",
+    "test:gui:portable-build:native": "node scripts/gui/validate-portable-build.mjs",
+    "test:gui:corpus": "node --test test/gui.corpus.test.js",
+    "test:gui:corpus:native": "node scripts/gui/validate-corpus.mjs",
+    "test:gui:export:native": "node scripts/gui/validate-export.mjs",
+    "test:gui:testing": "node --test test/gui.testing.test.js test/broker95.submission.review.test.js test/broker95.submission.evaluation.test.js",
+    "test:gui:cost": "node --test test/gui.cost.test.js",
+    "test:gui:native": "node scripts/gui/validate-native.mjs",
+    "test:gui:private": "node scripts/gui/validate-private-runtime.mjs",
+    "test:gui:base": "node scripts/gui/validate-base-runtime.mjs",
+    "test:gui:controls": "node scripts/gui/validate-controls.mjs",
+    "test:gui:events": "node scripts/gui/validate-events.mjs",
+    "test:gui:debug": "node --test test/gui.debug.test.js",
+    "test:gui:editor": "node --test test/gui.editor.test.js test/gui.diagram.trace.test.js",
+    "test:gui:debug:native": "node scripts/gui/validate-debug.mjs",
+    "test:broker95:learning": "node --test test/broker95.learning.corpus.test.js test/broker95.learning.model.test.js test/broker95.learning.catalog.test.js test/broker95.learning.taxonomy.test.js test/broker95.learning.progress.test.js test/broker95.learning.routes-progress.test.js test/broker95.learning.multiroute-transitions.test.js test/broker95.learning.contract.test.js test/broker95.learning.atomic-transitions.test.js test/broker95.learning.game-integration.test.js test/broker95.learning.route.test.js test/broker95.learning.accessibility.test.js test/broker95.learning.lesson.test.js test/broker95.learning.request.test.js test/broker95.learning.validation.test.js test/broker95.learning.service.test.js test/broker95.learning.protocol.test.js test/broker95.learning.terminal.test.js test/broker95.submission.review.test.js test/broker95.submission.evaluation.test.js test/broker95.submission.push.test.js test/broker95.persistence.test.js test/broker95.webview.test.js",
+    "test:broker95:learning:corpus": "node --test test/broker95.learning.corpus.test.js",
+    "test:broker95:corpus": "node --test test/broker95.acceptance.corpus.test.js",
+    "test:broker95:economy": "node --test test/broker95.economy.test.js",
+    "test:broker95:statistics": "node --test test/broker95.statistics.test.js",
+    "test:broker95:conversation": "node --test test/broker95.free.conversation.test.js",
+    "test:broker95:audio": "node --test test/broker95.audio.test.js",
+    "test:broker95:providers": "node --test test/broker95.llm.provider.test.js test/broker95.provider.registry.test.js test/broker95.provider.experience.test.js test/broker95.providers.corpus.test.js",
+    "test:broker95:normalization": "node --test test/broker95.llm.normalization.test.js",
+    "test:broker95:gemini": "node --test test/broker95.gemini.adapter.test.js",
+    "test:broker95:deepseek": "node --test test/broker95.deepseek.adapter.test.js",
+    "test:broker95:ollama": "node --test test/broker95.ollama.adapter.test.js",
+    "test:broker95:openai": "node --test test/broker95.openai.adapter.test.js",
+    "test:broker95:openai-compatible": "node --test test/broker95.openai-compatible.adapter.test.js",
+    "test:broker95:remote-compatible": "node --test test/broker95.remote-openai-compatible.adapter.test.js",
+    "test:broker95:lmstudio": "node --test test/broker95.lmstudio.adapter.test.js",
+    "test:broker95:resilience": "node --test test/broker95.llm.resilience.test.js",
+    "test:broker95:credentials": "node --test test/broker95.credentials.test.js",
+    "test:trajectory": "node --test test/loop.trajectory.test.js",
+    "test:diagram:corpus": "node --test test/diagram.editing.corpus.test.js test/diagram.execution.corpus.test.js",
+    "pretest:extension": "npm run build:extension",
+    "test:extension": "vscode-test",
+    "build:extension": "node scripts/build-extension.mjs",
+    "build:webview": "npm --prefix frontend run build",
+    "build": "npm run build:extension && npm run build:webview",
+    "test:all": "npm run lint && npm run test:terminal && npm run test:unit && npm run test:broker95:corpus && npm run test:broker95:economy && npm run test:broker95:statistics && npm run test:broker95:conversation && npm run test:broker95:audio && npm run test:broker95:providers && npm run test:broker95:credentials && npm run test:broker95:normalization && npm run test:broker95:gemini && npm run test:broker95:deepseek && npm run test:broker95:ollama && npm run test:broker95:openai && npm run test:broker95:resilience && npm run test:trajectory && npm run build:webview && npm run test:extension",
+    "test:terminal": "node --test test/terminal.ui.test.js test/terminal.presentation.test.js test/terminal.animation.test.js test/gui.runtime.presentation.test.js test/terminal.cli.integration.test.js",
+    "test:corpus:integrity": "node --test test/corpus.integral.test.js test/array.literal.corpus.test.js test/platform.regression.test.js test/gui.corpus.test.js test/cli.export.architecture.test.js test/cli.export.profile.test.js test/cli.manifest.test.js test/cli.export.transaction.test.js test/cli.lock.validation.test.js test/javascript.export.presentation.test.js test/cli.export.corpus.test.js test/cli.export.install.test.js test/cli.export.build.test.js test/cli.export.documentation.test.js test/portable.export.corpus.test.js",
+    "test:cli:export-architecture": "node --test test/cli.export.architecture.test.js test/cli.export.profile.test.js test/cli.manifest.test.js test/cli.export.transaction.test.js test/cli.lock.validation.test.js test/javascript.export.presentation.test.js test/cli.export.corpus.test.js test/cli.export.install.test.js test/cli.export.build.test.js test/cli.export.documentation.test.js",
+    "test:cli:export-corpus": "node --test test/cli.export.corpus.test.js",
+    "test:cli:export-docs": "node --test test/cli.export.documentation.test.js",
+    "test:cli:lock:native": "node scripts/cli/validate-lock.mjs",
+    "test:cli:install:native": "node scripts/cli/validate-export.mjs",
+    "test:cli:build:native": "node scripts/cli/validate-portable-build.mjs",
+    "test:corpus": "npm run test:corpus:integrity && npm run test:broker95:learning && npm run test:all",
+    "release:check": "npm run test:corpus",
+    "prepackage:vsix": "npm run release:check",
+    "package:vsix": "node scripts/package-vsix.mjs",
+    "prepackage:list": "npm run build",
+    "package:list": "vsce ls"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.125.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.25.12",
+    "eslint": "^9.39.3"
+  },
+  "dependencies": {
+    "chevrotain": "^12.0.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-2.0-only",
+  "type": "module"
+}

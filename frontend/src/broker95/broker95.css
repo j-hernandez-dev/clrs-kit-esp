@@ -1,0 +1,3998 @@
+html[data-webview-mode="broker95"],
+html[data-webview-mode="broker95"] body,
+html[data-webview-mode="broker95"] #app {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    color: #c8f58f;
+    background: #020600;
+    font-family: var(--vscode-editor-font-family, "Cascadia Mono", monospace);
+}
+
+html[data-webview-mode="broker95"] * {
+    box-sizing: border-box;
+}
+
+html[data-webview-mode="broker95"] button,
+html[data-webview-mode="broker95"] input {
+    font: inherit;
+}
+
+.broker95-visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.broker95-skip-link {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 30;
+    padding: 9px 12px;
+    border: 2px solid #b9f37a;
+    color: #071000;
+    background: #d2ff91;
+    font-size: 11px;
+    font-weight: 700;
+    transform: translateY(-160%);
+}
+
+.broker95-skip-link:focus {
+    outline: none;
+    transform: translateY(0);
+}
+
+.broker95-app :focus-visible {
+    outline: 2px solid #c3ff7d;
+    outline-offset: 2px;
+}
+
+.broker95-app {
+    --broker-green: #9be249;
+    --broker-bright: #d2ff91;
+    --broker-muted: #70964c;
+    --broker-dark: #071000;
+    --broker-panel: #0a1602;
+    --broker-border: #355c18;
+    position: relative;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: 100%;
+    height: 100%;
+    min-width: 320px;
+    overflow: hidden;
+    color: #c8f58f;
+    background:
+        radial-gradient(circle at 50% 18%, #1c3c0866, transparent 46%),
+        linear-gradient(150deg, #020600 0%, #071000 58%, #020500 100%);
+}
+
+.broker95-app,
+.broker95-app * {
+    scrollbar-color: #365b1c #071000;
+}
+
+.broker95-app::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .2;
+    background-image:
+        linear-gradient(#78ad3214 1px, transparent 1px),
+        linear-gradient(90deg, #78ad3210 1px, transparent 1px);
+    background-size: 34px 34px;
+}
+
+.broker95-scanlines {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    opacity: .13;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 3px,
+        #000 4px
+    );
+}
+
+.broker95-header,
+.broker95-footer,
+.broker95-workspace {
+    position: relative;
+    z-index: 1;
+}
+
+.broker95-header {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 28px;
+    min-height: 76px;
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--broker-border);
+    background: #030900e8;
+}
+
+.broker95-brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 225px;
+}
+
+.broker95-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 45px;
+    height: 45px;
+    border: 1px solid #78ba32;
+    color: #d9ffa2;
+    background: #112604;
+    box-shadow: inset 0 0 14px #72c22d38, 0 0 13px #66a32d25;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.broker95-brand h1,
+.broker95-brand p,
+.broker95-panel-header h2,
+.broker95-panel-header span {
+    margin: 0;
+}
+
+.broker95-brand h1 {
+    color: var(--broker-bright);
+    font-size: 18px;
+    letter-spacing: .2em;
+}
+
+.broker95-brand p {
+    margin-top: 3px;
+    color: var(--broker-muted);
+    font-size: 9px;
+    letter-spacing: .11em;
+}
+
+.broker95-metrics {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    min-width: 0;
+}
+
+.broker95-metric,
+.broker95-alert-metric {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 112px;
+    padding: 7px 13px;
+    border-left: 1px solid #294913;
+}
+
+.broker95-metric span,
+.broker95-alert-metric > span,
+.broker95-section-label,
+.broker95-panel-header span,
+.broker95-contract-panel h3,
+.broker95-statistics-panel h3 {
+    color: var(--broker-muted);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.broker95-metric strong,
+.broker95-alert-metric strong {
+    margin-top: 5px;
+    overflow: hidden;
+    color: var(--broker-bright);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.broker95-alert-track {
+    width: 106px;
+    height: 4px;
+    margin-top: 6px;
+    overflow: hidden;
+    background: #243411;
+}
+
+.broker95-alert-track i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #79c235, #e5d64d, #f06b41);
+    transition: width 220ms ease;
+}
+
+.broker95-workspace {
+    display: grid;
+    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+    gap: 14px;
+    min-height: 0;
+    padding: 14px;
+}
+
+.broker95-cipher-panel,
+.broker95-console {
+    min-height: 0;
+    border: 1px solid var(--broker-border);
+    background: #071000e8;
+    box-shadow: 0 16px 44px #0008;
+}
+
+.broker95-cipher-panel {
+    --broker-cipher-thumbnail-width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 14px;
+}
+
+.broker95-cipher-panel.expanded::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: #010500e8;
+    backdrop-filter: blur(5px);
+}
+
+.broker95-section-label {
+    margin: 2px 0 13px;
+}
+
+.broker95-cipher-screen {
+    position: relative;
+    display: block;
+    width: var(--broker-cipher-thumbnail-width);
+    aspect-ratio: 3 / 2;
+    max-height: 270px;
+    padding: 0;
+    overflow: hidden;
+    border: 8px solid #18270d;
+    outline: 1px solid #4a7027;
+    color: inherit;
+    background:
+        radial-gradient(circle, #275d0c 0%, #0c2602 47%, #020800 100%);
+    box-shadow: inset 0 0 32px #000, 0 0 24px #5d9b2630;
+    cursor: zoom-in;
+    appearance: none;
+}
+
+.broker95-cipher-screen:focus-visible {
+    outline: 2px solid var(--broker-bright);
+    outline-offset: 3px;
+}
+
+.broker95-cipher-panel.expanded .broker95-cipher-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 41;
+    width: min(calc(100vw - 64px), 1100px);
+    max-height: calc(100vh - 64px);
+    transform: translate(-50%, -50%);
+    border-width: 12px;
+    cursor: zoom-out;
+    box-shadow:
+        inset 0 0 48px #000,
+        0 0 0 1px #79b53c,
+        0 24px 90px #000;
+}
+
+.broker95-cipher-screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: .33;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0 5px,
+        #b8ff7317 6px
+    );
+}
+
+.broker95-cipher-screen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 54%,
+            #0007 100%
+        );
+    box-shadow: inset 0 0 18px #000b;
+}
+
+.broker95-cipher-screen.offline {
+    filter: saturate(.3) brightness(.65);
+}
+
+.broker95-cipher-screen[data-cipher-state="attentive"],
+.broker95-cipher-screen[data-cipher-state="working"] {
+    outline-color: #89c849;
+    box-shadow:
+        inset 0 0 32px #000,
+        0 0 28px #8ed34a3b;
+}
+
+.broker95-cipher-screen[data-cipher-state="warning"] {
+    outline-color: #b9822d;
+    box-shadow:
+        inset 0 0 32px #000,
+        0 0 28px #ce8d3740;
+}
+
+.broker95-cipher-screen[data-cipher-state="error"] {
+    outline-color: #b14d36;
+    box-shadow:
+        inset 0 0 32px #000,
+        0 0 30px #d04c3947;
+}
+
+.broker95-kaplay-stage {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    background: #010300;
+    contain: strict;
+}
+
+.broker95-kaplay-stage canvas {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    outline: none;
+    image-rendering: pixelated;
+}
+
+.broker95-kaplay-stage[data-status="paused"] canvas {
+    /* Conserva el último frame real como imagen estática durante la pausa. */
+    opacity: 1;
+}
+
+.broker95-scene-message {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    color: #789f4e;
+    background: #020700;
+    font-size: 9px;
+    letter-spacing: .12em;
+}
+
+.broker95-scene-message.paused {
+    place-items: end center;
+    padding-bottom: 8px;
+    color: #628a40;
+    background: transparent;
+    font-size: 7px;
+}
+
+.broker95-scene-message.error {
+    color: #e28a69;
+}
+
+.broker95-cipher-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 17px 0 8px;
+    color: var(--broker-bright);
+    font-size: 11px;
+    letter-spacing: .08em;
+}
+
+.broker95-cipher-status > span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ad5138;
+    box-shadow: 0 0 8px #ad5138;
+}
+
+.broker95-cipher-status > span.online {
+    background: #9be249;
+    box-shadow: 0 0 8px #9be249;
+}
+
+.broker95-cipher-panel > p {
+    min-height: 48px;
+    margin: 0;
+    color: #7da257;
+    font-size: 10px;
+    line-height: 1.55;
+}
+
+.broker95-link-details {
+    display: grid;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #294913;
+}
+
+.broker95-link-details span {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    color: #668843;
+    font-size: 9px;
+}
+
+.broker95-link-details b {
+    max-width: 130px;
+    overflow: hidden;
+    color: #a7db70;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.broker95-console {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+}
+
+.broker95-tabs {
+    display: flex;
+    min-height: 42px;
+    overflow-x: auto;
+    padding: 0 10px;
+    border-bottom: 1px solid var(--broker-border);
+    background: #050c01;
+}
+
+.broker95-tabs button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: max-content;
+    padding: 0 15px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: #6e914b;
+    background: transparent;
+    cursor: pointer;
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.broker95-tabs button > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.broker95-tabs button > b {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border: 1px solid #4f7f27;
+    border-radius: 999px;
+    color: #cfff91;
+    background: #142807;
+    font-size: 8px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.broker95-tabs button:hover,
+.broker95-tabs button:focus-visible,
+.broker95-tabs button.active {
+    border-bottom-color: var(--broker-green);
+    color: var(--broker-bright);
+    background: #14280755;
+}
+
+.broker95-panel-frame {
+    min-height: 0;
+    overflow: auto;
+}
+
+.broker95-panel-frame:focus-visible {
+    outline: 1px solid #6ca535;
+    outline-offset: -1px;
+}
+
+.broker95-terminal-panel,
+.broker95-contract-panel,
+.broker95-learning-panel,
+.broker95-economy-panel,
+.broker95-statistics-panel,
+.broker95-settings-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 18px;
+}
+
+.broker95-contract-panel {
+    container-name: broker-contract-panel;
+    container-type: inline-size;
+}
+
+.broker95-learning-panel,
+.broker95-learning-network {
+    container-name: broker-learning-panel;
+    container-type: inline-size;
+    overflow: auto;
+}
+
+.broker95-learning-network {
+    container-name: broker-learning-network;
+    padding: 18px;
+}
+
+.broker95-learning-network-intro {
+    max-width: 720px;
+    margin: 0 auto 26px;
+    padding: 16px 18px;
+    border: 1px solid #315718;
+    background:
+        linear-gradient(135deg, #0c1905, #030800);
+    box-shadow: inset 3px 0 #78bd35;
+}
+
+.broker95-learning-network-intro > span,
+.broker95-learning-route-card-copy small,
+.broker95-learning-route-card-progress span {
+    color: #719a4c;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-learning-network-intro h3 {
+    margin-top: 5px;
+    color: #cef796;
+    font-size: 14px;
+}
+
+.broker95-learning-network-intro p {
+    margin-top: 8px;
+    color: #8eb768;
+    font-size: 10px;
+    line-height: 1.55;
+}
+
+.broker95-learning-route-selector {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 38px;
+    width: min(100%, 920px);
+    margin: 0 auto;
+    padding: 18px 0;
+}
+
+.broker95-learning-route-selector::before {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    right: 44%;
+    left: 44%;
+    height: 2px;
+    background: #426e25;
+    box-shadow: 0 0 8px #6cae3744;
+    content: "";
+}
+
+.broker95-learning-route-card {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-width: 0;
+    border: 1px solid #426e24;
+    background: #050c02;
+    box-shadow: 0 10px 28px #0008;
+}
+
+.broker95-learning-route-card.available {
+    border-color: #88cf42;
+    box-shadow:
+        inset 0 3px #94df48,
+        0 0 22px #68a83233;
+}
+
+.broker95-learning-route-card.completed {
+    border-color: #6ba937;
+    background: #0b1705;
+}
+
+.broker95-learning-route-card.locked {
+    border-color: #293d1c;
+    background: #050803;
+}
+
+.broker95-learning-route-card > button {
+    display: grid;
+    grid-template-columns: 54px minmax(0, 1fr) 32px;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+    min-height: 142px;
+    padding: 18px;
+    border: 0;
+    color: #bce886;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+}
+
+.broker95-learning-route-card > button:hover,
+.broker95-learning-route-card > button:focus-visible {
+    background: #173006aa;
+    outline: 2px solid #a1e859;
+    outline-offset: -4px;
+}
+
+.broker95-learning-route-card > button[aria-disabled="true"] {
+    color: #637452;
+    cursor: not-allowed;
+}
+
+.broker95-learning-route-card > button[aria-disabled="true"]:hover,
+.broker95-learning-route-card > button[aria-disabled="true"]:focus-visible {
+    background: #0b1008;
+    outline-color: #60764d;
+}
+
+.broker95-learning-route-index {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 2px solid #77b83b;
+    border-radius: 50%;
+    color: #d4fa9e;
+    background: #142807;
+    box-shadow:
+        0 0 0 6px #72ac3222,
+        0 0 16px #72ac3244;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.locked .broker95-learning-route-index {
+    border-color: #394a2d;
+    color: #6b775f;
+    background: #0c1109;
+    box-shadow: none;
+}
+
+.completed .broker95-learning-route-index {
+    color: #071003;
+    background: #91d448;
+}
+
+.broker95-learning-route-card-copy {
+    min-width: 0;
+}
+
+.broker95-learning-route-card-copy strong,
+.broker95-learning-route-card-copy > span {
+    display: block;
+}
+
+.broker95-learning-route-card-copy strong {
+    margin-top: 5px;
+    overflow-wrap: anywhere;
+    color: #d2fb9b;
+    font-size: clamp(16px, 2.4vw, 24px);
+    letter-spacing: .04em;
+}
+
+.broker95-learning-route-card-copy > span {
+    margin-top: 9px;
+    color: #7fa65e;
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+.locked .broker95-learning-route-card-copy strong,
+.locked .broker95-learning-route-card-copy > span {
+    color: #657359;
+}
+
+.broker95-learning-route-status-icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #5e9037;
+    border-radius: 50%;
+    color: #c8f58f;
+    font-size: 18px;
+}
+
+.locked .broker95-learning-route-status-icon {
+    border-color: #3d4c32;
+    color: #66725d;
+}
+
+.broker95-learning-route-card-progress {
+    display: grid;
+    grid-template-columns: auto minmax(70px, 1fr);
+    align-items: center;
+    gap: 14px;
+    padding: 11px 16px;
+    border-top: 1px solid #294817;
+    background: #071003;
+}
+
+.broker95-learning-route-card-progress > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.broker95-learning-route-card-progress strong {
+    color: #bde886;
+    font-size: 10px;
+}
+
+.broker95-learning-route-card-progress > div:last-child {
+    height: 7px;
+    overflow: hidden;
+    border: 1px solid #385f1d;
+    background: #030701;
+}
+
+.broker95-learning-route-card-progress i {
+    display: block;
+    height: 100%;
+    background: #91db43;
+    box-shadow: 0 0 8px #73b735;
+}
+
+.broker95-learning-network-back {
+    margin-bottom: 12px;
+    padding: 7px 10px;
+    border: 1px solid #3b6122;
+    color: #9dca72;
+    background: #081203;
+    cursor: pointer;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .08em;
+}
+
+.broker95-learning-network-back:hover,
+.broker95-learning-network-back:focus-visible {
+    border-color: #91d549;
+    color: #d2fa9b;
+    background: #173006;
+    outline: none;
+}
+
+@container broker-learning-network (max-width: 700px) {
+    .broker95-learning-route-selector {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+        width: min(100%, 520px);
+    }
+
+    .broker95-learning-route-selector::before {
+        top: 44%;
+        right: auto;
+        bottom: 44%;
+        left: 42px;
+        width: 2px;
+        height: auto;
+    }
+
+    .broker95-learning-route-card > button {
+        min-height: 118px;
+    }
+}
+
+@container broker-learning-network (max-width: 420px) {
+    .broker95-learning-network-intro {
+        padding: 13px;
+    }
+
+    .broker95-learning-route-card > button {
+        grid-template-columns: 42px minmax(0, 1fr) 26px;
+        gap: 9px;
+        min-height: 108px;
+        padding: 12px;
+    }
+
+    .broker95-learning-route-index {
+        width: 40px;
+        height: 40px;
+    }
+
+    .broker95-learning-route-status-icon {
+        width: 25px;
+        height: 25px;
+        font-size: 15px;
+    }
+
+    .broker95-learning-route-card-progress {
+        grid-template-columns: 1fr;
+        gap: 7px;
+    }
+}
+
+.broker95-learning-count,
+.broker95-learning-status {
+    flex: 0 0 auto;
+    padding: 5px 9px;
+    border: 1px solid #477526;
+    color: #bdf27f;
+    background: #102204;
+    font-size: 9px;
+    letter-spacing: .08em;
+}
+
+.broker95-learning-progress {
+    display: grid;
+    grid-template-columns: minmax(150px, auto) minmax(140px, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding: 14px;
+    border: 1px solid #315718;
+    background:
+        linear-gradient(135deg, #0a1604, #030800);
+    box-shadow: inset 3px 0 #78bd35;
+}
+
+.broker95-learning-progress span {
+    display: block;
+    color: #6f984b;
+    font-size: 8px;
+    letter-spacing: .1em;
+}
+
+.broker95-learning-progress strong {
+    display: block;
+    margin-top: 4px;
+    color: #c9f791;
+    font-size: 11px;
+}
+
+.broker95-learning-progress > div:nth-child(2) {
+    height: 7px;
+    overflow: hidden;
+    border: 1px solid #385f1d;
+    background: #071003;
+}
+
+.broker95-learning-progress i {
+    display: block;
+    height: 100%;
+    background: #91db43;
+    box-shadow: 0 0 8px #73b735;
+    transition: width .2s ease;
+}
+
+.broker95-learning-progress button,
+.broker95-learning-back {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid #5d9430;
+    color: #ccfa93;
+    background: #173006;
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .06em;
+}
+
+.broker95-learning-progress button:hover,
+.broker95-learning-progress button:focus-visible,
+.broker95-learning-back:hover,
+.broker95-learning-back:focus-visible {
+    border-color: #9adc52;
+    background: #24470b;
+    outline: none;
+}
+
+.broker95-learning-route {
+    display: grid;
+    gap: 18px;
+    width: min(100%, 780px);
+    margin: 0 auto;
+    padding-bottom: 12px;
+}
+
+.broker95-learning-section {
+    padding: 15px;
+    border: 1px solid #2e5018;
+    background: #050c02;
+}
+
+.broker95-learning-section.locked {
+    border-color: #1d3011;
+    opacity: .62;
+}
+
+.broker95-learning-section > header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 3px 12px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #294715;
+}
+
+.broker95-learning-section > header > span {
+    grid-column: 1 / -1;
+    color: #6f994b;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-learning-section h3 {
+    color: #c9f790;
+    font-size: 13px;
+}
+
+.broker95-learning-section > header small {
+    color: #80ad57;
+    font-size: 9px;
+}
+
+.broker95-learning-section ol {
+    display: grid;
+    gap: 7px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.broker95-learning-section li {
+    position: relative;
+}
+
+.broker95-learning-section li:not(:last-child)::after {
+    position: absolute;
+    top: 36px;
+    bottom: -8px;
+    left: 16px;
+    width: 1px;
+    background: #355d1b;
+    content: "";
+}
+
+.broker95-learning-section li > button {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    min-height: 52px;
+    padding: 7px 11px 7px 0;
+    border: 1px solid #315719;
+    color: #a8d877;
+    background: #081203;
+    cursor: pointer;
+    text-align: left;
+}
+
+.broker95-learning-section li > button > b {
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin-left: 2px;
+    border: 1px solid #557f34;
+    border-radius: 50%;
+    color: #c7f38f;
+    background: #102305;
+    font-size: 9px;
+}
+
+.broker95-learning-section li > button strong,
+.broker95-learning-section li > button small {
+    display: block;
+}
+
+.broker95-learning-section li > button strong {
+    color: #bde887;
+    font-size: 10px;
+}
+
+.broker95-learning-section li > button small {
+    margin-top: 3px;
+    color: #648746;
+    font-size: 8px;
+    letter-spacing: .08em;
+}
+
+.broker95-learning-section li > button.available {
+    border-color: #89cd43;
+    background: #173006;
+    box-shadow: inset 3px 0 #9be34d;
+}
+
+.broker95-learning-section li > button.completed > b {
+    border-color: #8bc94a;
+    color: #071003;
+    background: #91d448;
+}
+
+.broker95-learning-section li > button:hover,
+.broker95-learning-section li > button:focus-visible {
+    border-color: #a0e354;
+    background: #1b3509;
+    outline: none;
+}
+
+.broker95-learning-section li > button:disabled {
+    border-color: #223714;
+    color: #4c6338;
+    background: #050a02;
+    cursor: not-allowed;
+    opacity: .62;
+}
+
+/* Ruta secuencial completa: el eje es puramente visual; el orden accesible
+   sigue siendo el orden natural de las 50 lecciones en el documento. */
+.broker95-learning-route {
+    position: relative;
+    gap: 26px;
+    width: min(100%, 840px);
+    min-width: 340px;
+    margin-inline: auto;
+    padding: 8px 0 24px;
+}
+
+.broker95-learning-route-viewport {
+    container-name: broker-learning-route;
+    container-type: inline-size;
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: visible;
+    overscroll-behavior-x: contain;
+}
+
+.broker95-learning-route::before {
+    position: absolute;
+    z-index: 0;
+    top: 34px;
+    bottom: 44px;
+    left: 50%;
+    width: 2px;
+    background:
+        linear-gradient(
+            #80c13e,
+            #365d1d 18%,
+            #263e17 82%,
+            #17250f
+        );
+    box-shadow: 0 0 9px #5c962b55;
+    content: "";
+    transform: translateX(-50%);
+}
+
+.broker95-learning-terminal-node {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    gap: 6px;
+    width: 70px;
+    margin: 0 auto;
+    color: #a8d878;
+    font-size: 8px;
+    letter-spacing: .13em;
+}
+
+.broker95-learning-terminal-node > b {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 2px solid #79b83a;
+    border-radius: 50%;
+    color: #d4fa9e;
+    background: #142807;
+    box-shadow:
+        0 0 0 6px #72ac3222,
+        0 0 16px #72ac3244;
+    font-size: 10px;
+}
+
+.broker95-learning-terminal-node.finish.locked {
+    color: #4f663d;
+}
+
+.broker95-learning-terminal-node.finish.locked > b {
+    border-color: #344528;
+    color: #637057;
+    background: #0c1109;
+    box-shadow: none;
+}
+
+.broker95-learning-terminal-node.finish.completed > b {
+    color: #071003;
+    background: #91d448;
+}
+
+.broker95-learning-section,
+.broker95-learning-section.locked {
+    position: relative;
+    z-index: 1;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 680px;
+}
+
+.broker95-learning-section.locked {
+    opacity: .68;
+}
+
+.broker95-learning-section > header {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    width: min(88%, 620px);
+    margin: 0 auto 15px;
+    padding: 12px 14px;
+    border: 1px solid #3c6820;
+    background:
+        linear-gradient(145deg, #0d1c05, #050b02);
+    box-shadow:
+        0 8px 24px #0008,
+        inset 3px 0 #6eaa31;
+}
+
+.broker95-learning-section > header > b {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #699c37;
+    color: #c8ef93;
+    background: #152b08;
+    font-size: 10px;
+}
+
+.broker95-learning-section > header > div {
+    min-width: 0;
+}
+
+.broker95-learning-section > header h3,
+.broker95-learning-section > header p,
+.broker95-learning-section li > button strong {
+  overflow-wrap: anywhere;
+}
+
+.broker95-learning-section li > button > span {
+  min-width: 0;
+}
+
+.broker95-learning-section > header > div > span {
+    color: #73a34c;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-learning-section > header h3 {
+    margin: 3px 0 0;
+}
+
+.broker95-learning-section > header p {
+    margin: 5px 0 0;
+    color: #6d8f50;
+    font-size: 8px;
+    line-height: 1.45;
+}
+
+.broker95-learning-section > header > small {
+    padding: 4px 6px;
+    border: 1px solid #355b1d;
+    background: #0b1804;
+}
+
+.broker95-learning-section ol {
+    gap: 0;
+}
+
+.broker95-learning-section li,
+.broker95-learning-section li:not(:last-child) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 92px;
+}
+
+.broker95-learning-section li:not(:last-child)::after {
+    content: none;
+}
+
+.broker95-learning-node-row::before {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    width: 46px;
+    height: 1px;
+    background: #3d6821;
+    content: "";
+}
+
+.broker95-learning-node-row.left::before {
+    right: 50%;
+}
+
+.broker95-learning-node-row.right::before {
+    left: 50%;
+}
+
+.broker95-learning-section li > button {
+    position: relative;
+    z-index: 1;
+    grid-template-columns: 44px minmax(0, 1fr);
+    width: calc(50% - 44px);
+    min-height: 64px;
+    padding: 8px 12px 8px 5px;
+    box-shadow: 0 7px 18px #0007;
+}
+
+.broker95-learning-node-row.left > button {
+    margin-right: auto;
+}
+
+.broker95-learning-node-row.right > button {
+    margin-left: auto;
+}
+
+.broker95-learning-section li > button > b {
+    width: 36px;
+    height: 36px;
+    margin-left: 0;
+}
+
+.broker95-learning-section li > button em {
+    display: block;
+    margin-bottom: 3px;
+    color: #638b42;
+    font-size: 7px;
+    font-style: normal;
+    letter-spacing: .1em;
+}
+
+.broker95-learning-node-row.right > button {
+    grid-template-columns: minmax(0, 1fr) 44px;
+    padding: 8px 5px 8px 12px;
+    text-align: right;
+}
+
+.broker95-learning-node-row.right > button > b {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.broker95-learning-node-row.right > button > span {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.broker95-learning-section li > button.available > b {
+    border-color: #a5ee57;
+    box-shadow:
+        0 0 0 6px #89ce3d1c,
+        0 0 14px #89ce3d77;
+    animation:
+        broker95-learning-current 2.2s
+        ease-in-out infinite;
+}
+
+.broker95-learning-section li > button[aria-current="step"]::after {
+    position: absolute;
+    top: -8px;
+    right: 8px;
+    padding: 3px 6px;
+    border: 1px solid #83c83d;
+    color: #d1ff98;
+    background: #132906;
+    content: "ESTÁS AQUÍ";
+    font-size: 7px;
+    letter-spacing: .08em;
+}
+
+@keyframes broker95-learning-current {
+    50% {
+        box-shadow:
+            0 0 0 9px #89ce3d0d,
+            0 0 20px #89ce3daa;
+    }
+}
+
+/* La ruta conserva una lectura vertical. En paneles estrechos el eje se
+   desplaza a la izquierda y las tarjetas forman una sola columna, sin
+   alterar el orden curricular ni introducir desplazamiento horizontal. */
+@container broker-learning-panel (max-width: 640px) {
+    .broker95-learning-panel > .broker95-panel-header {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .broker95-learning-progress {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 11px;
+    }
+
+    .broker95-learning-progress button {
+        width: 100%;
+    }
+}
+
+@container broker-learning-route (max-width: 700px) {
+    .broker95-learning-route {
+        width: 100%;
+        gap: 22px;
+    }
+
+    .broker95-learning-route::before {
+        left: 24px;
+        transform: none;
+    }
+
+    .broker95-learning-terminal-node {
+        margin-left: 0;
+    }
+
+    .broker95-learning-section > header {
+        grid-template-columns: 36px minmax(0, 1fr) auto;
+        width: calc(100% - 50px);
+        margin-right: 0;
+        margin-left: 50px;
+        padding: 10px 12px;
+    }
+
+    .broker95-learning-section > header > b {
+        width: 32px;
+        height: 32px;
+    }
+
+    .broker95-learning-node-row.left::before,
+    .broker95-learning-node-row.right::before {
+        right: auto;
+        left: 24px;
+        width: 26px;
+    }
+
+    .broker95-learning-section li > button,
+    .broker95-learning-node-row.left > button,
+    .broker95-learning-node-row.right > button {
+        grid-template-columns: 42px minmax(0, 1fr);
+        width: calc(100% - 50px);
+        margin-right: 0;
+        margin-left: 50px;
+        padding: 8px 11px 8px 5px;
+        text-align: left;
+    }
+
+    .broker95-learning-node-row.right > button > b,
+    .broker95-learning-node-row.right > button > span {
+        grid-column: auto;
+        grid-row: auto;
+    }
+}
+
+@container broker-learning-route (max-width: 420px) {
+    .broker95-learning-route {
+        gap: 18px;
+    }
+
+    .broker95-learning-route::before {
+        left: 18px;
+    }
+
+    .broker95-learning-section > header {
+        grid-template-columns: 30px minmax(0, 1fr);
+        gap: 8px;
+        width: calc(100% - 38px);
+        margin-left: 38px;
+        padding: 9px;
+    }
+
+    .broker95-learning-section > header > b {
+        width: 28px;
+        height: 28px;
+    }
+
+    .broker95-learning-section > header > small {
+        grid-column: 2;
+        justify-self: start;
+    }
+
+    .broker95-learning-section > header p {
+        font-size: 7px;
+    }
+
+    .broker95-learning-node-row.left::before,
+    .broker95-learning-node-row.right::before {
+        left: 18px;
+        width: 20px;
+    }
+
+    .broker95-learning-section li > button,
+    .broker95-learning-node-row.left > button,
+    .broker95-learning-node-row.right > button {
+        grid-template-columns: 36px minmax(0, 1fr);
+        width: calc(100% - 38px);
+        margin-left: 38px;
+        padding-right: 8px;
+    }
+
+    .broker95-learning-section li > button > b {
+        width: 30px;
+        height: 30px;
+    }
+
+    .broker95-learning-section li > button[aria-current="step"]::after {
+        right: 4px;
+        max-width: calc(100% - 8px);
+        font-size: 6px;
+    }
+}
+
+.broker95-learning-back {
+    align-self: flex-start;
+    margin-bottom: 17px;
+}
+
+.broker95-learning-status.completed {
+    border-color: #6da637;
+    color: #d5ff9d;
+}
+
+.broker95-learning-status.locked {
+    border-color: #3c482f;
+    color: #78826e;
+    background: #11150e;
+}
+
+.broker95-learning-lesson-summary {
+    width: min(100%, 980px);
+    padding: 20px;
+    border: 1px solid #315718;
+    background:
+        linear-gradient(145deg, #0a1604, #030800);
+    box-shadow: inset 3px 0 #78bd35;
+}
+
+.broker95-learning-lesson-summary > h3 {
+    margin: 0;
+    color: #73a14d;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-learning-lesson-summary > p {
+    margin: 9px 0 18px;
+    color: #c2e991;
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.broker95-learning-lesson-summary dl {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+}
+
+.broker95-learning-lesson-summary dl > div {
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid #284716;
+    background: #071003;
+}
+
+.broker95-learning-lesson-summary dt {
+    color: #638744;
+    font-size: 8px;
+}
+
+.broker95-learning-lesson-summary dd {
+    margin: 5px 0 0;
+    overflow-wrap: anywhere;
+    color: #bde688;
+    font-size: 10px;
+}
+
+.broker95-learning-lesson-summary dd small {
+    display: block;
+    margin-top: 4px;
+    color: #72984f;
+    font-size: 7px;
+    font-weight: 400;
+    letter-spacing: .04em;
+}
+
+.broker95-learning-lesson {
+    position: relative;
+    gap: 0;
+}
+
+.broker95-learning-problem {
+    width: min(100%, 980px);
+    margin-top: 16px;
+    padding: 16px 18px;
+    border: 1px solid #6c9d34;
+    background:
+        linear-gradient(110deg, #142505, #071003 72%);
+    box-shadow:
+        inset 4px 0 #9be34d,
+        0 8px 24px #0007;
+}
+
+.broker95-learning-problem > header {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.broker95-learning-problem > header > span {
+    display: grid;
+    place-items: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #8dd341;
+    color: #d5ff9d;
+    background: #1a3608;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.broker95-learning-problem small,
+.broker95-learning-expected-contract > span {
+    color: #80ad57;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-learning-problem h3,
+.broker95-learning-expected-contract h3 {
+    margin-top: 3px;
+    color: #d2fb9b;
+    font-size: 13px;
+}
+
+.broker95-learning-problem > p,
+.broker95-learning-expected-contract > p {
+    margin: 12px 0 0;
+    color: #b8dd89;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.broker95-learning-lesson-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(210px, 270px);
+    align-items: start;
+    gap: 16px;
+    width: min(100%, 980px);
+    margin-top: 16px;
+}
+
+.broker95-learning-content,
+.broker95-learning-sidebar {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+}
+
+.broker95-learning-sidebar {
+    position: sticky;
+    top: 0;
+}
+
+.broker95-learning-content-section,
+.broker95-learning-knowledge,
+.broker95-learning-expected-contract,
+.broker95-learning-tools,
+.broker95-learning-contract-action {
+    padding: 17px;
+    border: 1px solid #294a15;
+    background:
+        linear-gradient(145deg, #081203, #030800);
+}
+
+.broker95-learning-knowledge.main {
+    border-color: #416d22;
+    background:
+        linear-gradient(145deg, #0e1d06, #050b02);
+}
+
+.broker95-learning-knowledge.main ul {
+    grid-template-columns:
+        repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.broker95-learning-formulas {
+    border-color: #4e6f31;
+    background:
+        linear-gradient(145deg, #101a0b, #050803);
+}
+
+.broker95-learning-formula-list {
+    display: grid;
+    gap: 10px;
+}
+
+.broker95-learning-formula {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #496b30;
+    background: #030701;
+}
+
+.broker95-learning-formula > header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 11px;
+    border-bottom: 1px solid #304b1f;
+    background: #101c09;
+}
+
+.broker95-learning-formula > header span {
+    color: #a7e568;
+    font-family: Georgia, serif;
+    font-size: 15px;
+}
+
+.broker95-learning-formula h4 {
+    color: #c5ed96;
+    font-size: 10px;
+}
+
+.broker95-learning-formula-render {
+    overflow-x: auto;
+    padding: 15px 10px;
+    color: #e3ffc1;
+    background:
+        radial-gradient(circle at center, #16260b, #030701 72%);
+    scrollbar-color: #365b1c #071000;
+}
+
+.broker95-learning-formula-render .katex-display {
+    margin: 0;
+}
+
+.broker95-learning-formula-render .katex {
+    font-size: clamp(.9rem, 2.2vw, 1.15rem);
+}
+
+.broker95-learning-formula > p {
+    margin: 0;
+    padding: 9px 11px;
+    border-top: 1px solid #263c19;
+    color: #83a966;
+    font-size: 9px;
+    line-height: 1.55;
+}
+
+.broker95-learning-content-section > header {
+    margin-bottom: 13px;
+    padding-bottom: 9px;
+    border-bottom: 1px solid #294715;
+}
+
+.broker95-learning-content-section > header span,
+.broker95-learning-contract-action > span {
+    color: #6f994b;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-learning-content-section h3,
+.broker95-learning-contract-action h3,
+.broker95-learning-knowledge h3 {
+    margin-top: 4px;
+    color: #c9f790;
+    font-size: 13px;
+}
+
+.broker95-learning-content-section > p,
+.broker95-learning-content-section > ul,
+.broker95-learning-callout p,
+.broker95-learning-contract-action > p {
+    color: #a9cf7c;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.broker95-learning-content-section > p {
+    margin: 0 0 11px;
+    white-space: pre-line;
+}
+
+.broker95-learning-content-section > ul,
+.broker95-learning-knowledge ul {
+    display: grid;
+    gap: 7px;
+    margin: 0;
+    padding-left: 18px;
+}
+
+.broker95-learning-content-section > ul li::marker,
+.broker95-learning-knowledge li::marker {
+    color: #85c63e;
+}
+
+.broker95-learning-callout {
+    margin-top: 12px;
+    padding: 12px 13px;
+    border-left: 3px solid #88cc40;
+    background: #102105;
+}
+
+.broker95-learning-callout strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #d0f89c;
+    font-size: 10px;
+}
+
+.broker95-learning-callout p {
+    margin: 0;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.broker95-learning-content-section.comparative {
+    border-color: #3f5a24;
+    background:
+        linear-gradient(145deg, #0d1608, #050903);
+}
+
+.broker95-learning-examples {
+    display: grid;
+    gap: 12px;
+}
+
+.broker95-learning-example {
+    overflow: hidden;
+    border: 1px solid #355f1c;
+    background: #020500;
+}
+
+.broker95-learning-example > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 11px;
+    border-bottom: 1px solid #254313;
+    background: #0c1905;
+}
+
+.broker95-learning-example h4 {
+    color: #bde88a;
+    font-size: 10px;
+}
+
+.broker95-learning-example > header span {
+    padding: 2px 5px;
+    border: 1px solid #456f28;
+    color: #8fc65d;
+    font-size: 7px;
+    letter-spacing: .1em;
+}
+
+.broker95-learning-example pre {
+    margin: 0;
+    overflow: auto;
+    padding: 14px;
+    color: #d4f8a1;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            #030700,
+            #030700 19px,
+            #081005 20px
+        );
+    font-size: 11px;
+    line-height: 1.65;
+    tab-size: 4;
+}
+
+.broker95-learning-example code {
+    font: inherit;
+    white-space: pre;
+}
+
+.broker95-learning-example > p {
+    margin: 0;
+    padding: 9px 11px;
+    border-top: 1px solid #1c3510;
+    color: #779d57;
+    font-size: 9px;
+    line-height: 1.55;
+}
+
+.broker95-learning-knowledge.emphasized {
+    border-color: #4f7d28;
+    box-shadow: inset 3px 0 #80c23b;
+}
+
+.broker95-learning-knowledge h3 {
+    margin: 0 0 10px;
+    font-size: 9px;
+    letter-spacing: .07em;
+}
+
+.broker95-learning-knowledge ul {
+    color: #9fc778;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+details.broker95-learning-knowledge {
+    padding: 0;
+}
+
+.broker95-learning-knowledge summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 13px 14px;
+    color: #9cc874;
+    cursor: pointer;
+    font-size: 8px;
+    letter-spacing: .06em;
+    list-style: none;
+}
+
+.broker95-learning-knowledge summary::-webkit-details-marker {
+    display: none;
+}
+
+.broker95-learning-knowledge summary::before {
+    color: #88c449;
+    content: "+";
+}
+
+.broker95-learning-knowledge[open] summary::before {
+    content: "−";
+}
+
+.broker95-learning-knowledge summary b {
+    margin-left: auto;
+    padding: 2px 5px;
+    border: 1px solid #365d20;
+    font-size: 8px;
+}
+
+.broker95-learning-knowledge[open] ul {
+    max-height: 310px;
+    overflow: auto;
+    margin: 0 13px 13px;
+    padding-top: 11px;
+    border-top: 1px solid #294715;
+    scrollbar-color: #365b1c #071000;
+}
+
+.broker95-learning-expected-contract {
+    border-color: #4e7c28;
+    box-shadow: inset 3px 0 #73b634;
+}
+
+.broker95-learning-tools {
+    border-style: dashed;
+    border-color: #5f783c;
+    background:
+        linear-gradient(145deg, #101508, #050803);
+}
+
+.broker95-learning-tools > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.broker95-learning-tools > header span {
+    color: #9fc77b;
+    font-size: 8px;
+    letter-spacing: .09em;
+}
+
+.broker95-learning-tools > header b {
+    padding: 2px 5px;
+    border: 1px solid #668344;
+    color: #aacb8c;
+    font-size: 7px;
+}
+
+.broker95-learning-tools > p,
+.broker95-learning-tools > em {
+    color: #819f69;
+    font-size: 9px;
+    line-height: 1.55;
+}
+
+.broker95-learning-tools > ul {
+    display: grid;
+    gap: 7px;
+    margin: 10px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.broker95-learning-tools li {
+    padding: 8px;
+    border-left: 2px solid #668f41;
+    background: #101908;
+}
+
+.broker95-learning-tools li strong,
+.broker95-learning-tools li small {
+    display: block;
+}
+
+.broker95-learning-tools li strong {
+    color: #b9dd99;
+    font-size: 9px;
+}
+
+.broker95-learning-tools li small {
+    margin-top: 3px;
+    color: #748d62;
+    font-size: 8px;
+    line-height: 1.45;
+}
+
+.broker95-learning-tools > em {
+    display: block;
+    padding-top: 8px;
+    border-top: 1px dashed #41572f;
+}
+
+.broker95-learning-contract-action {
+    border-color: #4e7c28;
+    box-shadow:
+        inset 3px 0 #84c83d,
+        0 9px 25px #0008;
+}
+
+.broker95-learning-contract-action > strong {
+    display: block;
+    margin: -4px -4px 13px;
+    padding: 7px;
+    border: 1px solid #6fa936;
+    color: #d5ff9d;
+    background: #183407;
+    font-size: 8px;
+    letter-spacing: .09em;
+    text-align: center;
+}
+
+.broker95-learning-contract-action > p {
+    margin: 9px 0 13px;
+    font-size: 9px;
+}
+
+.broker95-learning-contract-action > button,
+.broker95-learning-contract-notice > button {
+    width: 100%;
+    min-height: 38px;
+    border: 1px solid #7dbd3b;
+    color: #d7ffa2;
+    background: #1b3b07;
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .07em;
+}
+
+.broker95-learning-contract-action > button:hover,
+.broker95-learning-contract-action > button:focus-visible,
+.broker95-learning-contract-notice > button:hover,
+.broker95-learning-contract-notice > button:focus-visible {
+    border-color: #adf05c;
+    background: #2a530d;
+    outline: none;
+}
+
+.broker95-learning-contract-action > button:disabled {
+    border-color: #30451f;
+    color: #667a55;
+    background: #0b1207;
+    cursor: not-allowed;
+}
+
+.broker95-learning-contract-linked {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 9px;
+    border: 1px solid #355d20;
+    background: #061003;
+}
+
+.broker95-learning-contract-linked span {
+    color: #a8d87e;
+    font-size: 8px;
+}
+
+.broker95-learning-contract-linked code,
+.broker95-learning-contract-notice code {
+    color: #d5ffa0;
+    font-size: 9px;
+}
+
+.broker95-learning-contract-notice {
+    position: sticky;
+    z-index: 5;
+    right: 0;
+    bottom: 0;
+    align-self: flex-end;
+    width: min(100%, 460px);
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid #8bd242;
+    background:
+        linear-gradient(145deg, #153006, #050b02);
+    box-shadow: 0 0 28px #65a52b55;
+}
+
+.broker95-learning-contract-notice > .broker95-learning-notice-close {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    width: 28px;
+    min-height: 28px;
+    padding: 0;
+    border-color: #456c28;
+    background: #091404;
+    font-size: 14px;
+}
+
+.broker95-learning-contract-notice > span {
+    color: #9ada56;
+    font-size: 8px;
+    letter-spacing: .14em;
+}
+
+.broker95-learning-contract-notice h3 {
+    margin: 6px 0;
+    color: #d5ffa0;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.broker95-learning-contract-notice p {
+    margin: 0 0 9px;
+    color: #9bc771;
+    font-size: 9px;
+}
+
+.broker95-learning-notice-context {
+    display: grid;
+    gap: 7px;
+    margin: 12px 0;
+}
+
+.broker95-learning-notice-context > div {
+    display: grid;
+    grid-template-columns: 68px minmax(0, 1fr);
+    gap: 10px;
+    align-items: baseline;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(150, 255, 76, .2);
+}
+
+.broker95-learning-notice-context dt {
+    color: var(--broker-muted);
+    font-size: .68rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.broker95-learning-notice-context dd {
+    min-width: 0;
+    margin: 0;
+    color: var(--broker-bright);
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.broker95-learning-contract-notice code {
+    display: block;
+    margin-bottom: 12px;
+    padding: 8px;
+    border: 1px solid #355d20;
+    background: #030800;
+}
+
+.broker95-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 15px;
+}
+
+.broker95-panel-header h2 {
+    margin-top: 4px;
+    color: var(--broker-bright);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+
+.broker95-terminal-hint,
+.broker95-config-state,
+.broker95-risk {
+    padding: 5px 8px;
+    border: 1px solid #315718;
+    color: #86b65a !important;
+    background: #102204;
+    font-size: 9px !important;
+}
+
+.broker95-terminal-output {
+    flex: 1;
+    min-height: 150px;
+    overflow: auto;
+    padding: 13px 14px;
+    border: 1px solid #294913;
+    background: #020600;
+    scrollbar-color: #365b1c #071000;
+}
+
+.broker95-follow-output {
+    align-self: flex-end;
+    margin-top: 7px;
+    padding: 6px 9px;
+    border: 1px solid #527f2b;
+    color: #bde983;
+    background: #102104;
+    cursor: pointer;
+    font-size: 8px;
+    letter-spacing: .07em;
+}
+
+.broker95-terminal-empty {
+    color: #526b3a;
+    font-size: 11px;
+}
+
+.broker95-terminal-entry {
+    display: grid;
+    grid-template-columns: minmax(86px, max-content) minmax(0, 1fr);
+    gap: 11px;
+    margin: 0;
+    padding: 9px 10px;
+    border-left: 2px solid #294913;
+    border-bottom: 1px solid #13270a;
+    color: #a8d479;
+    background: linear-gradient(90deg, #0b190566, transparent 62%);
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.broker95-terminal-entry:first-of-type {
+    border-top: 1px solid #13270a;
+}
+
+.broker95-terminal-entry > span {
+    color: #6f9a48;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    white-space: nowrap;
+}
+
+.broker95-terminal-entry pre {
+    margin: 0;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    font: inherit;
+    tab-size: 4;
+}
+
+.broker95-terminal-entry.user pre {
+    color: #ddffac;
+}
+
+.broker95-terminal-entry.user {
+    border-left-color: #73a942;
+    background: #10210455;
+}
+
+.broker95-terminal-entry.cipher pre {
+    color: #a9ef60;
+}
+
+.broker95-terminal-entry.cipher {
+    border-left-color: #9ce84c;
+    background: linear-gradient(90deg, #142b0766, transparent 72%);
+}
+
+.broker95-terminal-entry.error pre,
+.broker95-terminal-entry.error > span {
+    color: #ef8569;
+}
+
+.broker95-terminal-entry.error {
+    border-left-color: #c65d43;
+    background: linear-gradient(90deg, #35110888, transparent 72%);
+}
+
+.broker95-terminal-entry.dim {
+    opacity: .55;
+}
+
+.broker95-terminal-input {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 9px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.broker95-terminal-input label {
+    color: var(--broker-bright);
+    font-weight: 700;
+}
+
+.broker95-terminal-input input,
+.broker95-settings-form input,
+.broker95-settings-form select {
+    min-width: 0;
+    height: 36px;
+    padding: 0 11px;
+    border: 1px solid #315719;
+    outline: none;
+    color: #d5ffa0;
+    background: #030800;
+    caret-color: var(--broker-green);
+    font-size: 11px;
+}
+
+.broker95-terminal-input input:focus,
+.broker95-settings-form input:focus,
+.broker95-settings-form select:focus {
+    border-color: #8ad43b;
+    box-shadow: 0 0 0 2px #74b73220;
+}
+
+.broker95-terminal-input input::placeholder,
+.broker95-settings-form input::placeholder {
+    color: #506d34;
+}
+
+.broker95-terminal-input button,
+.broker95-settings-form button,
+.broker95-settings-actions button,
+.broker95-lm-studio-discovery button,
+.broker95-connection-test button,
+.broker95-audio-settings button,
+.broker95-local-data-actions button,
+.broker95-countermeasure button {
+    height: 36px;
+    padding: 0 13px;
+    border: 1px solid #5f942c;
+    color: #d1ff96;
+    background: #183306;
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .06em;
+}
+
+.broker95-terminal-input button:hover,
+.broker95-terminal-input button:focus-visible,
+.broker95-settings-form button:hover,
+.broker95-settings-form button:focus-visible,
+.broker95-settings-actions button:hover,
+.broker95-settings-actions button:focus-visible,
+.broker95-lm-studio-discovery button:hover,
+.broker95-lm-studio-discovery button:focus-visible,
+.broker95-connection-test button:hover,
+.broker95-connection-test button:focus-visible,
+.broker95-audio-settings button:hover,
+.broker95-audio-settings button:focus-visible,
+.broker95-local-data-actions button:hover,
+.broker95-local-data-actions button:focus-visible,
+.broker95-countermeasure button:hover,
+.broker95-countermeasure button:focus-visible {
+    outline: 1px solid #b2ed70;
+    background: #244b0a;
+}
+
+.broker95-terminal-input :disabled,
+.broker95-settings-actions button:disabled,
+.broker95-lm-studio-discovery button:disabled,
+.broker95-connection-test button:disabled,
+.broker95-audio-settings button:disabled,
+.broker95-local-data-actions button:disabled,
+.broker95-countermeasure button:disabled {
+    cursor: not-allowed;
+    opacity: .4;
+}
+
+.broker95-empty-panel {
+    display: grid;
+    place-content: center;
+    min-height: 100%;
+    padding: 40px;
+    text-align: center;
+}
+
+.broker95-empty-panel > span {
+    color: #658d43;
+    font-size: 9px;
+    letter-spacing: .14em;
+}
+
+.broker95-empty-panel > div {
+    margin: 24px 0 8px;
+    color: #79b53d;
+    font-size: 34px;
+    letter-spacing: .1em;
+    text-shadow: 0 0 13px #75b83677;
+}
+
+.broker95-empty-panel h2 {
+    margin: 7px 0;
+    color: #c6ef91;
+    font-size: 17px;
+}
+
+.broker95-empty-panel p {
+    max-width: 470px;
+    margin: 4px auto;
+    color: #70934e;
+    font-size: 11px;
+    line-height: 1.65;
+}
+
+.broker95-contract-meta,
+.broker95-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-bottom: 18px;
+    border: 1px solid #294913;
+    background: #050b01;
+}
+
+.broker95-contract-meta .broker95-metric,
+.broker95-stat-grid .broker95-metric {
+    border-left: 0;
+    border-right: 1px solid #294913;
+}
+
+.broker95-contract-panel {
+    overflow: auto;
+}
+
+.broker95-active-contract {
+    padding: 15px;
+    border: 1px solid #3a681b;
+    background:
+        linear-gradient(145deg, #102504, #050b01);
+    box-shadow: inset 3px 0 #76b936;
+}
+
+.broker95-active-contract > header,
+.broker95-contract-collection > div:first-child,
+.broker95-contract-grid article > header,
+.broker95-contract-grid article > footer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.broker95-active-contract > header {
+    margin-bottom: 14px;
+}
+
+.broker95-active-contract h3,
+.broker95-contract-grid h4 {
+    margin: 4px 0 0;
+    color: #d1f99d;
+    font-size: 13px;
+}
+
+.broker95-active-contract > section {
+    padding: 14px 0;
+    border-top: 1px solid #213d0f;
+}
+
+.broker95-active-contract > section p,
+.broker95-active-contract ol {
+    color: #99c56c;
+    font-size: 11px;
+    line-height: 1.75;
+}
+
+.broker95-active-contract ol {
+    padding-left: 23px;
+}
+
+.broker95-contract-tests > header,
+.broker95-test-case > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.broker95-contract-tests > header h4 {
+    margin: 0;
+}
+
+.broker95-contract-tests > header > span {
+    min-width: 26px;
+    padding: 3px 7px;
+    border: 1px solid #4d7d27;
+    color: #c9f78f;
+    text-align: center;
+    font-size: 9px;
+}
+
+.broker95-test-case-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    margin-top: 12px;
+}
+
+.broker95-test-case {
+    min-width: 0;
+    padding: 11px;
+    border: 1px solid #294913;
+    background: #071002;
+}
+
+.broker95-test-case > header {
+    padding-bottom: 8px;
+    border-bottom: 1px solid #213d0f;
+}
+
+.broker95-test-case > header strong {
+    color: #d1f99d;
+    font-size: 10px;
+}
+
+.broker95-test-case > header span {
+    color: #80b74e;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    text-align: right;
+}
+
+.broker95-test-case > p {
+    margin: 10px 0;
+}
+
+.broker95-test-case dl {
+    display: grid;
+    gap: 7px;
+    margin: 0;
+}
+
+.broker95-test-case dl > div {
+    min-width: 0;
+}
+
+.broker95-test-case dt {
+    margin-bottom: 2px;
+    color: #628a40;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.broker95-test-case dd {
+    margin: 0;
+    color: #a9d47b;
+    font-size: 9px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.broker95-test-case code {
+    display: block;
+    max-height: 88px;
+    padding: 6px;
+    overflow: auto;
+    border: 1px solid #1c350c;
+    color: #c9f78f;
+    background: #030700;
+    white-space: pre-wrap;
+}
+
+.broker95-contract-tests-empty {
+    padding: 10px;
+    border: 1px dashed #294913;
+    background: #050b01;
+}
+
+.broker95-contract-count {
+    padding: 5px 8px;
+    border: 1px solid #4d7d27;
+    color: #bfe985 !important;
+}
+
+.broker95-contract-note {
+    margin: 0 0 15px;
+    padding: 12px;
+    border: 1px solid #294913;
+    color: #85ab61;
+    background: #091204;
+    font-size: 10px;
+    line-height: 1.55;
+}
+
+.broker95-contract-note code {
+    color: #ccf895;
+}
+
+.broker95-contract-collection {
+    margin-top: 17px;
+    padding-top: 14px;
+    border-top: 1px solid #294913;
+}
+
+.broker95-contract-collection > div:first-child {
+    align-items: center;
+    margin-bottom: 9px;
+}
+
+.broker95-contract-collection > div:first-child h3 {
+    margin: 0;
+}
+
+.broker95-contract-collection > div:first-child span {
+    color: #719a4d;
+    font-size: 9px;
+}
+
+.broker95-contract-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.broker95-contract-grid article {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #294913;
+    background: #071002;
+}
+
+.broker95-contract-grid article > header > span {
+    color: #789f53;
+    font-size: 9px;
+}
+
+.broker95-contract-state {
+    color: #a7d572;
+    font-size: 8px;
+    letter-spacing: .08em;
+}
+
+.broker95-contract-state.completed {
+    color: #9ee65b;
+}
+
+.broker95-contract-state.failed {
+    color: #e9866c;
+}
+
+.broker95-contract-grid article > p {
+    min-height: 28px;
+    margin: 7px 0 12px;
+    color: #688c49;
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+.broker95-contract-grid article > footer {
+    align-items: center;
+}
+
+.broker95-contract-payment {
+    display: grid;
+    gap: 3px;
+    margin: 0;
+    text-align: right;
+}
+
+.broker95-contract-payment > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 7px;
+}
+
+.broker95-contract-payment dt {
+    color: #688c49;
+    font-size: 8px;
+    text-transform: uppercase;
+}
+
+.broker95-contract-payment dd {
+    margin: 0;
+    color: #cafa92;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+@container broker-contract-panel (max-width: 620px) {
+    .broker95-contract-payment {
+        padding-inline-end: 8px;
+        padding-bottom: 3px;
+    }
+}
+
+.broker95-risk.low { border-color: #62a131; }
+.broker95-risk.medium { border-color: #b49e3a; color: #e5d873 !important; }
+.broker95-risk.high { border-color: #c9763d; color: #f1a96f !important; }
+.broker95-risk.extreme { border-color: #c74d4d; color: #f08478 !important; }
+
+.broker95-stat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.broker95-stat-sections {
+    display: grid;
+    grid-template-columns: minmax(180px, .7fr) minmax(280px, 1.3fr);
+    gap: 14px;
+}
+
+.broker95-stat-sections > section {
+    padding: 14px;
+    border: 1px solid #294913;
+    background: #050b01;
+}
+
+.broker95-learning-statistics {
+    min-width: 0;
+    container: broker-learning-statistics / inline-size;
+}
+
+.broker95-stat-row,
+.broker95-profile-row {
+    display: grid;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-top: 1px solid #1c350c;
+    color: #86af60;
+    font-size: 10px;
+}
+
+.broker95-stat-row {
+    grid-template-columns: 70px minmax(60px, 1fr) auto;
+}
+
+.broker95-stat-row strong,
+.broker95-profile-row strong {
+    color: #c4f28d;
+    font-size: 12px;
+    text-align: right;
+}
+
+.broker95-stat-row small,
+.broker95-profile-row small {
+    display: block;
+    margin-top: 2px;
+    color: #5f803f;
+    font-size: 8px;
+    font-weight: 400;
+}
+
+.broker95-profile-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px 12px;
+}
+
+.broker95-profile-row > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.broker95-profile-row > div {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    height: 5px;
+    overflow: hidden;
+    background: #1b310d;
+}
+
+.broker95-profile-row > strong {
+    display: flex;
+    grid-column: 2;
+    grid-row: 1;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 7px;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.broker95-profile-row > strong small {
+    display: inline;
+    margin-top: 0;
+}
+
+.broker95-profile-row i {
+    display: block;
+    height: 100%;
+    background: #8bd23f;
+}
+
+@container broker-learning-statistics (max-width: 320px) {
+    .broker95-learning-stat-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 7px 12px;
+    }
+
+    .broker95-learning-stat-row > span,
+    .broker95-learning-stat-row > strong {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .broker95-learning-stat-row > .broker95-stat-bar {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+    }
+
+    .broker95-learning-stat-row > strong {
+        grid-column: 2;
+        grid-row: 1;
+        max-width: 100%;
+    }
+}
+
+@container broker-learning-statistics (max-width: 220px) {
+    .broker95-learning-stat-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .broker95-learning-stat-row > strong {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: start;
+        text-align: left;
+    }
+
+    .broker95-learning-stat-row > .broker95-stat-bar {
+        grid-row: 3;
+    }
+}
+
+.broker95-stat-status {
+    padding: 5px 8px;
+    border: 1px solid #5f9a2d;
+    color: #a9e765 !important;
+}
+
+.broker95-stat-status.final {
+    border-color: #a83f2f;
+    color: #ff8e76 !important;
+}
+
+.broker95-stat-bar,
+.broker95-specialty-bar {
+    height: 5px;
+    overflow: hidden;
+    background: #1b310d;
+}
+
+.broker95-stat-bar i,
+.broker95-specialty-bar i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #527f27, #9bdc50);
+}
+
+.broker95-specialties {
+    grid-column: 1 / -1;
+}
+
+.broker95-specialties-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 10px;
+}
+
+.broker95-specialties-heading h3 {
+    margin-bottom: 4px;
+}
+
+.broker95-specialties-heading p {
+    margin: 0;
+    color: #628146;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.broker95-specialties-heading > span {
+    flex: 0 0 auto;
+    color: #6f994b;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-specialty-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 18px;
+}
+
+.broker95-specialty-row {
+    display: grid;
+    grid-template-columns: minmax(105px, 1fr) minmax(65px, .8fr) 48px;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-top: 1px solid #1c350c;
+}
+
+.broker95-contract-grid article,
+.broker95-countermeasure,
+.broker95-specialty-row {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 92px;
+}
+
+.broker95-specialty-row strong {
+    display: block;
+    overflow: hidden;
+    color: #9fce70;
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.broker95-specialty-row small {
+    display: block;
+    margin-top: 2px;
+    color: #5f803f;
+    font-size: 8px;
+    font-weight: 400;
+}
+
+.broker95-specialty-row > span {
+    color: #c4f28d;
+    font-size: 11px;
+    text-align: right;
+}
+
+.broker95-settings-panel {
+    overflow: auto;
+    container: broker-settings-panel / inline-size;
+}
+
+.broker95-setup-steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0 0 18px;
+}
+
+.broker95-setup-steps button {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    min-height: 58px;
+    padding: 10px;
+    border: 1px solid var(--broker-border);
+    color: #b1cd94;
+    background: #071000;
+    text-align: left;
+    font-size: 10px;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.broker95-setup-step-index {
+    text-align: center;
+}
+
+.broker95-setup-step-label {
+    min-width: 0;
+    text-align: left;
+}
+
+.broker95-setup-steps button.complete {
+    color: var(--broker-bright);
+    border-color: #6c9a37;
+}
+
+.broker95-provider-guide,
+.broker95-educational-help {
+    margin: 0 0 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--broker-border);
+    border-left: 3px solid var(--broker-green);
+    background: #081203;
+    color: #a9c88e;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.broker95-provider-guide strong,
+.broker95-educational-help h3 {
+    margin: 0;
+    color: var(--broker-bright);
+    font-size: 12px;
+}
+
+.broker95-provider-guide p,
+.broker95-educational-help p {
+    margin: 8px 0 0;
+}
+
+.broker95-educational-help {
+    margin-top: 18px;
+}
+
+.broker95-cipher-provider {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    margin: 12px 0;
+    font-size: 10px;
+    color: #a9c88e;
+}
+
+.broker95-cipher-provider code {
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.broker95-cipher-provider button {
+    min-height: 36px;
+    border: 1px solid var(--broker-border);
+    background: #102305;
+    color: var(--broker-bright);
+    cursor: pointer;
+    font-size: 10px;
+    transition:
+        border-color .12s ease,
+        background-color .12s ease,
+        color .12s ease;
+}
+
+.broker95-cipher-provider button:hover,
+.broker95-cipher-provider button:focus-visible {
+    border-color: #adf05c;
+    outline: 1px solid #b2ed70;
+    background: #244b0a;
+    color: #e1ffb9;
+}
+
+.broker95-connection-test.warning {
+    border-color: #bb825c;
+    box-shadow: inset 3px 0 #bb825c;
+}
+
+.broker95-connection-test small {
+    display: block;
+    margin-top: 8px;
+    color: #a9c88e;
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.broker95-settings-panel button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+@container broker-settings-panel (max-width: 900px) {
+    .broker95-setup-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@container broker-settings-panel (max-width: 430px) {
+    .broker95-setup-steps { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 580px) {
+    .broker95-cipher-provider {
+        grid-column: 1 / -1;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        margin: 4px 0 0;
+    }
+    .broker95-cipher-provider button { padding: 8px; }
+    .broker95-cipher-provider span { text-align: right; }
+}
+
+@media (forced-colors: active) {
+    .broker95-setup-steps button,
+    .broker95-provider-guide,
+    .broker95-educational-help,
+    .broker95-cipher-provider button {
+        border-color: ButtonText;
+        color: CanvasText;
+        background: Canvas;
+    }
+}
+
+.broker95-config-state.configured {
+    border-color: #5f9a2d;
+    color: #a9e765 !important;
+}
+
+.broker95-config-state.missing {
+    border-color: #945132;
+    color: #e3956f !important;
+}
+
+.broker95-config-state.pending {
+    border-color: #73914f;
+    color: #b1cd94 !important;
+}
+
+.broker95-settings-form {
+    display: grid;
+    gap: 8px;
+    padding: 17px 0;
+    border-top: 1px solid #294913;
+}
+
+.broker95-settings-form label {
+    color: #a7d473;
+    font-size: 11px;
+}
+
+.broker95-settings-form > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+}
+
+.broker95-settings-form select {
+    grid-column: 1 / -1;
+    width: 100%;
+    color-scheme: dark;
+}
+
+.broker95-settings-form small,
+.broker95-settings-actions p {
+    color: #91b66f;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.broker95-settings-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-top: 17px;
+    border-top: 1px solid #294913;
+}
+
+.broker95-lm-studio-discovery {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--broker-border);
+    background: rgba(10, 22, 8, 0.45);
+}
+
+.broker95-lm-studio-discovery > div {
+    min-width: 0;
+}
+
+.broker95-lm-studio-discovery span {
+    color: var(--broker-green);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+}
+
+.broker95-lm-studio-discovery p {
+    margin: 5px 0 0;
+    color: var(--broker-muted);
+    line-height: 1.45;
+}
+
+.broker95-connection-test {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px solid #355d1a;
+    background:
+        linear-gradient(135deg, #071103, #030800);
+    box-shadow: inset 3px 0 #74b732;
+}
+
+.broker95-connection-test > div {
+    min-width: 0;
+}
+
+.broker95-connection-test span {
+    display: block;
+    color: #76a64d;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-connection-test strong {
+    display: block;
+    margin-top: 5px;
+    color: #cff79b;
+    font-size: 12px;
+}
+
+.broker95-connection-test p {
+    margin: 6px 0 0;
+    color: #a9c88e;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.broker95-connection-test button {
+    flex: 0 0 auto;
+    min-width: 142px;
+    height: 36px;
+    padding: 0 13px;
+    border: 1px solid #5f942c;
+    color: #d1ff96;
+    background: #183306;
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .06em;
+}
+
+.broker95-audio-settings {
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px solid #355d1a;
+    background:
+        linear-gradient(135deg, #091504, #030800);
+    box-shadow: inset 3px 0 #74b732;
+}
+
+.broker95-audio-settings > header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.broker95-audio-settings > header span,
+.broker95-audio-settings > header b {
+    color: #76a64d;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-audio-settings > header b {
+    padding: 4px 7px;
+    border: 1px solid #4f8127;
+    color: #b8eb7d;
+}
+
+.broker95-audio-settings h3 {
+    margin: 4px 0 0;
+    color: #cff79b;
+    font-size: 13px;
+}
+
+.broker95-audio-controls {
+    display: grid;
+    grid-template-columns: auto auto minmax(100px, 1fr) 46px auto;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0 10px;
+}
+
+.broker95-audio-controls label,
+.broker95-audio-controls output {
+    color: #9bc76e;
+    font-size: 9px;
+}
+
+.broker95-audio-controls output {
+    text-align: right;
+}
+
+.broker95-audio-controls input[type="range"] {
+    min-width: 90px;
+    accent-color: #8ed044;
+    cursor: pointer;
+}
+
+.broker95-audio-controls input[type="range"]:focus-visible {
+    outline: 1px solid #b2ed70;
+    outline-offset: 3px;
+}
+
+.broker95-audio-toggle[aria-pressed="true"] {
+    border-color: #80652c;
+    color: #dfc66f;
+    background: #291e06;
+}
+
+.broker95-audio-settings > small {
+    display: block;
+    color: #668848;
+    font-size: 9px;
+    line-height: 1.55;
+}
+
+.broker95-audio-test {
+    min-width: 0;
+}
+
+@container broker-settings-panel (max-width: 720px) {
+    .broker95-audio-controls {
+        grid-template-columns:
+            auto auto minmax(80px, 1fr) 42px;
+    }
+
+    .broker95-audio-controls > .broker95-audio-test {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
+
+@container broker-settings-panel (max-width: 520px) {
+    .broker95-audio-controls {
+        grid-template-columns:
+            auto minmax(80px, 1fr) 42px;
+    }
+
+    .broker95-audio-controls > .broker95-audio-toggle {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
+
+.broker95-local-data {
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px solid #294913;
+    background: #050b01;
+}
+
+.broker95-local-data > header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.broker95-local-data > header span,
+.broker95-local-data > header b {
+    color: #70964c;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-local-data h3 {
+    margin: 4px 0 0;
+    color: #c7f38f;
+    font-size: 13px;
+}
+
+.broker95-local-data > p,
+.broker95-local-data > small {
+    display: block;
+    color: #6f9250;
+    font-size: 9px;
+    line-height: 1.55;
+}
+
+.broker95-local-data-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 13px 0;
+}
+
+.broker95-local-data-actions .warning {
+    border-color: #8b6c2d;
+    color: #e7ce77;
+    background: #302207;
+}
+
+.broker95-local-data-actions .danger {
+    border-color: #a34d39;
+    color: #f2a48d;
+    background: #35100a;
+}
+
+.broker95-confirm-action {
+    display: flex;
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #7c442d;
+    background: #260e0875;
+}
+
+.broker95-confirm-action > span {
+    flex: 1 1 220px;
+    color: #d99b7c;
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+.broker95-economy-panel {
+    overflow: auto;
+}
+
+.broker95-economy-status {
+    padding: 5px 8px;
+    border: 1px solid #5f9a2d;
+    color: #a9e765 !important;
+}
+
+.broker95-economy-status.critical {
+    border-color: #a83f2f;
+    color: #ff8e76 !important;
+}
+
+.broker95-economy-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.broker95-economy-summary .broker95-metric {
+    border: 1px solid #294913;
+    background: #091204;
+}
+
+.broker95-game-over-notice,
+.broker95-economy-note {
+    margin: 0 0 14px;
+    padding: 12px;
+    border: 1px solid #713225;
+    color: #e7a18d;
+    background: #2a0d0870;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.broker95-game-over-notice p {
+    margin: 5px 0 0;
+}
+
+.broker95-economy-note {
+    border-color: #52672f;
+    color: #9eba78;
+    background: #111b0870;
+}
+
+.broker95-countermeasure-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.broker95-countermeasure {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    padding: 14px;
+    border: 1px solid #294913;
+    background: linear-gradient(145deg, #0c1805, #050a02);
+}
+
+.broker95-countermeasure span {
+    color: #638d40;
+    font-size: 8px;
+    letter-spacing: .12em;
+}
+
+.broker95-countermeasure h3 {
+    margin: 4px 0 0;
+    color: #c9f391;
+    font-size: 12px;
+}
+
+.broker95-countermeasure > strong {
+    color: var(--broker-bright);
+    font-size: 13px;
+}
+
+.broker95-countermeasure p {
+    grid-column: 1 / -1;
+    min-height: 30px;
+    margin: 0;
+    color: #739654;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.broker95-countermeasure button {
+    grid-column: 1 / -1;
+}
+
+.broker95-economy-footnote {
+    margin: 14px 0 0;
+    color: #56763b;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.broker95-alert-track.critical i {
+    background: #f0523a;
+    box-shadow: 0 0 8px #f0523a;
+}
+
+.broker95-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 28px;
+    padding: 8px 20px;
+    border-top: 1px solid #294913;
+    color: #4f6d34;
+    background: #020600;
+    font-size: 8px;
+    letter-spacing: .08em;
+}
+
+@media (max-width: 820px) {
+    .broker95-header {
+        gap: 8px;
+        padding-inline: 12px;
+    }
+
+    .broker95-metrics > .broker95-metric {
+        display: none;
+    }
+
+    .broker95-workspace {
+        grid-template-columns: 220px minmax(0, 1fr);
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .broker95-cipher-panel {
+        --broker-cipher-thumbnail-width: clamp(150px, 24vw, 190px);
+    }
+
+    .broker95-cipher-screen {
+        align-self: center;
+    }
+
+    .broker95-tabs {
+        flex-wrap: wrap;
+        overflow-x: hidden;
+        padding-inline: 0;
+    }
+
+    .broker95-tabs button {
+        flex: 1 1 115px;
+        min-width: 0;
+        min-height: 38px;
+        padding-inline: 5px;
+        font-size: 8px;
+    }
+
+    .broker95-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .broker95-stat-sections {
+        grid-template-columns: 1fr;
+    }
+
+    .broker95-test-case-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .broker95-learning-progress {
+        grid-template-columns: 1fr;
+    }
+
+    .broker95-learning-lesson-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .broker95-learning-sidebar {
+        position: static;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .broker95-learning-contract-action {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 580px) {
+    .broker95-terminal-entry {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 3px;
+    }
+
+    .broker95-app {
+        grid-template-rows: auto auto auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .broker95-header {
+        position: sticky;
+        top: 0;
+        z-index: 4;
+    }
+
+    .broker95-brand p,
+    .broker95-alert-metric > span {
+        display: none;
+    }
+
+    .broker95-brand {
+        min-width: 0;
+    }
+
+    .broker95-alert-metric {
+        min-width: 80px;
+        padding-inline: 7px;
+    }
+
+    .broker95-alert-track {
+        width: 75px;
+    }
+
+    .broker95-workspace {
+        display: flex;
+        flex-direction: column;
+        min-height: 820px;
+    }
+
+    .broker95-cipher-panel {
+        --broker-cipher-thumbnail-width: clamp(68px, 18vw, 92px);
+        display: grid;
+        flex: 0 0 auto;
+        grid-template-columns:
+            var(--broker-cipher-thumbnail-width)
+            minmax(0, 1fr);
+        align-items: start;
+        gap: 10px 13px;
+    }
+
+    .broker95-section-label,
+    .broker95-link-details {
+        display: none;
+    }
+
+    .broker95-cipher-screen {
+        grid-row: 1 / 3;
+        align-self: start;
+        justify-self: start;
+        border-width: 5px;
+    }
+
+    .broker95-cipher-panel.expanded .broker95-cipher-screen {
+        width: calc(100vw - 24px);
+        max-height: calc(100vh - 24px);
+        border-width: 7px;
+    }
+
+    .broker95-cipher-status {
+        margin: 8px 0 0;
+    }
+
+    .broker95-learning-lesson-summary dl {
+        grid-template-columns: 1fr;
+    }
+
+    .broker95-learning-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+    .broker95-learning-contract-action {
+        grid-column: auto;
+    }
+
+    .broker95-learning-content-section,
+    .broker95-learning-knowledge,
+    .broker95-learning-expected-contract,
+    .broker95-learning-tools,
+    .broker95-learning-contract-action {
+        padding: 13px;
+    }
+
+    .broker95-learning-contract-notice {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .broker95-learning-network {
+        padding: 12px;
+    }
+
+    .broker95-learning-notice-context > div {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 3px;
+    }
+
+    .broker95-learning-route {
+        width: 100%;
+    }
+
+    .broker95-learning-route::before {
+        left: 20px;
+        transform: none;
+    }
+
+    .broker95-learning-terminal-node {
+        margin-left: 0;
+    }
+
+    .broker95-learning-section > header {
+        grid-template-columns: 34px minmax(0, 1fr) auto;
+        width: calc(100% - 42px);
+        margin-left: 42px;
+        padding: 10px;
+    }
+
+    .broker95-learning-section > header > b {
+        width: 30px;
+        height: 30px;
+    }
+
+    .broker95-learning-node-row.left::before,
+    .broker95-learning-node-row.right::before {
+        right: auto;
+        left: 20px;
+        width: 22px;
+    }
+
+    .broker95-learning-section li > button,
+    .broker95-learning-node-row.left > button,
+    .broker95-learning-node-row.right > button {
+        grid-template-columns: 38px minmax(0, 1fr);
+        width: calc(100% - 42px);
+        margin-right: 0;
+        margin-left: 42px;
+        padding: 8px 10px 8px 4px;
+        text-align: left;
+    }
+
+    .broker95-learning-node-row.right > button > b,
+    .broker95-learning-node-row.right > button > span {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    .broker95-learning-section li > button > b {
+        width: 32px;
+        height: 32px;
+    }
+
+    .broker95-cipher-panel > p {
+        min-height: 0;
+        font-size: 9px;
+    }
+
+    .broker95-console {
+        min-height: 650px;
+    }
+
+    .broker95-terminal-panel,
+    .broker95-contract-panel,
+    .broker95-economy-panel,
+    .broker95-statistics-panel,
+    .broker95-settings-panel {
+        padding: 12px;
+    }
+
+    .broker95-contract-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .broker95-stat-grid,
+    .broker95-stat-sections,
+    .broker95-specialty-grid,
+    .broker95-contract-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .broker95-specialties {
+        grid-column: auto;
+    }
+
+    .broker95-countermeasure-grid,
+    .broker95-economy-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .broker95-terminal-input,
+    .broker95-settings-form > div {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .broker95-terminal-input button,
+    .broker95-settings-form button {
+        grid-column: 2;
+    }
+
+    .broker95-audio-controls {
+        grid-template-columns: auto minmax(80px, 1fr) 42px;
+    }
+
+    .broker95-lm-studio-discovery,
+    .broker95-connection-test {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .broker95-lm-studio-discovery button,
+    .broker95-connection-test button {
+        width: 100%;
+    }
+
+    .broker95-audio-controls > button:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .broker95-audio-controls > button:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .broker95-footer {
+        flex-direction: column;
+        gap: 4px;
+        padding-inline: 12px;
+    }
+
+    .broker95-footer span:last-child {
+        text-align: right;
+    }
+}
+
+/* La lección comparte el espacio horizontal con CIPHER. Su composición debe
+   responder al ancho disponible del panel, no al de la ventana completa. */
+@container broker-learning-panel (max-width: 760px) {
+    .broker95-learning-lesson-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .broker95-learning-sidebar {
+        position: static;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .broker95-learning-sidebar > * {
+        min-width: 0;
+    }
+
+    .broker95-learning-contract-action {
+        grid-column: 1 / -1;
+    }
+}
+
+@container broker-learning-panel (max-width: 520px) {
+    .broker95-learning-lesson-summary dl,
+    .broker95-learning-sidebar {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .broker95-learning-contract-action {
+        grid-column: auto;
+    }
+
+    .broker95-learning-content-section,
+    .broker95-learning-knowledge,
+    .broker95-learning-expected-contract,
+    .broker95-learning-tools,
+    .broker95-learning-contract-action {
+        padding: 13px;
+    }
+
+    .broker95-learning-contract-notice {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .broker95-app *,
+    .broker95-app *::before,
+    .broker95-app *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+    }
+}
+
+@media (prefers-contrast: more) {
+    .broker95-app {
+        --broker-muted: #a9d77d;
+        --broker-border: #79ac50;
+    }
+
+    .broker95-terminal-entry,
+    .broker95-cipher-panel > p,
+    .broker95-empty-panel p,
+    .broker95-settings-form small,
+    .broker95-local-data > p,
+    .broker95-local-data > small,
+    .broker95-audio-settings > small {
+        color: #b7dd91;
+    }
+
+    .broker95-learning-section > header p,
+    .broker95-learning-content-section > p,
+    .broker95-learning-content-section > ul,
+    .broker95-learning-example > p,
+    .broker95-learning-knowledge ul,
+    .broker95-learning-contract-action > p {
+        color: #d0f0aa;
+    }
+}
+
+@media (forced-colors: active) {
+    .broker95-scanlines,
+    .broker95-app::before,
+    .broker95-cipher-screen::before,
+    .broker95-cipher-screen::after {
+        display: none;
+    }
+
+    .broker95-app,
+    .broker95-header,
+    .broker95-footer,
+    .broker95-cipher-panel,
+    .broker95-console,
+    .broker95-terminal-output,
+    .broker95-contract-grid article,
+    .broker95-countermeasure,
+    .broker95-audio-settings,
+    .broker95-local-data,
+    .broker95-learning-network-intro,
+    .broker95-learning-route-card,
+    .broker95-learning-route-card > button,
+    .broker95-learning-route-card-progress,
+    .broker95-learning-progress,
+    .broker95-learning-section > header,
+    .broker95-learning-section li > button,
+    .broker95-learning-lesson-summary,
+    .broker95-learning-problem,
+    .broker95-learning-content-section,
+    .broker95-learning-formula,
+    .broker95-learning-example,
+    .broker95-learning-knowledge,
+    .broker95-learning-expected-contract,
+    .broker95-learning-tools,
+    .broker95-learning-contract-action,
+    .broker95-learning-contract-notice {
+        color: CanvasText;
+        border-color: CanvasText;
+        background: Canvas;
+        box-shadow: none;
+    }
+
+    .broker95-app :focus-visible {
+        outline-color: Highlight;
+    }
+
+    .broker95-tabs button.active {
+        color: HighlightText;
+        border-color: Highlight;
+        background: Highlight;
+    }
+
+    .broker95-learning-section li > button.available,
+    .broker95-learning-section li > button.completed,
+    .broker95-learning-route-card.available > button,
+    .broker95-learning-route-card.completed > button {
+        color: HighlightText;
+        border-color: Highlight;
+        background: Highlight;
+    }
+
+    .broker95-learning-route::before,
+    .broker95-learning-route-selector::before,
+    .broker95-learning-node-row::before {
+        background: CanvasText;
+    }
+
+    .broker95-learning-notice-context > div {
+        border-color: CanvasText;
+    }
+
+    .broker95-alert-track,
+    .broker95-stat-bar,
+    .broker95-specialty-bar,
+    .broker95-profile-row > div {
+        border: 1px solid CanvasText;
+        background: Canvas;
+    }
+
+    .broker95-alert-track i,
+    .broker95-stat-bar i,
+    .broker95-specialty-bar i,
+    .broker95-profile-row i {
+        background: Highlight;
+    }
+}
+
+@media (pointer: coarse) {
+    .broker95-tabs button,
+    .broker95-terminal-input button,
+    .broker95-settings-form button,
+    .broker95-settings-actions button,
+    .broker95-lm-studio-discovery button,
+    .broker95-connection-test button,
+    .broker95-audio-settings button,
+    .broker95-local-data-actions button,
+    .broker95-countermeasure button,
+    .broker95-learning-progress button,
+    .broker95-learning-section li > button,
+    .broker95-learning-back,
+    .broker95-learning-contract-action > button,
+    .broker95-learning-contract-notice > button,
+    .broker95-learning-knowledge summary {
+        min-height: 44px;
+    }
+}

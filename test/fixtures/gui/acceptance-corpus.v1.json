@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "suite": "CLRS GUI integral acceptance corpus",
+  "components": 24,
+  "functions": 61,
+  "areas": {
+    "contract-semantics": ["test/gui.contract.test.js", "test/gui.pipeline.test.js", "test/null.literal.test.js"],
+    "private-environment": ["test/gui.dependencies.test.js", "test/gui.environment.test.js"],
+    "runtime-controls": ["test/gui.runtime.test.js", "test/gui.controls.test.js"],
+    "events-dialogs": ["test/gui.events.test.js", "test/gui.dialogs.test.js"],
+    "debugging": ["test/gui.debug.test.js"],
+    "editor-diagram": ["test/gui.editor.test.js", "test/gui.diagram.trace.test.js"],
+    "costs": ["test/gui.cost.test.js"],
+    "testing-broker95": ["test/gui.testing.test.js"],
+    "standalone-export": ["test/gui.export.test.js"],
+    "cross-platform": ["test/gui.corpus.test.js", "test/platform.regression.test.js"]
+  },
+  "scenarios": [
+    { "id": "console", "file": "console.clrs", "gui": false, "stdout": "3\n" },
+    { "id": "shadowing", "file": "shadowing.clrs", "gui": false, "stdout": "sin GTK\n" },
+    { "id": "callback-and-containment", "file": "callback-and-containment.clrs", "gui": true, "stdout": "hola ñ\noscuro\n" },
+    { "id": "dialog-cancellation", "file": "dialog-cancellation.clrs", "gui": true, "stdout": "true\n0\n" },
+    { "id": "window-close-callback", "file": "window-close-callback.clrs", "gui": true, "stdout": "v\nfin\n" }
+  ],
+  "native": {
+    "command": "npm run test:gui:corpus:native",
+    "requires": "Node compatible, distribución node-gtk 4.1.1 y GTK >= 4.10 disponibles para la plataforma; entorno gráfico para las ventanas de ensayo.",
+    "scope": "Opt-in; no forma parte de la suite pura ni instala dependencias del sistema. Cada informe certifica sólo la plataforma, arquitectura y versiones registradas."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "providers": {
+    "groq": "test/broker95.groq.adapter.test.js",
+    "gemini": "test/broker95.gemini.adapter.test.js",
+    "deepseek": "test/broker95.deepseek.adapter.test.js",
+    "ollama": "test/broker95.ollama.adapter.test.js",
+    "openai": "test/broker95.openai.adapter.test.js",
+    "lm-studio": "test/broker95.lmstudio.adapter.test.js",
+    "xai": "test/broker95.remote-openai-compatible.adapter.test.js",
+    "together": "test/broker95.remote-openai-compatible.adapter.test.js",
+    "zai": "test/broker95.remote-openai-compatible.adapter.test.js",
+    "hugging-face": "test/broker95.remote-openai-compatible.adapter.test.js",
+    "openrouter": "test/broker95.remote-openai-compatible.adapter.test.js"
+  },
+  "areas": {
+    "contract-routing": ["test/broker95.llm.port.test.js", "test/broker95.llm.provider.test.js", "test/broker95.provider.registry.test.js"],
+    "security-persistence": ["test/broker95.configuration.test.js", "test/broker95.credentials.test.js", "test/broker95.protocol.test.js", "test/webview.security.test.js"],
+    "compatible-transport": ["test/broker95.openai-compatible.adapter.test.js", "test/broker95.remote-openai-compatible.adapter.test.js", "test/broker95.llm.normalization.test.js"],
+    "local-discovery": ["test/broker95.lmstudio.adapter.test.js"],
+    "educational-experience": ["test/broker95.provider.experience.test.js", "test/broker95.command.test.js", "test/broker95.webview.test.js", "test/broker95.learning.lesson.test.js"],
+    "resilience": ["test/broker95.llm.resilience.test.js", "test/broker95.llm.availability.test.js", "test/broker95.providers.corpus.test.js"],
+    "domain-authority": ["test/broker95.contract.generation.test.js", "test/broker95.submission.review.test.js", "test/broker95.submission.evaluation.test.js", "test/broker95.submission.push.test.js", "test/broker95.concurrency.test.js", "test/broker95.acceptance.corpus.test.js"],
+    "composition": ["test/application.composition.test.js"]
+  }
+}

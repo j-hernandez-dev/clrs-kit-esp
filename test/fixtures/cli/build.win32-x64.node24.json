@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "platform": "win32",
+  "arch": "x64",
+  "node": "24.16.0",
+  "npm": "11.13.0",
+  "checks": [
+    "three-file-cli-export-with-dynamic-normalized-name",
+    "real-npm-ci-lock-unchanged-without-gui-dependencies",
+    "process-interface-probe-in-direct-javascript-entry",
+    "host-build-created-single-executable-without-gui-residue",
+    "host-executable-copied-outside-project",
+    "isolated-executable-preserves-stdin-stdout-stderr-argv-and-exit-code",
+    "runtime-created-no-bootstrap-packable-or-gtk-files"
+  ],
+  "notValidated": [
+    "cross-compilation",
+    "other hosts or architectures",
+    "code signing and distribution",
+    "interactive terminal appearance"
+  ],
+  "executable": {
+    "name": "prueba-cli-portatil.exe",
+    "size": 92019919,
+    "sha256": "6b386f070f1bd39049196e4bbf7b248c7042a8c0b882aae6fa955fddeb7aa17e",
+    "buildScript": "build:win"
+  },
+  "cleaned": true
+}

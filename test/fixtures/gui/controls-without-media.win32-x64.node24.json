@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "date": "2026-09-10",
+  "node": "24.16.0",
+  "binding": "4.1.1",
+  "platform": "win32",
+  "arch": "x64",
+  "gtk": [4, 22, 4],
+  "publicComponents": 24,
+  "publicFunctions": 61,
+  "capabilities": ["gui"],
+  "scope": "17 controles productivos del bloque 6; la regresión de cinco componentes base del bloque 5 también pasó. Los dos diálogos conservan su contrato para el bloque 7.",
+  "checks": [
+    "17-native-controls-and-readable-properties",
+    "curated-properties-text-buffers-enums-and-null",
+    "image-file-clear-reload-without-media",
+    "real-string-models-selection-modes-row-width-and-listbox-wrapper",
+    "groups-calendar-actions-and-equal-range",
+    "native-column-factories-render-and-node-timer",
+    "generated-clrs-dropdown-table-and-textview"
+  ],
+  "warnings": ["Aviso no fatal de GLib-GIO: win32 session dbus binary not found."],
+  "testHarness": "El archivo de imagen se prepara antes de iniciar GTK. La escritura asíncrona de esta fixture desde la continuación interna de inicialización se bloqueaba; no se cambió el runtime para esta corrección.",
+  "notValidated": [
+    "Linux/macOS, Node 22/26 y GTK exactamente 4.10.",
+    "Integración productiva de eventos y diálogos reservada al bloque 7; no se certifica aquí E/S asíncrona general desde callbacks nativos.",
+    "Exportador transaccional completo del bloque 12; sí se verifica el ensamblado JavaScript autónomo compartido."
+  ]
+}

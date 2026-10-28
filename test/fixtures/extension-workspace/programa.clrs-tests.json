@@ -1,0 +1,21 @@
+{
+  "$schema": "../../../extension/schemas/clrs-tests.schema.json",
+  "version": 1,
+  "id": "suite:programa-extension",
+  "name": "Pruebas del programa CLRS",
+  "program": "./programa.clrs",
+  "cases": [
+    {
+      "id": "case:entrada-base",
+      "name": "Ejecuta la entrada base",
+      "input": [],
+      "expectedOutput": []
+    },
+    {
+      "id": "case:segunda-entrada",
+      "name": "Ejecuta una segunda entrada",
+      "input": ["2"],
+      "expectedOutput": []
+    }
+  ]
+}

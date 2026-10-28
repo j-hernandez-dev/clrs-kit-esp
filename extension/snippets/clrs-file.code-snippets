@@ -1,0 +1,49 @@
+{
+    "Leer Archivo": {
+        "prefix": "archLeer",
+        "body": [
+            "LEER_ARCHIVO(${1:ruta})"
+        ],
+        "description": "Lectura de archivo. Devuelve Cadena."
+    },
+
+    "Existe Archivo": {
+        "prefix": "archExis",
+        "body": [
+            "EXISTE_ARCHIVO(${1:ruta})"
+        ],
+        "description": "Existencia de archivo. Devuelve Lógico."
+    },
+
+    "Peso Archivo": {
+        "prefix": "archPeso",
+        "body": [
+            "PESO_ARCHIVO(${1:ruta})"
+        ],
+        "description": "Peso del archivo en bytes. Devuelve Número."
+    },
+
+    "Crear Archivo": {
+        "prefix": "archCrea",
+        "body": [
+            "CREAR_ARCHIVO(${1:ruta})"
+        ],
+        "description": "Crea un archivo. No devuelve nada."
+    },
+
+    "Escribir Archivo": {
+        "prefix": "archEscr",
+        "body": [
+            "ESCRIBIR_ARCHIVO(${1:ruta}, ${2:contenido})"
+        ],
+        "description": "Escribe contenido al final del archivo. No devuelve nada."
+    },
+
+    "Eliminar Archivo": {
+        "prefix": "archElim",
+        "body": [
+            "ELIMINAR_ARCHIVO(${1:ruta})"
+        ],
+        "description": "Elimina un archivo. No devuelve nada."
+    }
+}

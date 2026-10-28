@@ -1,0 +1,387 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import * as fs from "node:fs/promises";
+import path from "node:path";
+import os from "node:os";
+import { pathToFileURL } from "node:url";
+import { setTimeout as delay } from "node:timers/promises";
+import { NodeGtkDependencyManager, PRIVATE_GUI_MANIFEST } from "../src/infrastructure/gui/NodeGtkDependencyManager.js";
+import { GuiDependencyError } from "../src/infrastructure/gui/GuiDependencyError.js";
+import { PrivateRuntimeLayout } from "../src/infrastructure/gui/PrivateRuntimeLayout.js";
+import { acquirePrivateRuntimeLock } from "../src/infrastructure/gui/PrivateRuntimeLock.js";
+import { GuiProcessAdapter, guiProcessEnvironment } from "../src/infrastructure/gui/GuiProcessAdapter.js";
+import { NodeRuntimeInspector } from "../src/infrastructure/gui/NodeRuntimeInspector.js";
+import { NodeGtkResolver } from "../src/infrastructure/gui/NodeGtkResolver.js";
+import { NodeGtkProbe } from "../src/infrastructure/gui/NodeGtkProbe.js";
+import { NpmProcessAdapter } from "../src/infrastructure/gui/NpmProcessAdapter.js";
+import { GuiRuntimePreparation } from "../src/compiler/gui/GuiRuntimePreparation.js";
+import { CompilationService } from "../src/compiler/services/CompilationService.js";
+import { NodeProgramRunner } from "../src/compiler/adapters/NodeProgramRunner.js";
+
+const runtime = { executable: process.execPath, version: process.versions.node, abi: process.versions.modules,
+    platform: process.platform, arch: process.arch };
+const lock = { lockfileVersion: 3, packages: { "": { dependencies: { "node-gtk": "4.1.1" } },
+    "node_modules/node-gtk": { version: "4.1.1", integrity: "sha512-fixture" } } };
+const failure = code => error => error.code === code;
+
+async function fixture(t) {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "clrs-gui-dependencies-"));
+    t.after(() => fs.rm(root, { recursive: true, force: true }));
+    const calls = [];
+    const options = { extensionRoot: root, lockOptions: { pollMs: 5, timeoutMs: 2000 },
+        inspector: { async inspect() { calls.push("node"); return runtime; } },
+        npm: { async install({ packages, locked }) {
+            calls.push(locked ? "ci" : "install");
+            await fs.writeFile(path.join(packages, "package-lock.json"), JSON.stringify(lock));
+        } },
+        resolver: { async resolve(packages) { calls.push("resolve"); return { entryUrl: pathToFileURL(path.join(packages, "entry.mjs")).href }; } },
+        probe: { async check() { calls.push("probe"); return [4, 22, 4]; } } };
+    const manager = new NodeGtkDependencyManager(options);
+    return { root, calls, options, manager };
+}
+
+test("GUI dependencias: primera instalación transaccional y segunda ejecución sin npm", async t => {
+    const { manager, calls, root } = await fixture(t);
+    const result = await manager.ensure();
+    assert.equal(manager.state, "READY");
+    assert.match(result.entryUrl, /\/packages\/entry\.mjs$/u);
+    assert.equal(result.nodeExecutable, process.execPath);
+    assert.equal(calls.filter(x => x === "install").length, 1);
+    assert.equal(calls.filter(x => x === "probe").length, 2, "Se comprueba staging y ubicación final");
+    await manager.ensure();
+    assert.equal(calls.filter(x => x === "install").length, 1);
+    assert.deepEqual(await fs.readdir(path.join(root, ".runtime", "staging")), []);
+    assert.deepEqual(await fs.readdir(path.join(root, ".runtime", "locks")), []);
+    assert.deepEqual(JSON.parse(await fs.readFile(path.join(root, ".runtime/packages/package.json"))), PRIVATE_GUI_MANIFEST);
+});
+
+test("GUI dependencias: Node incompatible falla antes de crear carpetas o invocar npm", async t => {
+    const { options, root, calls } = await fixture(t);
+    options.inspector = { async inspect() { throw new GuiDependencyError("CLRS_GUI_DEP_NODE_UNSUPPORTED"); } };
+    const manager = new NodeGtkDependencyManager(options);
+    await assert.rejects(manager.ensure(), failure("CLRS_GUI_DEP_NODE_UNSUPPORTED"));
+    assert.deepEqual(await fs.readdir(root), []);
+    assert.deepEqual(calls, []);
+    assert.equal(manager.state, "INCOMPATIBLE_NODE");
+});
+
+test("GUI dependencias: reparación usa lock válido con ci una sola vez", async t => {
+    const { manager, calls, options } = await fixture(t);
+    await manager.ensure();
+    let checks = 0;
+    options.probe.check = async () => {
+        if (checks++ === 0) { throw new GuiDependencyError("CLRS_GUI_DEP_NATIVE_LOAD_FAILED"); }
+        return [4, 22, 4];
+    };
+    await manager.ensure();
+    assert.equal(calls.filter(x => x === "ci").length, 1);
+    assert.equal(checks, 3);
+});
+
+test("GUI dependencias: una reparación fallida conserva la instalación anterior y libera staging/lock", async t => {
+    const { manager, calls, options, root } = await fixture(t);
+    await manager.ensure();
+    await fs.writeFile(path.join(root, ".runtime/packages/previous-marker"), "preservado");
+    options.probe.check = async () => { throw new GuiDependencyError("CLRS_GUI_DEP_NATIVE_LOAD_FAILED"); };
+    await assert.rejects(manager.ensure(), failure("CLRS_GUI_DEP_NATIVE_LOAD_FAILED"));
+    assert.equal(calls.filter(x => x === "ci").length, 1);
+    assert.equal(await fs.readFile(path.join(root, ".runtime/packages/previous-marker"), "utf8"), "preservado");
+    assert.deepEqual(await fs.readdir(path.join(root, ".runtime/staging")), []);
+    assert.deepEqual(await fs.readdir(path.join(root, ".runtime/locks")), []);
+    assert.equal(manager.state, "FAILED");
+});
+
+test("GUI dependencias: ausencia o versión antigua de GTK no provoca reinstalación npm", async t => {
+    const { manager, calls, options } = await fixture(t);
+    options.inspector.inspect = async () => ({ ...runtime, platform: "linux" });
+    await manager.ensure();
+    for (const code of ["CLRS_GUI_DEP_GTK_NOT_FOUND", "CLRS_GUI_DEP_GTK_TOO_OLD"]) {
+        options.probe.check = async () => { throw new GuiDependencyError(code); };
+        await assert.rejects(manager.ensure(), failure(code));
+    }
+    assert.equal(calls.filter(x => x === "install" || x === "ci").length, 1);
+});
+
+test("GUI dependencias: concurrencia comparte instalación y cancelar un cliente no cancela los demás", async t => {
+    const { manager, options, calls } = await fixture(t);
+    const original = options.npm.install;
+    let started;
+    const installing = new Promise(resolve => { started = resolve; });
+    options.npm.install = async request => { started(); await delay(35); return original(request); };
+    const controller = new AbortController();
+    const first = manager.ensure({ signal: controller.signal });
+    const cancelled = assert.rejects(first, failure("CLRS_GUI_DEP_CANCELLED"));
+    const second = new NodeGtkDependencyManager(options).ensure();
+    await installing; controller.abort();
+    await Promise.all([cancelled, second]);
+    assert.equal(calls.filter(x => x === "install").length, 1);
+});
+
+test("GUI Windows: GTK empaquetado reparable se recupera antes de emitir diagnóstico nativo", async t => {
+    const { manager, options, calls } = await fixture(t);
+    options.inspector.inspect = async () => ({ ...runtime, platform: "win32" });
+    await manager.ensure();
+    let count = 0;
+    options.probe.check = async () => {
+        if (count++ === 0) { throw new GuiDependencyError("CLRS_GUI_DEP_GTK_NOT_FOUND"); }
+        return [4, 10, 0];
+    };
+    await manager.ensure();
+    assert.equal(calls.filter(call => call === "ci").length, 1);
+    assert.equal(count, 3);
+});
+
+test("GUI multimedia: el fallo no repara npm y no invalida GUI; Linux/macOS no invocan instaladores nativos", async t => {
+    const { manager, options, calls } = await fixture(t);
+    const dependency = await manager.ensure();
+    const installs = calls.filter(call => call === "ci" || call === "install").length;
+    options.probe.check = async (_resolved, _runtime, { capabilities = [] }) => {
+        if (capabilities.includes("gui.video")) { throw new GuiDependencyError("CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE"); }
+        return [4, 10, 0];
+    };
+    await assert.rejects(manager.checkCapabilities(dependency, ["gui", "gui.video"]), failure("CLRS_GUI_MEDIA_BACKEND_UNAVAILABLE"));
+    await manager.ensure();
+    for (const platform of ["linux", "darwin"]) {
+        options.inspector.inspect = async () => ({ ...runtime, platform });
+        options.probe.check = async () => { throw new GuiDependencyError("CLRS_GUI_DEP_GTK_NOT_FOUND"); };
+        await assert.rejects(manager.ensure(), failure("CLRS_GUI_DEP_GTK_NOT_FOUND"));
+    }
+    assert.equal(calls.filter(call => call === "ci" || call === "install").length, installs);
+});
+
+test("GUI dependencias: cancelar todos los clientes espera limpieza y no publica packages", async t => {
+    const { manager, options, root } = await fixture(t);
+    let started;
+    const installing = new Promise(resolve => { started = resolve; });
+    options.npm.install = async ({ signal }) => { started(); await delay(1000, undefined, { signal }); };
+    const controller = new AbortController();
+    const operation = manager.ensure({ signal: controller.signal });
+    const cancelled = assert.rejects(operation, failure("CLRS_GUI_DEP_CANCELLED"));
+    await installing; controller.abort(); await cancelled;
+    await assert.rejects(fs.access(path.join(root, ".runtime/packages")));
+    assert.deepEqual(await fs.readdir(path.join(root, ".runtime/staging")), []);
+    assert.deepEqual(await fs.readdir(path.join(root, ".runtime/locks")), []);
+});
+
+test("GUI dependencias: offline deja un diagnóstico estable sin valores secretos", async t => {
+    const { manager, options, root } = await fixture(t);
+    options.npm.install = async () => { throw new GuiDependencyError("CLRS_GUI_DEP_REGISTRY_UNAVAILABLE"); };
+    await assert.rejects(manager.ensure(), failure("CLRS_GUI_DEP_REGISTRY_UNAVAILABLE"));
+    assert.equal(manager.state, "FAILED");
+    assert.deepEqual(await fs.readdir(path.join(root, ".runtime/staging")), []);
+});
+
+test("GUI dependencias: lock corrupto se reconstruye con install, no ci", async t => {
+    const { manager, calls, root } = await fixture(t);
+    await manager.ensure();
+    await fs.writeFile(path.join(root, ".runtime/packages/package-lock.json"), "incompleto");
+    await manager.ensure();
+    assert.equal(calls.filter(x => x === "install").length, 2);
+    assert.equal(calls.includes("ci"), false);
+});
+
+test("GUI layout: no sigue enlaces del directorio privado ni elimina destinos externos", async t => {
+    const { root } = await fixture(t);
+    const external = path.join(root, "outside");
+    const extension = path.join(root, "extension");
+    await fs.mkdir(external); await fs.mkdir(extension);
+    await fs.symlink(external, path.join(extension, ".runtime"), process.platform === "win32" ? "junction" : "dir");
+    await assert.rejects(new PrivateRuntimeLayout(extension).prepare(), failure("CLRS_GUI_DEP_RUNTIME_NOT_WRITABLE"));
+    assert.deepEqual(await fs.readdir(external), []);
+    const layout = new PrivateRuntimeLayout(root);
+    await layout.prepare();
+    await assert.rejects(layout.removeStage(external));
+    await assert.rejects(layout.removeStage(layout.root));
+    await assert.rejects(layout.removeStage(layout.packages));
+});
+
+test("GUI layout: publicación fallida restaura packages anterior", async t => {
+    const { root } = await fixture(t);
+    const layout = new PrivateRuntimeLayout(root); await layout.prepare();
+    await fs.mkdir(layout.packages); await fs.writeFile(path.join(layout.packages, "marker"), "anterior");
+    const stage = await layout.createStage();
+    await fs.writeFile(path.join(stage, "marker"), "nuevo");
+    await assert.rejects(layout.publish(stage, async () => { throw new Error("probe final"); }));
+    assert.equal(await fs.readFile(path.join(layout.packages, "marker"), "utf8"), "anterior");
+});
+
+test("GUI lock: exclusión entre procesos, propietario vivo no caduca y propietario muerto se recupera", async t => {
+    const { root } = await fixture(t);
+    const layout = new PrivateRuntimeLayout(root); await layout.prepare();
+    const release = await acquirePrivateRuntimeLock(layout);
+    await assert.rejects(acquirePrivateRuntimeLock(layout, { timeoutMs: 25, pollMs: 5, staleMs: 0 }), failure("CLRS_GUI_DEP_LOCK_TIMEOUT"));
+    await release();
+    await fs.writeFile(layout.lock, JSON.stringify({ pid: 9999999, startedAt: 1 }));
+    const reclaimed = await acquirePrivateRuntimeLock(layout, { staleMs: 0, isAlive: () => false, pollMs: 5 });
+    await reclaimed();
+    assert.deepEqual(await fs.readdir(layout.locks), []);
+});
+
+test("GUI inspector: utiliza el Node seleccionado y rechaza Electron/major no soportado", async () => {
+    const adapter = new GuiProcessAdapter();
+    assert.equal((await new NodeRuntimeInspector(adapter, process.execPath).inspect()).executable, process.execPath);
+    for (const info of [{ ...runtime, version: "20.1.0" }, { ...runtime, electron: true }]) {
+        const inspector = new NodeRuntimeInspector({ async run() { return { code: 0, stdout: JSON.stringify(info) }; } });
+        await assert.rejects(inspector.inspect(), failure("CLRS_GUI_DEP_NODE_UNSUPPORTED"));
+    }
+});
+
+test("GUI lock: dos procesos Node independientes no entran simultáneamente", async t => {
+    const { root } = await fixture(t);
+    const layoutUrl = new URL("../src/infrastructure/gui/PrivateRuntimeLayout.js", import.meta.url).href;
+    const lockUrl = new URL("../src/infrastructure/gui/PrivateRuntimeLock.js", import.meta.url).href;
+    const source = `
+        import {PrivateRuntimeLayout} from ${JSON.stringify(layoutUrl)};
+        import {acquirePrivateRuntimeLock} from ${JSON.stringify(lockUrl)};
+        import {writeFile} from 'node:fs/promises';
+        import {setTimeout as delay} from 'node:timers/promises';
+        const layout = new PrivateRuntimeLayout(process.argv[1]); await layout.prepare();
+        const release = await acquirePrivateRuntimeLock(layout, {pollMs:5,timeoutMs:3000});
+        const acquired=Date.now();
+        if(process.argv[2]==='first') { await writeFile(process.argv[1]+'/entered',''); await delay(180); }
+        const released=Date.now(); await release();
+        console.log(JSON.stringify({acquired,released}));
+    `;
+    const processes = new GuiProcessAdapter();
+    const first = processes.run(process.execPath, ["--input-type=module", "-e", source, root, "first"]);
+    let entered = false;
+    for (let attempt = 0; attempt < 200; attempt++) {
+        try { await fs.access(path.join(root, "entered")); entered = true; break; } catch { await delay(5); }
+    }
+    assert.equal(entered, true);
+    const second = processes.run(process.execPath, ["--input-type=module", "-e", source, root, "second"]);
+    const [a, b] = await Promise.all([first, second]);
+    assert.equal(a.code, 0, a.stderr); assert.equal(b.code, 0, b.stderr);
+    assert.ok(JSON.parse(b.stdout).acquired >= JSON.parse(a.stdout).released);
+});
+
+test("GUI resolver: exports ESM y rutas con espacios/no ASCII; no usa la dependencia del padre", async t => {
+    const { root } = await fixture(t);
+    const packages = path.join(root, "José Pérez # GUI");
+    const dependency = path.join(packages, "node_modules", "node-gtk");
+    await fs.mkdir(dependency, { recursive: true });
+    await fs.writeFile(path.join(dependency, "package.json"), JSON.stringify({ name: "node-gtk", version: "4.1.1", type: "module",
+        exports: { ".": { import: "./public.mjs", require: "./other.cjs" }, "./package.json": "./package.json" } }));
+    await fs.writeFile(path.join(dependency, "public.mjs"), "throw new Error('El resolver no debe cargar el módulo');");
+    const resolver = new NodeGtkResolver(new GuiProcessAdapter());
+    const resolved = await resolver.resolve(packages, runtime);
+    assert.match(resolved.entryUrl, /public\.mjs$/u);
+    assert.match(resolved.entryUrl, /%20|%23/u);
+    const child = path.join(packages, "child"); await fs.mkdir(child);
+    await assert.rejects(resolver.resolve(child, runtime), failure("CLRS_GUI_DEP_RESOLUTION_FAILED"));
+});
+
+test("GUI probe: clasificación de GTK ausente, antiguo y addon defectuoso en proceso separado", async t => {
+    const { root } = await fixture(t);
+    const file = path.join(root, "binding.mjs");
+    const probe = new NodeGtkProbe(new GuiProcessAdapter());
+    for (const [source, code] of [
+        ['export default {require(){throw new Error("Typelib file for namespace Gtk not found")}}', "CLRS_GUI_DEP_GTK_NOT_FOUND"],
+        ['throw new Error("invalid ABI")', "CLRS_GUI_DEP_NATIVE_LOAD_FAILED"],
+        ['export default {require:()=>({getMajorVersion:()=>4,getMinorVersion:()=>8,getMicroVersion:()=>0})}', "CLRS_GUI_DEP_GTK_TOO_OLD"]
+    ]) {
+        await fs.writeFile(file, source);
+        await assert.rejects(probe.check({ entryUrl: pathToFileURL(file).href }, runtime), failure(code));
+    }
+});
+
+test("GUI npm: npm-cli con shell false, ci/install sin scripts y precompilado sin fallback", async () => {
+    for (const locked of [false, true]) {
+        const calls = [];
+        const packages = path.resolve("fixture private packages");
+        const adapter = { environment: {}, async run(command, args, options) {
+            calls.push({ command, args, options });
+            return { code: 0, stdout: JSON.stringify({ root: path.join(packages, "node_modules/node-gtk"),
+                bin: path.join(packages, "node_modules/helper/bin.js") }), stderr: "" };
+        } };
+        await new NpmProcessAdapter(adapter, { findCli: async () => "npm-cli.js" }).install({ packages, cache: "private-cache", runtime, locked });
+        assert.equal(calls[0].command, process.execPath);
+        assert.equal(calls[0].args[1], locked ? "ci" : "install");
+        assert.ok(calls[0].args.includes("--ignore-scripts"));
+        assert.ok(calls[2].args.includes("--fallback-to-build=false"));
+        assert.ok(calls[2].args.includes("--build-from-source=false"));
+        assert.equal(calls.some(call => call.args.includes("-g")), false);
+    }
+});
+
+test("GUI procesos: entorno sin NODE_PATH, cancelación y timeout terminan el hijo", async () => {
+    assert.deepEqual(guiProcessEnvironment({ Node_Path: "x", NODE_OPTIONS: "x", PATH: "ok", HTTPS_PROXY: "proxy" }), { PATH: "ok", HTTPS_PROXY: "proxy" });
+    const processes = new GuiProcessAdapter();
+    const controller = new AbortController();
+    const child = processes.run(process.execPath, ["-e", "setInterval(()=>{},1000)"], { signal: controller.signal });
+    const rejection = assert.rejects(child, failure("CLRS_GUI_DEP_CANCELLED"));
+    controller.abort(); await rejection;
+    await assert.rejects(processes.run(process.execPath, ["-e", "setInterval(()=>{},1000)"], { timeoutMs: 30 }), failure("ETIMEDOUT"));
+});
+
+test("GUI npm: ausencia de npm y registry inaccesible conservan códigos sin exponer credenciales", async () => {
+    let ran = false;
+    const noNpm = new NpmProcessAdapter({ async run() { ran = true; } }, {
+        findCli: async () => { throw new GuiDependencyError("CLRS_GUI_DEP_NPM_NOT_FOUND"); }
+    });
+    await assert.rejects(noNpm.install({ runtime }), failure("CLRS_GUI_DEP_NPM_NOT_FOUND"));
+    assert.equal(ran, false);
+    const offline = new NpmProcessAdapter({ async run() {
+        return { code: 1, stderr: "ENOTFOUND https://user:private-token@example.invalid", stdout: "" };
+    } }, { findCli: async () => "npm-cli.js" });
+    await assert.rejects(offline.install({ runtime, packages: "private" }), error => {
+        assert.equal(error.code, "CLRS_GUI_DEP_REGISTRY_UNAVAILABLE");
+        assert.doesNotMatch(JSON.stringify(error) + error.message + error.cause.message, /private-token/u);
+        return true;
+    });
+});
+
+test("GUI pipeline: sólo run válido provisiona, nunca análisis/exportación; mismo emisor y runner", async () => {
+    const calls = [];
+    const preparation = new GuiRuntimePreparation({ dependencyManager: { async ensure() {
+        calls.push("ensure"); return { entryUrl: "file:///private/entry.mjs", nodeExecutable: process.execPath, version: "4.1.1" };
+    } }, getFactorySource: () => "()=>({invoke(){},waitForIdle(){},dispose(){}})" });
+    const service = new CompilationService({ runtimePreparation: preparation,
+        fileEmitter: { async writeArtifact() { calls.push("emit"); } },
+        programRunner: { async run(request) { calls.push("run"); return request; } } });
+    await service.runSource("escribir 1", "p.clrs");
+    assert.deepEqual(calls, ["emit", "run"]);
+    calls.length = 0;
+    await service.tryRunSource('BOTON("b")', "p.clrs");
+    await service.tryCompileSource('BOTON("b", "x")', "p.clrs");
+    assert.deepEqual(calls, []);
+    const result = await service.runSource('BOTON("b", "x")', "p.clrs");
+    assert.deepEqual(calls, ["ensure", "emit", "run"]);
+    assert.equal(result.execution.command, process.execPath);
+    assert.match(result.artifact.outputPath, /\.mjs$/u);
+    assert.deepEqual(result.artifact.requiredCapabilities, ["gui"]);
+});
+
+test("GUI pipeline: rechaza una fuente de runtime explícitamente ausente", async () => {
+    let ensured = false, emitted = false;
+    const service = new CompilationService({ runtimePreparation: new GuiRuntimePreparation({
+        dependencyManager: { async ensure() { ensured = true; return { entryUrl: "file:///binding.mjs" }; } },
+        getFactorySource: () => null
+    }), fileEmitter: { async writeArtifact() { emitted = true; } } });
+    const result = await service.tryRunSource('OBTENER_TEMA()', "p.clrs");
+    assert.equal(ensured, true); assert.equal(emitted, false);
+    assert.equal(result.errors[0].code, "CLRS_GUI_RUNTIME_NOT_READY");
+});
+
+test("GUI runner: ejecuta ESM con el Node validado y limpia temporal dentro de un workspace CommonJS", async t => {
+    const { root } = await fixture(t);
+    await fs.writeFile(path.join(root, "package.json"), '{"type":"commonjs"}');
+    const programPath = path.join(root, "program.mjs");
+    await fs.writeFile(programPath, 'import os from "node:os"; console.log(os.platform());');
+    const runner = new NodeProgramRunner({ logger: { log() {}, error() {} }, stdio: ["ignore", "pipe", "pipe"], standardOutput: { write() {} } });
+    const result = await runner.run({ programPath, cleanupPath: programPath, gui: true, command: process.execPath });
+    assert.equal(result.ok, true);
+    await assert.rejects(fs.access(programPath));
+});
+
+test("GUI runner: AbortSignal detiene el programa activo y elimina el temporal", async t => {
+    const { root } = await fixture(t);
+    const programPath = path.join(root, "waiting.mjs");
+    await fs.writeFile(programPath, 'console.log("ready"); setInterval(()=>{},1000);');
+    const controller = new AbortController();
+    const runner = new NodeProgramRunner({ logger: { log() {}, error() {} }, stdio: ["ignore", "pipe", "pipe"],
+        standardOutput: { write() { controller.abort(); } } });
+    await assert.rejects(runner.run({ programPath, cleanupPath: programPath, gui: true,
+        command: process.execPath, signal: controller.signal }), failure("CLRS_RUNTIME_EXIT_ERROR"));
+    await assert.rejects(fs.access(programPath));
+});

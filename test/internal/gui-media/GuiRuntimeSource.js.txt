@@ -1,0 +1,40 @@
+import { GUI_DOMAINS, getGuiOwnEntry } from "../GuiContract.js";
+import { GUI_COMPONENTS, getGuiComponentDefinition } from "../GuiComponentCatalog.js";
+import { GUI_FUNCTION_DEFINITIONS } from "../GuiFunctionCatalog.js";
+import { GUI_ERROR_MESSAGES, GuiContractError } from "../GuiErrors.js";
+import { getGuiRuntimeValidationSource } from "../GuiContractValidation.js";
+import { createGuiBaseRuntime } from "./GuiBaseRuntime.js";
+import { createGuiControlsAdapter } from "./GuiControlsAdapter.js";
+import { createGuiModelsAdapter } from "./GuiModelsAdapter.js";
+import { createGuiMediaAdapter } from "./GuiMediaAdapter.js";
+import { classifyGuiMediaError, guiEnvironmentMessage } from "./GuiEnvironmentProbe.js";
+
+/** Una sola implementación, autocontenida tanto en JS temporal como exportado. */
+export function getGuiRuntimeFactorySource() {
+    return `async function(binding, options) {
+        const GUI_DOMAINS = ${JSON.stringify(GUI_DOMAINS)};
+        const GUI_COMPONENTS = ${JSON.stringify(GUI_COMPONENTS)};
+        const GUI_FUNCTION_DEFINITIONS = ${JSON.stringify(GUI_FUNCTION_DEFINITIONS)};
+        const GUI_ERROR_MESSAGES = ${JSON.stringify(GUI_ERROR_MESSAGES)};
+        ${classifyGuiMediaError.toString()}
+        ${guiEnvironmentMessage.toString()}
+        ${getGuiOwnEntry.toString()}
+        ${getGuiComponentDefinition.toString()}
+        const GuiContractError = (${GuiContractError.toString()});
+        ${getGuiRuntimeValidationSource()}
+        try {
+            return await (${createGuiBaseRuntime.toString()})(binding, options, {
+                GUI_COMPONENTS, GuiContractError, assertGuiArgumentDomains, assertGuiNewIdentifier,
+                environmentMessage: code => guiEnvironmentMessage(code, GUI_ERROR_MESSAGES, process.platform),
+                requireGuiProperty, assertGuiPropertyDomain, requireGuiEvent, requireGuiAction,
+                createControls: (${createGuiControlsAdapter.toString()}),
+                createModels: (${createGuiModelsAdapter.toString()}),
+                createMedia: context => (${createGuiMediaAdapter.toString()})({ ...context, classifyGuiMediaError })
+            });
+        } catch (cause) {
+            const error = cause instanceof GuiContractError ? cause : new GuiContractError("CLRS_GUI_NATIVE_OPERATION_FAILED");
+            error.name = "CLRSUserError";
+            throw error;
+        }
+    }`;
+}

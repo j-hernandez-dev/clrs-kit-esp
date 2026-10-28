@@ -1,0 +1,429 @@
+{
+    "VENTANA": {
+        "prefix": "guiVentana",
+        "body": [
+            "VENTANA(${1:id}, ${2:titulo})"
+        ],
+        "description": "Crea una ventana general. No devuelve nada. Recibe id: Cadena; titulo: Cadena."
+    },
+    "VENTANA_APLICACION": {
+        "prefix": "guiVentanaAplicacion",
+        "body": [
+            "VENTANA_APLICACION(${1:id}, ${2:titulo})"
+        ],
+        "description": "Crea una ventana integrada con la aplicación GTK de la ejecución. No devuelve nada. Recibe id: Cadena; titulo: Cadena."
+    },
+    "ETIQUETA": {
+        "prefix": "guiEtiqueta",
+        "body": [
+            "ETIQUETA(${1:id}, ${2:texto})"
+        ],
+        "description": "Crea una etiqueta de texto literal. No devuelve nada. Recibe id: Cadena; texto: Cadena."
+    },
+    "ENTRADA": {
+        "prefix": "guiEntrada",
+        "body": [
+            "ENTRADA(${1:id})"
+        ],
+        "description": "Crea una entrada de texto de una línea. No devuelve nada. Recibe id: Cadena."
+    },
+    "ENTRADA_CONTRASENA": {
+        "prefix": "guiEntradaContrasena",
+        "body": [
+            "ENTRADA_CONTRASENA(${1:id})"
+        ],
+        "description": "Crea una entrada especializada para contraseñas. No devuelve nada. Recibe id: Cadena."
+    },
+    "AREA_TEXTO": {
+        "prefix": "guiAreaTexto",
+        "body": [
+            "AREA_TEXTO(${1:id})"
+        ],
+        "description": "Crea un área de texto de varias líneas. No devuelve nada. Recibe id: Cadena."
+    },
+    "BOTON": {
+        "prefix": "guiBoton",
+        "body": [
+            "BOTON(${1:id}, ${2:texto})"
+        ],
+        "description": "Crea un botón de acción. No devuelve nada. Recibe id: Cadena; texto: Cadena."
+    },
+    "CASILLA": {
+        "prefix": "guiCasilla",
+        "body": [
+            "CASILLA(${1:id}, ${2:texto})"
+        ],
+        "description": "Crea una casilla de selección. No devuelve nada. Recibe id: Cadena; texto: Cadena."
+    },
+    "BOTON_ALTERNABLE": {
+        "prefix": "guiBotonAlternable",
+        "body": [
+            "BOTON_ALTERNABLE(${1:id}, ${2:texto})"
+        ],
+        "description": "Crea un botón con estado activado o desactivado. No devuelve nada. Recibe id: Cadena; texto: Cadena."
+    },
+    "BOTON_ENLACE": {
+        "prefix": "guiBotonEnlace",
+        "body": [
+            "BOTON_ENLACE(${1:id}, ${2:uri}, ${3:texto})"
+        ],
+        "description": "Crea un botón que permite abrir un enlace. No devuelve nada. Recibe id: Cadena; uri: Cadena; texto: Cadena."
+    },
+    "ENTRADA_NUMERICA": {
+        "prefix": "guiEntradaNumerica",
+        "body": [
+            "ENTRADA_NUMERICA(${1:id}, ${2:minimo}, ${3:maximo}, ${4:paso})"
+        ],
+        "description": "Crea una entrada numérica con rango e incremento. No devuelve nada. Recibe id: Cadena; minimo: Número; maximo: Número; paso: Número."
+    },
+    "DESLIZADOR": {
+        "prefix": "guiDeslizador",
+        "body": [
+            "DESLIZADOR(${1:id}, ${2:orientacion}, ${3:minimo}, ${4:maximo}, ${5:paso})"
+        ],
+        "description": "Crea un deslizador numérico con orientación y rango. No devuelve nada. Recibe id: Cadena; orientacion: \"horizontal\", \"vertical\"; minimo: Número; maximo: Número; paso: Número."
+    },
+    "BARRA_PROGRESO": {
+        "prefix": "guiBarraProgreso",
+        "body": [
+            "BARRA_PROGRESO(${1:id})"
+        ],
+        "description": "Crea una barra de progreso. No devuelve nada. Recibe id: Cadena."
+    },
+    "INDICADOR_CARGA": {
+        "prefix": "guiIndicadorCarga",
+        "body": [
+            "INDICADOR_CARGA(${1:id})"
+        ],
+        "description": "Crea un indicador de carga inicialmente detenido. No devuelve nada. Recibe id: Cadena."
+    },
+    "LISTA_DESPLEGABLE": {
+        "prefix": "guiListaDesplegable",
+        "body": [
+            "LISTA_DESPLEGABLE(${1:id}, ${2:opciones})"
+        ],
+        "description": "Crea una lista desplegable de cadenas. No devuelve nada. Recibe id: Cadena; opciones: Arreglo de Cadena."
+    },
+    "CALENDARIO": {
+        "prefix": "guiCalendario",
+        "body": [
+            "CALENDARIO(${1:id})"
+        ],
+        "description": "Crea un calendario con fechas [año, mes, día]. No devuelve nada. Recibe id: Cadena."
+    },
+    "IMAGEN": {
+        "prefix": "guiImagen",
+        "body": [
+            "IMAGEN(${1:id}, ${2:archivo})"
+        ],
+        "description": "Crea una imagen desde un archivo usando Gtk.Image. No devuelve nada. Recibe id: Cadena; archivo: Cadena."
+    },
+    "CAJA": {
+        "prefix": "guiCaja",
+        "body": [
+            "CAJA(${1:id}, ${2:orientacion}, ${3:separacion})"
+        ],
+        "description": "Crea un contenedor que organiza sus hijos en una fila o columna. No devuelve nada. Recibe id: Cadena; orientacion: \"horizontal\", \"vertical\"; separacion: Número."
+    },
+    "CUADRICULA": {
+        "prefix": "guiCuadricula",
+        "body": [
+            "CUADRICULA(${1:id})"
+        ],
+        "description": "Crea un contenedor de filas y columnas. No devuelve nada. Recibe id: Cadena."
+    },
+    "CONTENEDOR_DESPLAZABLE": {
+        "prefix": "guiContenedorDesplazable",
+        "body": [
+            "CONTENEDOR_DESPLAZABLE(${1:id})"
+        ],
+        "description": "Crea un contenedor desplazable con un solo hijo principal. No devuelve nada. Recibe id: Cadena."
+    },
+    "LISTA_VISUAL": {
+        "prefix": "guiListaVisual",
+        "body": [
+            "LISTA_VISUAL(${1:id})"
+        ],
+        "description": "Crea una lista visual de componentes seleccionables. No devuelve nada. Recibe id: Cadena."
+    },
+    "VISTA_COLUMNAS": {
+        "prefix": "guiVistaColumnas",
+        "body": [
+            "VISTA_COLUMNAS(${1:id}, ${2:columnas})"
+        ],
+        "description": "Crea una vista tabular con modelos y columnas GTK reales. No devuelve nada. Recibe id: Cadena; columnas: Arreglo de Cadena."
+    },
+    "DIALOGO_ALERTA": {
+        "prefix": "guiDialogoAlerta",
+        "body": [
+            "DIALOGO_ALERTA(${1:id}, ${2:mensaje})"
+        ],
+        "description": "Crea un diálogo de alerta; no es un widget. No devuelve nada. Recibe id: Cadena; mensaje: Cadena."
+    },
+    "DIALOGO_ARCHIVO": {
+        "prefix": "guiDialogoArchivo",
+        "body": [
+            "DIALOGO_ARCHIVO(${1:id})"
+        ],
+        "description": "Crea un selector de rutas locales; no es un widget. No devuelve nada. Recibe id: Cadena."
+    },
+    "ESTABLECER": {
+        "prefix": "guiEstablecer",
+        "body": [
+            "ESTABLECER(${1:componente}, ${2:propiedad}, ${3:dato})"
+        ],
+        "description": "Modifica una propiedad pública del componente. No devuelve nada. Recibe componente: Cadena; propiedad: Cadena; dato: valor CLRS."
+    },
+    "OBTENER": {
+        "prefix": "guiObtener",
+        "body": [
+            "OBTENER(${1:componente}, ${2:propiedad})"
+        ],
+        "description": "Consulta una propiedad pública; devuelve el tipo declarado por esa propiedad. Devuelve tipo de la propiedad. Recibe componente: Cadena; propiedad: Cadena."
+    },
+    "CONECTAR": {
+        "prefix": "guiConectar",
+        "body": [
+            "CONECTAR(${1:componente}, ${2:evento}, ${3:FUNCION})"
+        ],
+        "description": "Conecta una función CLRS a un evento. El callback recibe primero el identificador del componente. No devuelve nada. Recibe componente: Cadena; evento: Cadena; FUNCION: identificador de función CLRS."
+    },
+    "MOSTRAR": {
+        "prefix": "guiMostrar",
+        "body": [
+            "MOSTRAR(${1:componente})"
+        ],
+        "description": "Muestra un widget; presenta las ventanas de nivel superior. No devuelve nada. Recibe componente: Cadena."
+    },
+    "OCULTAR": {
+        "prefix": "guiOcultar",
+        "body": [
+            "OCULTAR(${1:componente})"
+        ],
+        "description": "Oculta un widget. No devuelve nada. Recibe componente: Cadena."
+    },
+    "ENFOCAR": {
+        "prefix": "guiEnfocar",
+        "body": [
+            "ENFOCAR(${1:componente})"
+        ],
+        "description": "Intenta enfocar el widget. Devuelve Lógico. Devuelve Lógico. Recibe componente: Cadena."
+    },
+    "CONTENER": {
+        "prefix": "guiContener",
+        "body": [
+            "CONTENER(${1:contenedor}, ${2:componente})"
+        ],
+        "description": "Establece el único hijo principal de un contenedor vacío. No devuelve nada. Recibe contenedor: Cadena; componente: Cadena."
+    },
+    "QUITAR": {
+        "prefix": "guiQuitar",
+        "body": [
+            "QUITAR(${1:contenedor}, ${2:componente})"
+        ],
+        "description": "Retira un hijo que pertenece al contenedor indicado. No devuelve nada. Recibe contenedor: Cadena; componente: Cadena."
+    },
+    "ANEXAR": {
+        "prefix": "guiAnexar",
+        "body": [
+            "ANEXAR(${1:contenedor}, ${2:componente})"
+        ],
+        "description": "Agrega un componente al final del contenedor. No devuelve nada. Recibe contenedor: Cadena; componente: Cadena."
+    },
+    "PREPONER": {
+        "prefix": "guiPreponer",
+        "body": [
+            "PREPONER(${1:contenedor}, ${2:componente})"
+        ],
+        "description": "Agrega un componente al principio del contenedor. No devuelve nada. Recibe contenedor: Cadena; componente: Cadena."
+    },
+    "COLOCAR": {
+        "prefix": "guiColocar",
+        "body": [
+            "COLOCAR(${1:contenedor}, ${2:componente}, ${3:columna}, ${4:fila}, ${5:ancho}, ${6:alto})"
+        ],
+        "description": "Coloca un componente en una cuadrícula. No devuelve nada. Recibe contenedor: Cadena; componente: Cadena; columna: Número; fila: Número; ancho: Número; alto: Número."
+    },
+    "CERRAR": {
+        "prefix": "guiCerrar",
+        "body": [
+            "CERRAR(${1:componente})"
+        ],
+        "description": "Solicita el cierre de una ventana respetando su evento cerrar. No devuelve nada. Recibe componente: Cadena."
+    },
+    "MAXIMIZAR": {
+        "prefix": "guiMaximizar",
+        "body": [
+            "MAXIMIZAR(${1:componente})"
+        ],
+        "description": "Maximiza una ventana. No devuelve nada. Recibe componente: Cadena."
+    },
+    "MINIMIZAR": {
+        "prefix": "guiMinimizar",
+        "body": [
+            "MINIMIZAR(${1:componente})"
+        ],
+        "description": "Minimiza una ventana. No devuelve nada. Recibe componente: Cadena."
+    },
+    "PANTALLA_COMPLETA": {
+        "prefix": "guiPantallaCompleta",
+        "body": [
+            "PANTALLA_COMPLETA(${1:componente})"
+        ],
+        "description": "Solicita pantalla completa para una ventana. No devuelve nada. Recibe componente: Cadena."
+    },
+    "RESTAURAR": {
+        "prefix": "guiRestaurar",
+        "body": [
+            "RESTAURAR(${1:componente})"
+        ],
+        "description": "Restaura una ventana según su estado actual. No devuelve nada. Recibe componente: Cadena."
+    },
+    "PULSAR_PROGRESO": {
+        "prefix": "guiPulsarProgreso",
+        "body": [
+            "PULSAR_PROGRESO(${1:componente})"
+        ],
+        "description": "Avanza el pulso de una barra de progreso indeterminada. No devuelve nada. Recibe componente: Cadena."
+    },
+    "INICIAR": {
+        "prefix": "guiIniciar",
+        "body": [
+            "INICIAR(${1:componente})"
+        ],
+        "description": "Inicia el indicador de carga. No devuelve nada. Recibe componente: Cadena."
+    },
+    "PARAR": {
+        "prefix": "guiParar",
+        "body": [
+            "PARAR(${1:componente})"
+        ],
+        "description": "Detiene el indicador de carga. No devuelve nada. Recibe componente: Cadena."
+    },
+    "MARCAR_DIA": {
+        "prefix": "guiMarcarDia",
+        "body": [
+            "MARCAR_DIA(${1:componente}, ${2:dia})"
+        ],
+        "description": "Marca un día del calendario. No devuelve nada. Recibe componente: Cadena; dia: Número."
+    },
+    "DESMARCAR_DIA": {
+        "prefix": "guiDesmarcarDia",
+        "body": [
+            "DESMARCAR_DIA(${1:componente}, ${2:dia})"
+        ],
+        "description": "Retira la marca de un día del calendario. No devuelve nada. Recibe componente: Cadena; dia: Número."
+    },
+    "LIMPIAR_MARCAS": {
+        "prefix": "guiLimpiarMarcas",
+        "body": [
+            "LIMPIAR_MARCAS(${1:componente})"
+        ],
+        "description": "Retira todas las marcas del calendario. No devuelve nada. Recibe componente: Cadena."
+    },
+    "LIMPIAR_IMAGEN": {
+        "prefix": "guiLimpiarImagen",
+        "body": [
+            "LIMPIAR_IMAGEN(${1:componente})"
+        ],
+        "description": "Limpia la fuente de una imagen. No devuelve nada. Recibe componente: Cadena."
+    },
+    "ANEXAR_FILA": {
+        "prefix": "guiAnexarFila",
+        "body": [
+            "ANEXAR_FILA(${1:componente}, ${2:fila})"
+        ],
+        "description": "Agrega una fila a la vista de columnas. No devuelve nada. Recibe componente: Cadena; fila: Arreglo de Cadena o Número o Lógico o NULO."
+    },
+    "QUITAR_FILA": {
+        "prefix": "guiQuitarFila",
+        "body": [
+            "QUITAR_FILA(${1:componente}, ${2:indice})"
+        ],
+        "description": "Retira una fila de la vista de columnas. No devuelve nada. Recibe componente: Cadena; indice: Número."
+    },
+    "LIMPIAR_FILAS": {
+        "prefix": "guiLimpiarFilas",
+        "body": [
+            "LIMPIAR_FILAS(${1:componente})"
+        ],
+        "description": "Retira todas las filas de la vista de columnas. No devuelve nada. Recibe componente: Cadena."
+    },
+    "MOSTRAR_ALERTA": {
+        "prefix": "guiMostrarAlerta",
+        "body": [
+            "MOSTRAR_ALERTA(${1:componente}, ${2:ventana})"
+        ],
+        "description": "Muestra una alerta sin esperar respuesta. No devuelve nada. Recibe componente: Cadena; ventana: Cadena o NULO."
+    },
+    "ELEGIR_ALERTA": {
+        "prefix": "guiElegirAlerta",
+        "body": [
+            "ELEGIR_ALERTA(${1:componente}, ${2:ventana})"
+        ],
+        "description": "Espera la elección de un botón de alerta. Devuelve su índice o -1 al cancelar sin botón de cancelación. Devuelve Número. Recibe componente: Cadena; ventana: Cadena o NULO."
+    },
+    "ABRIR_ARCHIVO": {
+        "prefix": "guiAbrirArchivo",
+        "body": [
+            "ABRIR_ARCHIVO(${1:componente}, ${2:ventana})"
+        ],
+        "description": "Selecciona una ruta local sin leer el archivo. Devuelve Cadena o NULO al cancelar. Devuelve Cadena o NULO. Recibe componente: Cadena; ventana: Cadena o NULO."
+    },
+    "ABRIR_ARCHIVOS": {
+        "prefix": "guiAbrirArchivos",
+        "body": [
+            "ABRIR_ARCHIVOS(${1:componente}, ${2:ventana})"
+        ],
+        "description": "Selecciona rutas locales sin leer archivos. Devuelve un arreglo de cadenas; vacío al cancelar. Devuelve Arreglo de Cadena. Recibe componente: Cadena; ventana: Cadena o NULO."
+    },
+    "GUARDAR_ARCHIVO": {
+        "prefix": "guiGuardarArchivo",
+        "body": [
+            "GUARDAR_ARCHIVO(${1:componente}, ${2:ventana})"
+        ],
+        "description": "Selecciona un destino sin crear ni escribir el archivo. Devuelve Cadena o NULO al cancelar. Devuelve Cadena o NULO. Recibe componente: Cadena; ventana: Cadena o NULO."
+    },
+    "ELEGIR_CARPETA": {
+        "prefix": "guiElegirCarpeta",
+        "body": [
+            "ELEGIR_CARPETA(${1:componente}, ${2:ventana})"
+        ],
+        "description": "Selecciona una carpeta local. Devuelve Cadena o NULO al cancelar. Devuelve Cadena o NULO. Recibe componente: Cadena; ventana: Cadena o NULO."
+    },
+    "ELEGIR_CARPETAS": {
+        "prefix": "guiElegirCarpetas",
+        "body": [
+            "ELEGIR_CARPETAS(${1:componente}, ${2:ventana})"
+        ],
+        "description": "Selecciona carpetas locales. Devuelve un arreglo de cadenas; vacío al cancelar. Devuelve Arreglo de Cadena. Recibe componente: Cadena; ventana: Cadena o NULO."
+    },
+    "ESTABLECER_TEMA": {
+        "prefix": "guiEstablecerTema",
+        "body": [
+            "ESTABLECER_TEMA(${1:nombre})"
+        ],
+        "description": "Establece el tema GTK global de la sesión. No devuelve nada. Recibe nombre: Cadena."
+    },
+    "OBTENER_TEMA": {
+        "prefix": "guiObtenerTema",
+        "body": [
+            "OBTENER_TEMA()"
+        ],
+        "description": "Consulta el nombre de tema vigente en GTK. Devuelve Cadena."
+    },
+    "ESTABLECER_MODO_TEMA": {
+        "prefix": "guiEstablecerModoTema",
+        "body": [
+            "ESTABLECER_MODO_TEMA(${1:modo})"
+        ],
+        "description": "Establece la preferencia global de apariencia sin sustituir el nombre del tema. No devuelve nada. Recibe modo: \"sistema\", \"claro\", \"oscuro\"."
+    },
+    "OBTENER_MODO_TEMA": {
+        "prefix": "guiObtenerModoTema",
+        "body": [
+            "OBTENER_MODO_TEMA()"
+        ],
+        "description": "Consulta la preferencia de apariencia; inicialmente sistema. Devuelve \"sistema\", \"claro\", \"oscuro\"."
+    }
+}

@@ -1,0 +1,6 @@
+PRINCIPAL()
+    DIALOGO_ARCHIVO("f")
+    ruta = ABRIR_ARCHIVO("f", NULO)
+    escribir ruta == NULO
+    rutas = ABRIR_ARCHIVOS("f", NULO)
+    escribir LONG(rutas)

@@ -1,0 +1,406 @@
+import {
+    freezeGuiContract, GUI_DOMAINS as D, guiParameter as arg, guiReference,
+    getGuiOwnEntry
+} from "./GuiContract.js";
+
+const property = (domain, gtk, options = {}) => ({
+    domain, access: "RW", gtk, ...options
+});
+const event = (parameters, kind, target, members, options = {}) => ({
+    parameters: [arg("id", D.id, "Identificador original del componente."), ...parameters],
+    backend: { kind, target, members },
+    returnPolicy: "ignored",
+    allowsAsyncCallback: true,
+    ...options
+});
+const immediate = { returnPolicy: "synchronous-boolean", allowsAsyncCallback: false,
+    returns: { oneOf: [D.boolean, D.null] },
+    trueEffect: "stop-default", falseOrNullEffect: "allow-default" };
+const textArgs = [arg("texto", D.string, "Texto actual.")];
+const valueArgs = [arg("valor", D.number, "Valor numérico actual.")];
+const activeArgs = [arg("activo", D.boolean, "Estado actual.")];
+const pointArgs = [arg("x", D.number, "Coordenada horizontal del widget."),
+    arg("y", D.number, "Coordenada vertical del widget.")];
+const gestureArgs = [arg("veces", D.integer, "Número de pulsaciones."), ...pointArgs,
+    arg("boton", D.integer, "Número de botón informado por GDK.")];
+const keyArgs = [arg("tecla", D.nullableString, "Nombre resuelto del keyval; NULO si no existe."),
+    arg("codigo", D.integer, "Código físico informado por GDK."),
+    arg("modificadores", D.strings, "Modificadores normalizados, por ejemplo shift y control.")];
+
+export const GUI_WIDGET_PROPERTIES = freezeGuiContract({
+    visible: property(D.boolean, "GtkWidget:visible"),
+    habilitado: property(D.boolean, "GtkWidget:sensitive"),
+    opacidad: property(D.unit, "GtkWidget:opacity"),
+    ancho_minimo: property(D.naturalOrUnset, "GtkWidget:width-request"),
+    alto_minimo: property(D.naturalOrUnset, "GtkWidget:height-request"),
+    expandir_horizontal: property(D.boolean, "GtkWidget:hexpand"),
+    expandir_vertical: property(D.boolean, "GtkWidget:vexpand"),
+    alineacion_horizontal: property(D.alignment, "GtkWidget:halign"),
+    alineacion_vertical: property(D.alignment, "GtkWidget:valign"),
+    margen_superior: property(D.natural, "GtkWidget:margin-top"),
+    margen_inferior: property(D.natural, "GtkWidget:margin-bottom"),
+    margen_inicio: property(D.natural, "GtkWidget:margin-start"),
+    margen_fin: property(D.natural, "GtkWidget:margin-end"),
+    ayuda: property(D.nullableString, "GtkWidget:tooltip-text"),
+    enfocable: property(D.boolean, "GtkWidget:focusable")
+});
+
+export const GUI_WIDGET_EVENTS = freezeGuiContract({
+    puntero_entro: event(pointArgs, "event-controller-motion", "GtkEventControllerMotion", ["enter"]),
+    puntero_salio: event([], "event-controller-motion", "GtkEventControllerMotion", ["leave"]),
+    puntero_movido: event(pointArgs, "event-controller-motion", "GtkEventControllerMotion", ["motion"]),
+    presionado: event(gestureArgs, "gesture-click", "GtkGestureClick", ["pressed"]),
+    liberado: event(gestureArgs, "gesture-click", "GtkGestureClick", ["released"]),
+    tecla_presionada: event(keyArgs, "event-controller-key", "GtkEventControllerKey", ["key-pressed"], immediate),
+    tecla_liberada: event(keyArgs, "event-controller-key", "GtkEventControllerKey", ["key-released"])
+});
+const widgetActions = {
+    MOSTRAR: ["GtkWidget.show"], OCULTAR: ["GtkWidget.hide"], ENFOCAR: ["GtkWidget.grab_focus"]
+};
+const windowActions = {
+    MOSTRAR: ["GtkWindow.present"], CONTENER: ["GtkWindow.set_child"],
+    QUITAR: ["GtkWindow.set_child(null)"], CERRAR: ["GtkWindow.close"],
+    MAXIMIZAR: ["GtkWindow.maximize"], MINIMIZAR: ["GtkWindow.minimize"],
+    PANTALLA_COMPLETA: ["GtkWindow.fullscreen"],
+    RESTAURAR: ["GtkWindow.unfullscreen", "GtkWindow.unmaximize", "GtkWindow.unminimize"]
+};
+const windowProperties = {
+    titulo: property(D.string, "GtkWindow:title"),
+    ancho: property(D.naturalOrUnset, "GtkWindow.set_default_size", { normalization: "requested-width-not-allocation" }),
+    alto: property(D.naturalOrUnset, "GtkWindow.set_default_size", { normalization: "requested-height-not-allocation" }),
+    redimensionable: property(D.boolean, "GtkWindow:resizable"),
+    modal: property(D.boolean, "GtkWindow:modal"),
+    decorada: property(D.boolean, "GtkWindow:decorated"),
+    cerrable: property(D.boolean, "GtkWindow:deletable"),
+    ocultar_al_cerrar: property(D.boolean, "GtkWindow:hide-on-close"),
+    maximizada: property(D.boolean, "GtkWindow-state", { access: "R", normalization: "maximized" }),
+    pantalla_completa: property(D.boolean, "GtkWindow-state", { access: "R", normalization: "fullscreen" }),
+    activa: property(D.boolean, "GtkWindow:is-active", { access: "R" })
+};
+const windowEvents = { cerrar: event([], "signal", "GtkWindow", ["close-request"], immediate) };
+const buttonProperties = {
+    texto: property(D.string, "GtkButton:label", { normalization: "replace-simple-content-with-text" }),
+    icono: property(D.nullableString, "GtkButton:icon-name", { normalization: "replace-simple-content-with-icon" }),
+    marco: property(D.boolean, "GtkButton:has-frame")
+};
+const click = event([], "signal", "GtkButton", ["clicked"]);
+const editableProperties = {
+    texto: property(D.string, "GtkEditable:text"), editable: property(D.boolean, "GtkEditable:editable")
+};
+const changed = event(textArgs, "interface-signal", "GtkEditable", ["changed"]);
+const rangeProperties = {
+    valor: property(D.number, "range-value"),
+    minimo: property(D.number, "range-lower", { normalization: "preserve-upper-bound" }),
+    maximo: property(D.number, "range-upper", { normalization: "preserve-lower-bound" }),
+    paso: property(D.positive, "range-increments", { normalization: "preserve-internal-page-increment" }),
+    decimales: property(D.natural, "digits")
+};
+const rangeRules = [{ kind: "ordered-range", minimum: "minimo", maximum: "maximo" }];
+const selectionProperty = property(D.selectionValue, "selection-model", {
+    readDomain: D.selectionResult,
+    normalization: "zero-based-selection-by-mode"
+});
+const selectionRules = [{ kind: "selection-by-mode", property: "seleccion", mode: "modo_seleccion",
+    read: { ninguno: "null", unica: "index-or-minus-one", explorar: "index-or-minus-one", multiple: "indices" },
+    write: { ninguno: "not-supported", unica: "index-or-minus-one", explorar: "index-or-minus-one", multiple: "indices" } }];
+const selectionArgs = [arg("seleccion", D.selectionResult, "Selección normalizada según el modo.")];
+const indexArg = arg("indice", D.natural, "Índice lógico base cero.");
+const rowRules = [{ kind: "row-width", columns: "columnas", rows: "datos" }];
+const factory = (name, parameters = []) => ({ name, parameters: [
+    arg("id", D.id, "Identificador único del componente dentro de la ejecución."), ...parameters
+] });
+const textFactory = name => factory(name, [arg("texto", D.string, "Texto literal del componente.")]);
+const windowFactory = name => factory(name, [arg("titulo", D.string, "Título de la ventana.")]);
+
+// Sólo se heredan las capacidades públicas explícitas; no se refleja GObject.
+const components = {
+    Window: {
+        factory: windowFactory("VENTANA"), description: "Crea una ventana general.",
+        properties: windowProperties, events: windowEvents, actions: windowActions,
+        containment: "single", toplevel: true
+    },
+    ApplicationWindow: {
+        factory: windowFactory("VENTANA_APLICACION"), description: "Crea una ventana integrada con la aplicación GTK de la ejecución.",
+        properties: windowProperties, events: windowEvents, actions: windowActions,
+        containment: "single", toplevel: true, inherits: "Window"
+    },
+    Label: {
+        factory: textFactory("ETIQUETA"), description: "Crea una etiqueta de texto literal.",
+        properties: {
+            texto: property(D.string, "GtkLabel:label", { normalization: "literal-no-markup" }),
+            seleccionable: property(D.boolean, "GtkLabel:selectable"),
+            ajuste_linea: property(D.boolean, "GtkLabel:wrap"),
+            modo_ajuste: property(D.wrap, "GtkLabel:wrap-mode", { normalization: "none-disables-wrap" }),
+            justificacion: property(D.justification, "GtkLabel:justify"),
+            elipsis: property(D.ellipsis, "GtkLabel:ellipsize"),
+            ancho_caracteres: property(D.naturalOrUnset, "GtkLabel:width-chars")
+        }
+    },
+    Entry: {
+        factory: factory("ENTRADA"), description: "Crea una entrada de texto de una línea.",
+        properties: { ...editableProperties,
+            marcador: property(D.nullableString, "GtkEntry:placeholder-text"),
+            longitud_maxima: property(D.natural, "GtkEntry:max-length"),
+            ancho_caracteres: property(D.naturalOrUnset, "GtkEditable:width-chars"),
+            alineacion_texto: property(D.unit, "GtkEditable:xalign"),
+            marco: property(D.boolean, "GtkEntry:has-frame") },
+        events: { cambio: changed, activar: event(textArgs, "signal", "GtkEntry", ["activate"]) }
+    },
+    PasswordEntry: {
+        factory: factory("ENTRADA_CONTRASENA"), description: "Crea una entrada especializada para contraseñas.",
+        properties: { ...editableProperties,
+            texto: { ...editableProperties.texto, sensitive: true },
+            marcador: property(D.nullableString, "GtkPasswordEntry:placeholder-text"),
+            mostrar_revelar: property(D.boolean, "GtkPasswordEntry:show-peek-icon"),
+            activar_predeterminado: property(D.boolean, "GtkPasswordEntry:activates-default") },
+        events: { cambio: { ...changed, sensitiveParameters: [1] },
+            activar: event(textArgs, "signal", "GtkPasswordEntry", ["activate"], { sensitiveParameters: [1] }) }
+    },
+    TextView: {
+        factory: factory("AREA_TEXTO"), description: "Crea un área de texto de varias líneas.",
+        properties: {
+            texto: property(D.string, "GtkTextBuffer", { normalization: "buffer-text" }),
+            editable: property(D.boolean, "GtkTextView:editable"),
+            modo_ajuste: property(D.wrap, "GtkTextView:wrap-mode"),
+            monoespaciado: property(D.boolean, "GtkTextView:monospace"),
+            acepta_tabulador: property(D.boolean, "GtkTextView:accepts-tab"),
+            cursor_visible: property(D.boolean, "GtkTextView:cursor-visible"),
+            sobrescritura: property(D.boolean, "GtkTextView:overwrite") },
+        events: { cambio: event(textArgs, "buffer-signal", "GtkTextBuffer", ["changed"]) }
+    },
+    Button: {
+        factory: textFactory("BOTON"), description: "Crea un botón de acción.",
+        properties: buttonProperties,
+        events: { clic: click, activar: event([], "signal", "GtkButton", ["activate"]) }
+    },
+    CheckButton: {
+        factory: textFactory("CASILLA"), description: "Crea una casilla de selección.",
+        properties: {
+            texto: property(D.string, "GtkCheckButton:label"),
+            activo: property(D.boolean, "GtkCheckButton:active"),
+            indeterminado: property(D.boolean, "GtkCheckButton:inconsistent"),
+            grupo: property(guiReference(["CheckButton"], true), "GtkCheckButton:group") },
+        events: { alternado: event(activeArgs, "signal", "GtkCheckButton", ["toggled"]),
+            activar: event([], "signal", "GtkCheckButton", ["activate"]) }
+    },
+    ToggleButton: {
+        factory: textFactory("BOTON_ALTERNABLE"), description: "Crea un botón con estado activado o desactivado.",
+        properties: { ...buttonProperties, activo: property(D.boolean, "GtkToggleButton:active"),
+            grupo: property(guiReference(["ToggleButton"], true), "GtkToggleButton:group") },
+        events: { clic: click, alternado: event(activeArgs, "signal", "GtkToggleButton", ["toggled"]) }
+    },
+    LinkButton: {
+        factory: factory("BOTON_ENLACE", [arg("uri", D.string, "Dirección del enlace."), ...textFactory("BOTON").parameters.slice(1)]),
+        description: "Crea un botón que permite abrir un enlace.",
+        properties: { ...buttonProperties, uri: property(D.string, "GtkLinkButton:uri"),
+            visitado: property(D.boolean, "GtkLinkButton:visited") },
+        events: { clic: click, activar_enlace: event([arg("uri", D.string, "Dirección del enlace.")],
+            "signal", "GtkLinkButton", ["activate-link"], immediate) }
+    },
+    SpinButton: {
+        factory: factory("ENTRADA_NUMERICA", [arg("minimo", D.number, "Límite inferior."),
+            arg("maximo", D.number, "Límite superior."), arg("paso", D.positive, "Incremento positivo.")]),
+        description: "Crea una entrada numérica con rango e incremento.",
+        properties: { ...rangeProperties,
+            solo_numeros: property(D.boolean, "GtkSpinButton:numeric"),
+            ajustar_saltos: property(D.boolean, "GtkSpinButton:snap-to-ticks"),
+            ciclico: property(D.boolean, "GtkSpinButton:wrap") },
+        constraints: rangeRules,
+        events: { valor_cambiado: event(valueArgs, "signal", "GtkSpinButton", ["value-changed"]),
+            activar: event(valueArgs, "signal", "GtkSpinButton", ["activate"]) }
+    },
+    Scale: {
+        factory: factory("DESLIZADOR", [arg("orientacion", D.orientation, "Orientación del deslizador."),
+            arg("minimo", D.number, "Límite inferior."), arg("maximo", D.number, "Límite superior."),
+            arg("paso", D.positive, "Incremento positivo.")]),
+        description: "Crea un deslizador numérico con orientación y rango.",
+        properties: { ...rangeProperties, orientacion: property(D.orientation, "GtkOrientable:orientation"),
+            mostrar_valor: property(D.boolean, "GtkScale:draw-value"),
+            posicion_valor: property(D.position, "GtkScale:value-pos"),
+            mostrar_origen: property(D.boolean, "GtkScale:has-origin"),
+            invertido: property(D.boolean, "GtkRange:inverted") },
+        constraints: rangeRules,
+        events: { valor_cambiado: event(valueArgs, "signal", "GtkRange", ["value-changed"]) }
+    },
+    ProgressBar: {
+        factory: factory("BARRA_PROGRESO"), description: "Crea una barra de progreso.",
+        properties: { orientacion: property(D.orientation, "GtkOrientable:orientation"),
+            progreso: property(D.unit, "GtkProgressBar:fraction"),
+            texto: property(D.nullableString, "GtkProgressBar:text"),
+            mostrar_texto: property(D.boolean, "GtkProgressBar:show-text"),
+            invertido: property(D.boolean, "GtkProgressBar:inverted"),
+            paso_pulso: property(D.unit, "GtkProgressBar:pulse-step") },
+        actions: { PULSAR_PROGRESO: ["GtkProgressBar.pulse"] }
+    },
+    Spinner: {
+        factory: factory("INDICADOR_CARGA"), description: "Crea un indicador de carga inicialmente detenido.",
+        initialState: { activo: false },
+        properties: { activo: property(D.boolean, "GtkSpinner:spinning", { access: "R" }) },
+        actions: { INICIAR: ["GtkSpinner.start"], PARAR: ["GtkSpinner.stop"] }
+    },
+    DropDown: {
+        factory: factory("LISTA_DESPLEGABLE", [arg("opciones", D.strings, "Opciones de texto.")]),
+        description: "Crea una lista desplegable de cadenas.",
+        properties: { opciones: property(D.strings, "GtkStringList", { normalization: "preserve-valid-selection-else-minus-one" }),
+            seleccion: property(D.naturalOrUnset, "GtkDropDown:selected", { normalization: "minus-one-is-no-selection" }),
+            valor: property(D.nullableString, "selected-string", { access: "R" }),
+            busqueda: property(D.boolean, "GtkDropDown:enable-search"),
+            mostrar_flecha: property(D.boolean, "GtkDropDown:show-arrow") },
+        constraints: [{ kind: "model-index", property: "seleccion", model: "opciones", unset: -1 }],
+        events: { seleccion_cambiada: event([arg("indice", D.naturalOrUnset, "Índice o -1 sin selección."),
+            arg("valor", D.nullableString, "Cadena seleccionada o NULO.")], "notify", "GtkDropDown", ["selected"]),
+        activar: event([], "signal", "GtkDropDown", ["activate"]) }
+    },
+    Calendar: {
+        factory: factory("CALENDARIO"), description: "Crea un calendario con fechas [año, mes, día].",
+        properties: { fecha: property(D.date, "GtkCalendar/GDateTime", { normalization: "year-month-day-month-one-based" }),
+            mostrar_dias_semana: property(D.boolean, "GtkCalendar:show-day-names"),
+            mostrar_encabezado: property(D.boolean, "GtkCalendar:show-heading"),
+            mostrar_numeros_semana: property(D.boolean, "GtkCalendar:show-week-numbers") },
+        actions: { MARCAR_DIA: ["GtkCalendar.mark_day"], DESMARCAR_DIA: ["GtkCalendar.unmark_day"],
+            LIMPIAR_MARCAS: ["GtkCalendar.clear_marks"] },
+        events: { fecha_cambiada: event([arg("fecha", D.date, "Fecha normalizada [año, mes, día].")],
+            "synthesized-signals", "GtkCalendar", ["day-selected", "next-month", "next-year", "prev-month", "prev-year"]) }
+    },
+    Image: {
+        factory: factory("IMAGEN", [arg("archivo", D.string, "Ruta del archivo de imagen.")]),
+        description: "Crea una imagen desde un archivo usando Gtk.Image.",
+        properties: { archivo: property(D.string, "GtkImage.set_from_file", { access: "W", normalization: "replace-image-source" }),
+            icono: property(D.nullableString, "GtkImage:icon-name", { normalization: "replace-image-source" }),
+            tamano_pixel: property(D.naturalOrUnset, "GtkImage:pixel-size") },
+        actions: { LIMPIAR_IMAGEN: ["GtkImage.clear"] }
+    },
+    Video: {
+        factory: factory("VIDEO", [arg("archivo", D.string, "Ruta del archivo de video.")]),
+        description: "Crea un reproductor de video.",
+        properties: { archivo: property(D.string, "GtkVideo:file"),
+            reproduccion_automatica: property(D.boolean, "GtkVideo:autoplay"),
+            bucle: property(D.boolean, "GtkVideo/GtkMediaStream:loop"),
+            volumen: property(D.unit, "GtkMediaStream:volume"),
+            silenciado: property(D.boolean, "GtkMediaStream:muted"),
+            reproduciendo: property(D.boolean, "GtkMediaStream:playing", { access: "R" }),
+            preparado: property(D.boolean, "GtkMediaStream:prepared", { access: "R" }),
+            finalizado: property(D.boolean, "GtkMediaStream:ended", { access: "R" }),
+            duracion: property(D.number, "GtkMediaStream:duration", { access: "R", normalization: "microseconds-to-seconds" }),
+            posicion: property(D.nonNegative, "GtkMediaStream:timestamp/seek", { normalization: "seconds-microseconds" }),
+            desplazable: property(D.boolean, "GtkMediaStream:seekable", { access: "R" }) },
+        constraints: [{ kind: "seekable", property: "posicion", action: "PARAR", allowAlreadyAtStart: true }],
+        actions: { REPRODUCIR: ["GtkMediaStream.play"], PAUSAR: ["GtkMediaStream.pause"],
+            PARAR: ["GtkMediaStream.pause", "GtkMediaStream.seek(0)"] },
+        events: { reproduccion_cambiada: event([arg("reproduciendo", D.boolean, "Estado de reproducción.")],
+            "media-notify", "GtkMediaStream", ["playing"]),
+        finalizado: event([], "media-notify", "GtkMediaStream", ["ended"]) }
+    },
+    Box: {
+        factory: factory("CAJA", [arg("orientacion", D.orientation, "Orientación de los hijos."),
+            arg("separacion", D.natural, "Separación entre hijos.")]),
+        description: "Crea un contenedor que organiza sus hijos en una fila o columna.",
+        properties: { orientacion: property(D.orientation, "GtkOrientable:orientation"),
+            separacion: property(D.natural, "GtkBox:spacing"), homogeneo: property(D.boolean, "GtkBox:homogeneous") },
+        actions: { ANEXAR: ["GtkBox.append"], PREPONER: ["GtkBox.prepend"], QUITAR: ["GtkBox.remove"] },
+        containment: "multiple"
+    },
+    Grid: {
+        factory: factory("CUADRICULA"), description: "Crea un contenedor de filas y columnas.",
+        properties: { separacion_filas: property(D.natural, "GtkGrid:row-spacing"),
+            separacion_columnas: property(D.natural, "GtkGrid:column-spacing"),
+            filas_homogeneas: property(D.boolean, "GtkGrid:row-homogeneous"),
+            columnas_homogeneas: property(D.boolean, "GtkGrid:column-homogeneous") },
+        actions: { COLOCAR: ["GtkGrid.attach"], QUITAR: ["GtkGrid.remove"] }, containment: "multiple"
+    },
+    ScrolledWindow: {
+        factory: factory("CONTENEDOR_DESPLAZABLE"), description: "Crea un contenedor desplazable con un solo hijo principal.",
+        properties: { politica_horizontal: property(D.scrollPolicy, "GtkScrolledWindow:hscrollbar-policy"),
+            politica_vertical: property(D.scrollPolicy, "GtkScrolledWindow:vscrollbar-policy"),
+            desplazamiento_cinetico: property(D.boolean, "GtkScrolledWindow:kinetic-scrolling"),
+            desplazamiento_superpuesto: property(D.boolean, "GtkScrolledWindow:overlay-scrolling"),
+            marco: property(D.boolean, "GtkScrolledWindow:has-frame"),
+            ancho_contenido_minimo: property(D.naturalOrUnset, "GtkScrolledWindow:min-content-width"),
+            alto_contenido_minimo: property(D.naturalOrUnset, "GtkScrolledWindow:min-content-height"),
+            ancho_contenido_maximo: property(D.naturalOrUnset, "GtkScrolledWindow:max-content-width"),
+            alto_contenido_maximo: property(D.naturalOrUnset, "GtkScrolledWindow:max-content-height") },
+        actions: { CONTENER: ["GtkScrolledWindow.set_child"], QUITAR: ["GtkScrolledWindow.set_child(null)"] },
+        containment: "single", privateWrappers: ["GtkViewport"],
+        events: { borde_alcanzado: event([arg("borde", D.position, "Borde alcanzado.")], "signal", "GtkScrolledWindow", ["edge-reached"]),
+            borde_excedido: event([arg("borde", D.position, "Borde excedido.")], "signal", "GtkScrolledWindow", ["edge-overshot"]) }
+    },
+    ListBox: {
+        factory: factory("LISTA_VISUAL"), description: "Crea una lista visual de componentes seleccionables.",
+        properties: { modo_seleccion: property(D.selection, "GtkListBox:selection-mode"),
+            activar_un_clic: property(D.boolean, "GtkListBox:activate-on-single-click"),
+            separadores: property(D.boolean, "GtkListBox:show-separators"), seleccion: selectionProperty },
+        actions: { ANEXAR: ["GtkListBox.append"], PREPONER: ["GtkListBox.prepend"], QUITAR: ["GtkListBox.remove"] },
+        containment: "multiple", privateWrappers: ["GtkListBoxRow"], constraints: selectionRules,
+        events: { fila_activada: event([indexArg], "signal", "GtkListBox", ["row-activated"]),
+            seleccion_cambiada: event(selectionArgs, "synthesized-signals", "GtkListBox", ["row-selected", "selected-rows-changed"]) }
+    },
+    ColumnView: {
+        factory: factory("VISTA_COLUMNAS", [arg("columnas", D.strings, "Títulos de las columnas.")]),
+        description: "Crea una vista tabular con modelos y columnas GTK reales.",
+        properties: { columnas: property(D.strings, "GtkColumnViewColumn/factories"),
+            datos: property(D.rows, "GtkColumnView-model", { normalization: "clrs-scalar-to-text" }),
+            modo_seleccion: property(D.selection, "GtkSelectionModel"), seleccion: selectionProperty,
+            reordenable: property(D.boolean, "GtkColumnView:reorderable"),
+            separadores_filas: property(D.boolean, "GtkColumnView:show-row-separators"),
+            separadores_columnas: property(D.boolean, "GtkColumnView:show-column-separators"),
+            activar_un_clic: property(D.boolean, "GtkColumnView:single-click-activate"),
+            seleccion_arrastre: property(D.boolean, "GtkColumnView:enable-rubberband") },
+        constraints: [...rowRules, ...selectionRules],
+        actions: { ANEXAR_FILA: ["model.append"], QUITAR_FILA: ["model.remove"], LIMPIAR_FILAS: ["model.remove_all"] },
+        events: { fila_activada: event([indexArg, arg("fila", D.row, "Valores CLRS de la fila.")], "signal", "GtkColumnView", ["activate"]),
+            seleccion_cambiada: event(selectionArgs, "selection-model-signal", "GtkSelectionModel", ["selection-changed"]) }
+    },
+    AlertDialog: {
+        factory: factory("DIALOGO_ALERTA", [arg("mensaje", D.string, "Mensaje principal del diálogo.")]),
+        description: "Crea un diálogo de alerta; no es un widget.", widget: false,
+        properties: { mensaje: property(D.string, "GtkAlertDialog:message"),
+            detalle: property(D.nullableString, "GtkAlertDialog:detail"),
+            botones: property(D.strings, "GtkAlertDialog:buttons"),
+            boton_cancelar: property(D.naturalOrUnset, "GtkAlertDialog:cancel-button"),
+            boton_predeterminado: property(D.naturalOrUnset, "GtkAlertDialog:default-button"),
+            modal: property(D.boolean, "GtkAlertDialog:modal") },
+        constraints: ["boton_cancelar", "boton_predeterminado"].map(name => ({ kind: "model-index", property: name, model: "botones", unset: -1 })),
+        actions: { MOSTRAR_ALERTA: ["GtkAlertDialog.show"], ELEGIR_ALERTA: ["GtkAlertDialog.choose", "GtkAlertDialog.choose_finish"] }
+    },
+    FileDialog: {
+        factory: factory("DIALOGO_ARCHIVO"), description: "Crea un selector de rutas locales; no es un widget.", widget: false,
+        properties: { titulo: property(D.nullableString, "GtkFileDialog:title"),
+            etiqueta_aceptar: property(D.nullableString, "GtkFileDialog:accept-label"),
+            modal: property(D.boolean, "GtkFileDialog:modal"),
+            archivo_inicial: property(D.nullableString, "GtkFileDialog:initial-file"),
+            carpeta_inicial: property(D.nullableString, "GtkFileDialog:initial-folder"),
+            nombre_inicial: property(D.nullableString, "GtkFileDialog:initial-name"),
+            filtros: property(D.filters, "GtkFileFilter-model"),
+            filtro_predeterminado: property(D.naturalOrUnset, "GtkFileDialog:default-filter") },
+        constraints: [{ kind: "model-index", property: "filtro_predeterminado", model: "filtros", unset: -1 }],
+        actions: { ABRIR_ARCHIVO: ["GtkFileDialog.open", "GtkFileDialog.open_finish"],
+            ABRIR_ARCHIVOS: ["GtkFileDialog.open_multiple", "GtkFileDialog.open_multiple_finish"],
+            GUARDAR_ARCHIVO: ["GtkFileDialog.save", "GtkFileDialog.save_finish"],
+            ELEGIR_CARPETA: ["GtkFileDialog.select_folder", "GtkFileDialog.select_folder_finish"],
+            ELEGIR_CARPETAS: ["GtkFileDialog.select_multiple_folders", "GtkFileDialog.select_multiple_folders_finish"] }
+    }
+};
+
+export const GUI_COMPONENTS = freezeGuiContract(Object.fromEntries(
+    Object.entries(components).map(([type, component], index) => {
+        const widget = component.widget !== false;
+        return [type, {
+            ...component, type, gtkClass: `Gtk.${type}`, widget,
+            source: { document: "docs/gui/api-catalog.md", heading: `9.${index + 1} ${type}` },
+            containment: component.containment ?? "none",
+            constraints: component.constraints ?? [],
+            properties: Object.fromEntries(Object.entries({
+                ...(widget ? GUI_WIDGET_PROPERTIES : {}), ...component.properties
+            }).map(([name, descriptor]) => [name, { name, ...descriptor,
+                read: descriptor.access !== "W", write: descriptor.access !== "R" } ])),
+            events: Object.fromEntries(Object.entries({
+                ...(widget ? GUI_WIDGET_EVENTS : {}), ...component.events
+            }).map(([name, descriptor]) => [name, { name, connectOnDemand: true, ...descriptor }])),
+            actions: { ...(widget ? widgetActions : {}), ...component.actions }
+        }];
+    })
+));
+
+export function getGuiComponentDefinition(type) {
+    return getGuiOwnEntry(GUI_COMPONENTS, type);
+}

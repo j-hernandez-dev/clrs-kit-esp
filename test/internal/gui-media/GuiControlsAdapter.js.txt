@@ -1,0 +1,186 @@
+/** Proyección ejecutable curada. Se serializa junto al runtime base, sin imports nativos en el Host. */
+export function createGuiControlsAdapter(context) {
+    const { Gtk, GLib, gi, fail, get, createModels, createMedia } = context;
+    const models = createModels(context);
+    const media = createMedia(context);
+    const Pango = gi.require("Pango", "1.0");
+    const orientation = { horizontal: Gtk.Orientation.HORIZONTAL, vertical: Gtk.Orientation.VERTICAL };
+    const wrap = { ninguno: Gtk.WrapMode.NONE, caracter: Gtk.WrapMode.CHAR,
+        palabra: Gtk.WrapMode.WORD, palabra_caracter: Gtk.WrapMode.WORD_CHAR };
+    const labelWrap = { caracter: Pango.WrapMode.CHAR, palabra: Pango.WrapMode.WORD, palabra_caracter: Pango.WrapMode.WORD_CHAR };
+    const enums = {
+        orientacion: orientation,
+        justificacion: { izquierda: Gtk.Justification.LEFT, derecha: Gtk.Justification.RIGHT,
+            centro: Gtk.Justification.CENTER, rellenar: Gtk.Justification.FILL },
+        elipsis: { ninguno: Pango.EllipsizeMode.NONE, inicio: Pango.EllipsizeMode.START,
+            medio: Pango.EllipsizeMode.MIDDLE, fin: Pango.EllipsizeMode.END },
+        posicion_valor: { izquierda: Gtk.PositionType.LEFT, derecha: Gtk.PositionType.RIGHT,
+            arriba: Gtk.PositionType.TOP, abajo: Gtk.PositionType.BOTTOM }
+    };
+    const baseButton = { texto: ["getLabel", "setLabel"], icono: ["getIconName", "setIconName"], marco: ["getHasFrame", "setHasFrame"] };
+    const editable = { texto: ["getText", "setText"], editable: ["getEditable", "setEditable"] };
+    const ranges = { valor: ["getValue", "setValue"], decimales: ["getDigits", "setDigits"] };
+    const mappings = {
+        Label: { texto: ["getText", "setText"], seleccionable: ["getSelectable", "setSelectable"],
+            ajuste_linea: ["getWrap", "setWrap"], justificacion: ["getJustify", "setJustify"],
+            elipsis: ["getEllipsize", "setEllipsize"], ancho_caracteres: ["getWidthChars", "setWidthChars"] },
+        Entry: { ...editable, marcador: ["getPlaceholderText", "setPlaceholderText"], longitud_maxima: ["getMaxLength", "setMaxLength"],
+            ancho_caracteres: ["getWidthChars", "setWidthChars"], alineacion_texto: ["getAlignment", "setAlignment"], marco: ["getHasFrame", "setHasFrame"] },
+        PasswordEntry: { ...editable, marcador: ["placeholderText", "placeholderText", "property"],
+            mostrar_revelar: ["getShowPeekIcon", "setShowPeekIcon"], activar_predeterminado: ["activatesDefault", "activatesDefault", "property"] },
+        TextView: { editable: ["getEditable", "setEditable"], monoespaciado: ["getMonospace", "setMonospace"],
+            acepta_tabulador: ["getAcceptsTab", "setAcceptsTab"], cursor_visible: ["getCursorVisible", "setCursorVisible"],
+            sobrescritura: ["getOverwrite", "setOverwrite"] },
+        Button: baseButton,
+        CheckButton: { texto: ["getLabel", "setLabel"], activo: ["getActive", "setActive"], indeterminado: ["getInconsistent", "setInconsistent"] },
+        ToggleButton: { ...baseButton, activo: ["getActive", "setActive"] },
+        LinkButton: { ...baseButton, uri: ["getUri", "setUri"], visitado: ["getVisited", "setVisited"] },
+        SpinButton: { ...ranges, solo_numeros: ["getNumeric", "setNumeric"], ajustar_saltos: ["getSnapToTicks", "setSnapToTicks"], ciclico: ["getWrap", "setWrap"] },
+        Scale: { ...ranges, orientacion: ["getOrientation", "setOrientation"], mostrar_valor: ["getDrawValue", "setDrawValue"],
+            posicion_valor: ["getValuePos", "setValuePos"], mostrar_origen: ["getHasOrigin", "setHasOrigin"], invertido: ["getInverted", "setInverted"] },
+        ProgressBar: { orientacion: ["getOrientation", "setOrientation"], progreso: ["getFraction", "setFraction"], texto: ["getText", "setText"],
+            mostrar_texto: ["getShowText", "setShowText"], invertido: ["getInverted", "setInverted"], paso_pulso: ["getPulseStep", "setPulseStep"] },
+        Spinner: { activo: ["getSpinning"] },
+        DropDown: { busqueda: ["getEnableSearch", "setEnableSearch"], mostrar_flecha: ["getShowArrow", "setShowArrow"] },
+        Calendar: { mostrar_dias_semana: ["getShowDayNames", "setShowDayNames"], mostrar_encabezado: ["getShowHeading", "setShowHeading"],
+            mostrar_numeros_semana: ["getShowWeekNumbers", "setShowWeekNumbers"] },
+        Image: { icono: ["getIconName", "setFromIconName"], tamano_pixel: ["getPixelSize", "setPixelSize"] },
+        ListBox: { activar_un_clic: ["getActivateOnSingleClick", "setActivateOnSingleClick"], separadores: ["getShowSeparators", "setShowSeparators"] },
+        ColumnView: { reordenable: ["getReorderable", "setReorderable"], separadores_filas: ["getShowRowSeparators", "setShowRowSeparators"],
+            separadores_columnas: ["getShowColumnSeparators", "setShowColumnSeparators"], activar_un_clic: ["getSingleClickActivate", "setSingleClickActivate"],
+            seleccion_arrastre: ["getEnableRubberband", "setEnableRubberband"] }
+    };
+    const constructors = {
+        Label: args => new Gtk.Label({ label: args[1] }), Entry: () => new Gtk.Entry(), PasswordEntry: () => new Gtk.PasswordEntry(),
+        TextView: () => new Gtk.TextView(), Button: args => new Gtk.Button({ label: args[1] }),
+        CheckButton: args => new Gtk.CheckButton({ label: args[1] }), ToggleButton: args => new Gtk.ToggleButton({ label: args[1] }),
+        LinkButton: args => Gtk.LinkButton.newWithLabel(args[1], args[2]),
+        SpinButton: args => Gtk.SpinButton.newWithRange(args[1], args[2], args[3]),
+        Scale: args => args[2] === args[3]
+            ? Gtk.Scale.new(orientation[args[1]], Gtk.Adjustment.new(args[2], args[2], args[3], args[4], args[4], 0))
+            : Gtk.Scale.newWithRange(orientation[args[1]], args[2], args[3], args[4]),
+        ProgressBar: () => new Gtk.ProgressBar(), Spinner: () => new Gtk.Spinner(), Calendar: () => new Gtk.Calendar(),
+        Image: args => Gtk.Image.newFromFile(args[1])
+    };
+    const groups = new Map();
+    const groupProperty = (record, value, write) => {
+        if (!write) {
+            const group = groups.get(record.id);
+            return { value: group ? [...group].find(id => id !== record.id) ?? null : null };
+        }
+        const target = value === null ? null : get(value);
+        if (target && target.type !== record.type) { fail("CLRS_GUI_WRONG_COMPONENT_TYPE"); }
+        if (target === record) { fail("CLRS_GUI_INVALID_PROPERTY_VALUE"); }
+        record.native.setGroup(target?.native ?? null);
+        groups.get(record.id)?.delete(record.id);
+        const group = target ? groups.get(target.id) ?? new Set([target.id]) : new Set();
+        group.add(record.id); groups.set(record.id, group);
+        if (target) { groups.set(target.id, group); }
+        return { value: undefined };
+    };
+    const rangeProperty = (record, name, value, write) => {
+        const adjustment = record.native.getAdjustment();
+        const lower = adjustment.getLower(), upper = adjustment.getUpper();
+        if (!write) { return { value: name === "minimo" ? lower : name === "maximo" ? upper : adjustment.getStepIncrement() }; }
+        if (name === "paso") { record.native.setIncrements(value, adjustment.getPageIncrement()); }
+        else {
+            const nextLower = name === "minimo" ? value : lower, nextUpper = name === "maximo" ? value : upper;
+            if (nextLower > nextUpper) { fail("CLRS_GUI_INVALID_PROPERTY_VALUE"); }
+            record.native.setRange(nextLower, nextUpper);
+        }
+        return { value: undefined };
+    };
+    return {
+        create(type, args) {
+            if (["DropDown", "ListBox", "ColumnView"].includes(type)) { return models.create(type, args); }
+            if (type === "Video") { return media.create(args); }
+            if (!Object.hasOwn(constructors, type)) { return null; }
+            return { native: constructors[type](args), state: {} };
+        },
+        property(record, name, value, write) {
+            const { native, type } = record;
+            if (type === "Video") { return media.property(record, name, value, write); }
+            if (["DropDown", "ListBox", "ColumnView"].includes(type)) {
+                const result = models.property(record, name, value, write);
+                if (result) { return result; }
+            }
+            if (["CheckButton", "ToggleButton"].includes(type) && name === "grupo") { return groupProperty(record, value, write); }
+            if (["SpinButton", "Scale"].includes(type) && ["minimo", "maximo", "paso"].includes(name)) {
+                return rangeProperty(record, name, value, write);
+            }
+            if (type === "TextView" && name === "texto") {
+                const buffer = native.getBuffer();
+                if (write) { buffer.setText(value, -1); return { value: undefined }; }
+                const [start, end] = buffer.getBounds();
+                return { value: buffer.getText(start, end, true) };
+            }
+            if ((type === "Label" || type === "TextView") && name === "modo_ajuste") {
+                const choices = type === "Label" ? labelWrap : wrap;
+                if (write) {
+                    if (type === "Label") { native.setWrap(value !== "ninguno"); }
+                    if (type !== "Label" || value !== "ninguno") { native.setWrapMode(choices[value]); }
+                    return { value: undefined };
+                }
+                return { value: type === "Label" && !native.getWrap() ? "ninguno"
+                    : Object.keys(choices).find(key => choices[key] === native.getWrapMode()) };
+            }
+            if ((type === "PasswordEntry" || type === "Entry") && name === "marcador") {
+                // La propiedad GObject no anota null; el GtkText delegado sí ofrece un setter nullable.
+                const delegate = type === "PasswordEntry" ? native.getDelegate() : native;
+                if (write) { delegate.setPlaceholderText(value); record.state.placeholder = value; return { value: undefined }; }
+                return { value: Object.hasOwn(record.state, "placeholder") ? record.state.placeholder : delegate.getPlaceholderText() };
+            }
+            if (type === "ProgressBar" && name === "texto") {
+                if (write) { native.setText(value); record.state.progressText = value; return { value: undefined }; }
+                return { value: Object.hasOwn(record.state, "progressText") ? record.state.progressText : native.getText() };
+            }
+            if (["Button", "ToggleButton", "LinkButton", "Image"].includes(type) && name === "icono" && write && value === null) {
+                if (type === "Image") { native.clear(); } else { native.setChild(null); }
+                return { value: undefined };
+            }
+            if (type === "Calendar" && name === "fecha") {
+                if (write) { native.selectDay(GLib.DateTime.newLocal(...value, 12, 0, 0)); return { value: undefined }; }
+                const date = native.getDate();
+                return { value: [date.getYear(), date.getMonth(), date.getDayOfMonth()] };
+            }
+            if (type === "Image" && name === "archivo") { native.setFromFile(value); return { value: undefined }; }
+            if (name === "decimales" && value > (type === "SpinButton" ? 20 : 64) && write) { fail("CLRS_GUI_INVALID_PROPERTY_VALUE"); }
+            const table = Object.hasOwn(mappings, type) ? mappings[type] : null;
+            if (!table || !Object.hasOwn(table, name)) { return null; }
+            const [getter, setter, access] = table[name];
+            const choices = Object.hasOwn(enums, name) ? enums[name] : null;
+            if (write) {
+                if (access === "property") { native[setter] = value; }
+                else { native[setter](choices ? choices[value] : value); }
+                return { value: undefined };
+            }
+            let result = access === "property" ? native[getter] : native[getter]();
+            // GtkButton devuelve NULL cuando su contenido simple es un icono.
+            if (name === "texto" && result === null && type !== "ProgressBar") { result = ""; }
+            if (choices) { result = Object.keys(choices).find(key => choices[key] === result); }
+            return { value: result };
+        },
+        action(record, name, args) {
+            if (record.type === "Video") { return media.action(record, name); }
+            if (models.action(record, name, args)) { return true; }
+            switch (name) {
+                case "PULSAR_PROGRESO": record.native.pulse(); break;
+                case "INICIAR": record.native.start(); break;
+                case "PARAR": record.native.stop(); break;
+                case "MARCAR_DIA": record.native.markDay(args[1]); break;
+                case "DESMARCAR_DIA": record.native.unmarkDay(args[1]); break;
+                case "LIMPIAR_MARCAS": record.native.clearMarks(); break;
+                case "LIMPIAR_IMAGEN": record.native.clear(); break;
+                default: return false;
+            }
+            return true;
+        },
+        detachListChild: models.detachListChild,
+        release(record) {
+            if (["CheckButton", "ToggleButton"].includes(record.type)) { record.native.setGroup(null); }
+            groups.get(record.id)?.delete(record.id); groups.delete(record.id);
+            models.release(record); media.release(record);
+        },
+        dispose() { media.dispose(); models.dispose(); groups.clear(); }
+    };
+}

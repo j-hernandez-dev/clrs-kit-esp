@@ -1,0 +1,2 @@
+PRINCIPAL()
+    escribir "Hola desde un proyecto CLI"

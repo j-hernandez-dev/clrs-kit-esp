@@ -1,0 +1,5 @@
+PRINCIPAL()
+    nombre = NULO
+    escribir "Ingresa tu nombre:"
+    leer nombre
+    escribir "Hola ", nombre

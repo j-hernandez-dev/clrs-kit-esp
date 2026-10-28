@@ -1,0 +1,281 @@
+{
+  "schemaVersion": 1,
+  "targetVersion": "2.0.3",
+  "phase": "release-closure",
+  "decision": {
+    "authority": "semanticModel.gui.usage.requiresGui",
+    "propagatedCapability": "gui",
+    "cliWhen": "requiresGui === false",
+    "guiWhen": "requiresGui === true",
+    "forbiddenHeuristics": [
+      "source-text-search",
+      "generated-code-search",
+      "symbol-name-search"
+    ]
+  },
+  "surfaces": {
+    "permanentExport": {
+      "trigger": "exportProject === true && temporary !== true",
+      "root": "app",
+      "published": true
+    },
+    "temporaryExecution": {
+      "trigger": "temporary === true",
+      "root": ".",
+      "published": false
+    }
+  },
+  "profiles": {
+    "cli": {
+      "initialFiles": [
+        "<program>.js",
+        "package.json",
+        "package-lock.json"
+      ],
+      "normalEntry": "<program>.js",
+      "packagedEntry": "<program>.js",
+      "buildOutputs": {
+        "win32": "dist/<program>.exe",
+        "unix": "dist/<program>"
+      },
+      "forbidden": [
+        "node-gtk",
+        "bootstrap.cjs",
+        "prepare-packable.cjs",
+        "<program>.packable.js",
+        "gtk-assets",
+        "private-clrs-runtime"
+      ]
+    },
+    "gui": {
+      "initialFiles": [
+        "<program>.js",
+        "prepare-packable.cjs",
+        "bootstrap.cjs",
+        "package.json",
+        "package-lock.json"
+      ],
+      "normalEntry": "<program>.js",
+      "packagedEntry": "bootstrap.cjs",
+      "required": [
+        "node-gtk@4.1.1",
+        "prepare-packable.cjs",
+        "bootstrap.cjs",
+        "<program>.packable.js as build output",
+        "gtk-binding-assets"
+      ]
+    }
+  },
+  "sharedInfrastructure": [
+    "portable-project-identity",
+    "app-export-root",
+    "staging",
+    "per-project-lock",
+    "atomic-publication",
+    "previous-export-backup",
+    "npm-lock-generation",
+    "cancellation",
+    "safe-path-validation",
+    "controlled-diagnostics"
+  ],
+  "profileSpecificInfrastructure": {
+    "cli": [
+      "direct-js-manifest",
+      "cli-lock-validation",
+      "cli-output-guidance"
+    ],
+    "gui": [
+      "gui-manifest",
+      "gui-lock-validation",
+      "packable-preparation",
+      "native-bootstrap",
+      "gtk-runtime-assets",
+      "gui-output-guidance"
+    ]
+  },
+  "manifestAuthority": {
+    "identity": "createJavaScriptProjectIdentity",
+    "cliFactory": "createCliJavaScriptProjectManifest",
+    "cliValidator": "validCliJavaScriptProjectManifest",
+    "packageDependency": "@yao-pkg/pkg@^6.22.0",
+    "target": "host",
+    "outputDirectory": "dist",
+    "nodeSupportedMajors": [22, 24, 26],
+    "cliOmittedFields": [
+      "dependencies",
+      "allowScripts",
+      "pkg"
+    ]
+  },
+  "lockAuthority": {
+    "generator": "NpmPackageLockAdapter",
+    "cliValidator": "validCliJavaScriptProjectLock",
+    "projectValidator": "validCliJavaScriptProjectSnapshot",
+    "lockfileVersion": 3,
+    "requires": true,
+    "installStrategy": "hoisted",
+    "mustBeDevelopmentOnly": true,
+    "mustHaveClosedReachableGraph": true,
+    "mustUseStrongSri": true,
+    "nativeCheck": "test:cli:lock:native"
+  },
+  "outputPresentation": {
+    "authority": "createJavaScriptProjectOutputLines",
+    "commonCommands": [
+      "npm ci",
+      "npm start",
+      "npm run build:win",
+      "npm run build:unix"
+    ],
+    "cliRequirements": [
+      "compatible Node for source and build",
+      "external resources are not embedded automatically"
+    ],
+    "cliForbiddenTerms": [
+      "GTK",
+      "node-gtk",
+      "graphical runtime",
+      "bootstrap",
+      "packable"
+    ],
+    "guiRequirements": [
+      "compatible Node",
+      "GTK 4.10 or newer"
+    ],
+    "unknownProfileFallbackMentionsGui": false
+  },
+  "deterministicCorpus": {
+    "authority": "test/fixtures/cli/export-corpus.v1.json",
+    "test": "test/cli.export.corpus.test.js",
+    "sourceCases": [
+      "minimum-program",
+      "input-output",
+      "control-flow",
+      "gui-words-as-data"
+    ],
+    "cliInitialFileCount": 3,
+    "guiInitialFileCount": 5,
+    "checks": [
+      "repeatable-byte-snapshot",
+      "strict-cli-manifest-and-lock",
+      "cli-has-no-gui-infrastructure",
+      "gui-keeps-specialized-infrastructure",
+      "temporary-execution-creates-no-project"
+    ],
+    "requiresNetwork": false,
+    "requiresNativeBuild": false
+  },
+  "normalInstallation": {
+    "authority": "scripts/cli/validate-export.mjs",
+    "command": "test:cli:install:native",
+    "install": "npm ci --no-audit --no-fund",
+    "start": "npm start",
+    "directEntry": "node <program>.js from an unrelated cwd",
+    "checks": [
+      "project-relocated-after-origin-removal",
+      "lock-and-sources-unchanged-after-install",
+      "yao-pkg-cli-available",
+      "node-gtk-absent",
+      "normal-start-has-no-build-side-effects"
+    ],
+    "workflow": "cli-install-native",
+    "workflowPlatforms": [
+      "windows-latest",
+      "ubuntu-latest",
+      "macos-latest"
+    ],
+    "localEvidence": "test/fixtures/cli/install.win32-x64.node24.json",
+    "optIn": true,
+    "includedInReleaseCheck": false
+  },
+  "nativeBuild": {
+    "authority": "scripts/cli/validate-portable-build.mjs",
+    "command": "test:cli:build:native",
+    "target": "host",
+    "windowsOutput": "dist/<program>.exe",
+    "unixOutput": "dist/<program>",
+    "checks": [
+      "single-host-executable",
+      "isolated-executable-needs-no-node-command",
+      "stdin-stdout-stderr-preserved",
+      "process-argv-preserved",
+      "exit-code-preserved",
+      "no-gui-build-or-runtime-residue"
+    ],
+    "workflow": "cli-build-native",
+    "workflowPlatforms": [
+      "windows-latest",
+      "ubuntu-latest",
+      "macos-latest"
+    ],
+    "localEvidence": "test/fixtures/cli/build.win32-x64.node24.json",
+    "crossCompilation": false,
+    "optIn": true,
+    "includedInReleaseCheck": false
+  },
+  "userExperienceDocumentation": {
+    "authority": "docs/gui/javascript-export.md",
+    "userManual": "README.md",
+    "technicalIndex": "docs/README.md",
+    "compilationReference": "docs/language/compilation.md",
+    "environmentReference": "docs/development/environment.md",
+    "outputPresenter": "createJavaScriptProjectOutputLines",
+    "commonFlow": [
+      "Generate JavaScript",
+      "open app/<program>",
+      "npm ci",
+      "npm start"
+    ],
+    "buildCommands": {
+      "win32": "npm run build:win",
+      "unix": "npm run build:unix"
+    },
+    "cli": {
+      "initialFileCount": 3,
+      "buildOutputs": [
+        "dist/<program>.exe",
+        "dist/<program>"
+      ],
+      "requiresGtk": false,
+      "directPkgEntry": "<program>.js"
+    },
+    "gui": {
+      "initialFileCount": 5,
+      "requiresGtk": true,
+      "packagedEntry": "bootstrap.cjs"
+    },
+    "externalResourcesEmbeddedAutomatically": false,
+    "versionChanged": true,
+    "vsixGenerated": true
+  },
+  "release": {
+    "version": "2.0.3",
+    "artifact": "dist/clrs-kit-esp-2.0.3.vsix",
+    "validation": "npm run release:check",
+    "packageInspection": "npm run package:list",
+    "packaging": "npm run package:vsix",
+    "marketplacePublished": false
+  },
+  "routing": {
+    "boundary": "JavaScriptProjectExportRouter",
+    "cliCurrentDelegate": "CliJavaScriptProjectExporter",
+    "guiCurrentDelegate": "JavaScriptProjectExporter",
+    "sharedTransaction": "JavaScriptProjectTransaction",
+    "temporaryExecutionUsesRouter": false
+  },
+  "currentState": {
+    "cli": "The explicit cli profile publishes a canonical manifest and strictly validated npm v3 lock through a shared atomic transaction",
+    "gui": "The explicit gui profile preserves its five-file contract through the same atomic transaction",
+    "gap": "No implementation gap remains in the 2.0.3 CLI executable-export contract; native evidence remains platform-specific",
+    "nextBlock": "none"
+  },
+  "unchangedBoundaries": [
+    "NodeProgramRunner",
+    "DAP",
+    "debugging",
+    "execution-traces",
+    "coverage",
+    "temporary-artifacts",
+    "private-gui-runtime"
+  ]
+}

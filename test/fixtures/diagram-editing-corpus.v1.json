@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "suite": "CLRS flowchart visual editing regression corpus",
+  "syntax": {
+    "assignment": "=",
+    "equality": "=="
+  },
+  "editableFigures": [
+    "return",
+    "assignment",
+    "read",
+    "write",
+    "if",
+    "while",
+    "for-to",
+    "for-downto",
+    "function-call"
+  ],
+  "operations": [
+    "update-node",
+    "delete-node",
+    "insert-node",
+    "create-function"
+  ],
+  "requiredAreas": [
+    "identity",
+    "interaction",
+    "update",
+    "delete",
+    "insert",
+    "function",
+    "safety",
+    "host",
+    "regression"
+  ],
+  "safetyCodes": [
+    "CLRS_DIAGRAM_EDIT_STALE_DOCUMENT",
+    "CLRS_DIAGRAM_EDIT_INSERTION_NOT_FOUND",
+    "CLRS_DIAGRAM_EDIT_UNSAFE_SCOPE",
+    "CLRS_DIAGRAM_EDIT_FUNCTION_SCOPE",
+    "CLRS_DIAGRAM_EDIT_DUPLICATE_FUNCTION",
+    "CLRS_DIAGRAM_EDIT_EMPTY_BLOCK",
+    "CLRS_DIAGRAM_EDIT_READ_ONLY",
+    "CLRS_DIAGRAM_EDIT_INVALID_VALUE",
+    "CLRS_DIAGRAM_EDIT_INVALID_RESULT"
+  ],
+  "cases": [
+    {
+      "id": "diagram-identities-deterministic",
+      "area": "identity",
+      "requirement": "Dos generaciones del mismo programa conservan identidades deterministas de nodos y conexiones.",
+      "evidence": [{ "file": "test/diagram.characterization.test.js", "testNeedle": "dos generaciones consecutivas conservan IDs deterministas" }]
+    },
+    {
+      "id": "diagram-identities-editable-entities",
+      "area": "identity",
+      "requirement": "Las nueve figuras y las conexiones seguras exponen su identidad editable sin alterar el modelo serializable.",
+      "evidence": [{ "file": "test/diagram.characterization.test.js", "testNeedle": "identifica nodos editables y puntos de inserción de flechas" }]
+    },
+    {
+      "id": "diagram-interaction-pointer-keyboard",
+      "area": "interaction",
+      "requirement": "Las figuras y flechas se seleccionan con puntero o teclado sin navegar accidentalmente al código.",
+      "evidence": [{ "file": "test/diagram.synchronization.test.js", "testNeedle": "selecciona figuras y flechas editables sin navegar al código" }]
+    },
+    {
+      "id": "diagram-editor-typed-intents",
+      "area": "interaction",
+      "requirement": "El editor flotante construye borradores e intenciones tipadas a partir de valores procedentes del AST.",
+      "evidence": [{ "file": "test/diagram.synchronization.test.js", "testNeedle": "construye un borrador editable e intenciones tipadas desde la identidad AST" }]
+    },
+    {
+      "id": "diagram-interaction-shape-focus",
+      "area": "interaction",
+      "requirement": "La selección visual sigue el contorno de la figura y suprime el rectángulo de foco nativo del grupo SVG.",
+      "evidence": [{ "file": "test/diagram.synchronization.test.js", "testNeedle": "el foco editable usa la geometría de la figura sin un rectángulo nativo" }]
+    },
+    {
+      "id": "diagram-update-nine-figures",
+      "area": "update",
+      "requirement": "Las nueve figuras editables actualizan exclusivamente la sentencia o encabezado que representan.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "DiagramSourceEditService actualiza las nueve figuras desde valores AST" }]
+    },
+    {
+      "id": "diagram-delete-if-branch-and-block",
+      "area": "delete",
+      "requirement": "Eliminar distingue una rama sino si de un bloque condicional completo y conserva las sentencias hermanas.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "el servicio elimina bloques completos y conserva sentencias hermanas" }]
+    },
+    {
+      "id": "diagram-delete-last-else-statement",
+      "area": "delete",
+      "requirement": "Eliminar la última sentencia de la rama No retira también el sino, mientras una rama con sentencias hermanas conserva su estructura.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "elimina sino al retirar la última sentencia de la rama No" }]
+    },
+    {
+      "id": "diagram-delete-loop-and-confirmation",
+      "area": "delete",
+      "requirement": "Los ciclos se eliminan como bloques completos y la confirmación visual no sustituye la validación del Host.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "la eliminación segura retira ciclos completos y valida la confirmación" }]
+    },
+    {
+      "id": "diagram-delete-return-and-materialize-finish",
+      "area": "delete",
+      "requirement": "Un retorno explícito puede eliminarse, se sustituye visualmente por Fin y ese final permite insertar nuevamente un retorno.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "elimina un retorno explícito, muestra Fin y permite materializar otro retorno" }]
+    },
+    {
+      "id": "diagram-edit-function-declaration",
+      "area": "function",
+      "requirement": "El terminal de inicio permite editar el identificador y los parámetros de una función existente.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "edita identificador y parámetros desde el inicio de una función" }]
+    },
+    {
+      "id": "diagram-delete-function-declaration",
+      "area": "function",
+      "requirement": "Eliminar el terminal de inicio retira la declaración y todo el cuerpo; en PRINCIPAL desaparece además la llamada global sintética.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "elimina una función completa desde su terminal de inicio" }]
+    },
+    {
+      "id": "diagram-delete-required-body",
+      "area": "delete",
+      "requirement": "Una edición no puede dejar vacío el cuerpo obligatorio de una función, condición o ciclo.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "el servicio rechaza versiones obsoletas, inyección multilínea y resultados inválidos" }]
+    },
+    {
+      "id": "diagram-insert-palette-and-defaults",
+      "area": "insert",
+      "requirement": "La paleta de inserción ofrece figuras válidas, valores iniciales y contexto estructural según el ámbito.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "el editor estructural ofrece figuras y valores iniciales según el ámbito" }]
+    },
+    {
+      "id": "diagram-insert-nine-figures",
+      "area": "insert",
+      "requirement": "Cada una de las nueve figuras puede insertarse desde una conexión segura y produce código CLRS válido.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "DiagramSourceEditService inserta las nueve figuras en una conexión segura" }]
+    },
+    {
+      "id": "diagram-insert-branches",
+      "area": "insert",
+      "requirement": "La inserción respeta ramas Sí y No, posición e índice y rechaza destinos manipulados.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "la inserción estructural respeta ramas y rechaza destinos manipulados" }]
+    },
+    {
+      "id": "diagram-insert-nested-flow",
+      "area": "insert",
+      "requirement": "Las inserciones conservan los límites de sino y los cuerpos de ciclos anidados.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "la inserción desde flechas conserva límites de sino y ciclos anidados" }]
+    },
+    {
+      "id": "diagram-insert-global-order",
+      "area": "insert",
+      "requirement": "La inserción global mantiene el orden fuente alrededor de la llamada PRINCIPAL sintética.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "la inserción global conserva el orden alrededor de la llamada PRINCIPAL sintética" }]
+    },
+    {
+      "id": "diagram-insert-global-function-call",
+      "area": "insert",
+      "requirement": "El flujo global permite insertar llamadas a funciones declaradas antes o después de PRINCIPAL.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "la inserción global admite llamadas a funciones declaradas" }]
+    },
+    {
+      "id": "diagram-insert-empty-global-function-call",
+      "area": "insert",
+      "requirement": "Un flujo global sin instrucciones ni PRINCIPAL admite insertar un subproceso antes de la primera declaración de función.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "la inserción global vacía admite un subproceso antes de las funciones" }]
+    },
+    {
+      "id": "diagram-function-editor-intent",
+      "area": "function",
+      "requirement": "El formulario de nueva función utiliza valores iniciales equivalentes a los snippets y emite una intención estructural.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "el editor de funciones genera una intención estructural para la firma" }]
+    },
+    {
+      "id": "diagram-function-create-before-main",
+      "area": "function",
+      "requirement": "Una función nueva se inserta antes de PRINCIPAL con firma, retorno inicial válido e indentación correcta.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "DiagramSourceEditService crea una función con retorno válido antes de PRINCIPAL" }]
+    },
+    {
+      "id": "diagram-function-duplicate-and-scope",
+      "area": "function",
+      "requirement": "La creación rechaza nombres duplicados y diagramas que no representan el documento completo.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "la creación de funciones rechaza duplicados y diagramas parciales" }]
+    },
+    {
+      "id": "diagram-function-without-parameters",
+      "area": "function",
+      "requirement": "Una función sin parámetros recibe un retorno inicial válido y vuelve a analizarse correctamente.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "la creación de una función sin parámetros produce un retorno válido" }]
+    },
+    {
+      "id": "diagram-function-main-proxy-edit",
+      "area": "function",
+      "requirement": "La llamada PRINCIPAL derivada abre una consulta de subproceso con campos visibles de solo lectura y ninguna intención puede modificar la declaración real.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "la llamada PRINCIPAL derivada abre una consulta de subproceso de solo lectura" }]
+    },
+    {
+      "id": "diagram-safety-stale-and-injection",
+      "area": "safety",
+      "requirement": "Versiones obsoletas, valores multilínea y resultados sintácticamente inválidos se rechazan sin editar el documento.",
+      "evidence": [{ "file": "test/diagram.application.test.js", "testNeedle": "el servicio rechaza versiones obsoletas, inyección multilínea y resultados inválidos" }]
+    },
+    {
+      "id": "diagram-safety-atomic-application",
+      "area": "safety",
+      "requirement": "La sesión aplica únicamente offsets, versión y texto esperado que pertenecen al documento enlazado.",
+      "evidence": [{ "file": "test/diagram.synchronization.test.js", "testNeedle": "la sesión aplica únicamente offsets y texto esperados de la versión enlazada" }]
+    },
+    {
+      "id": "diagram-host-correlated-edit",
+      "area": "host",
+      "requirement": "El controlador correlaciona la solicitud del Webview, aplica una edición y devuelve un resultado estructurado.",
+      "evidence": [{ "file": "test/application.controllers.test.js", "testNeedle": "DiagramCommandController aplica una edición correlacionada y responde al Webview" }]
+    },
+    {
+      "id": "diagram-host-document-binding",
+      "area": "host",
+      "requirement": "El panel conserva el documento enlazado al ocultarse, moverse o revelarse nuevamente.",
+      "evidence": [{ "file": "test/diagram.synchronization.test.js", "testNeedle": "el host del diagrama conserva el Webview al ocultarlo o moverlo" }]
+    },
+    {
+      "id": "diagram-host-save-linked-document",
+      "area": "host",
+      "requirement": "El Webview solicita al Host guardar exactamente el documento CLRS enlazado sin depender del editor que tenga el foco.",
+      "evidence": [{ "file": "test/application.controllers.test.js", "testNeedle": "DiagramCommandController gestiona panel, mensajes y limpieza" }]
+    },
+    {
+      "id": "diagram-regression-integrated-journey",
+      "area": "regression",
+      "requirement": "Un recorrido integral puede actualizar, insertar, eliminar y crear una función conservando un programa analizable.",
+      "evidence": [{ "file": "test/diagram.editing.corpus.test.js", "testNeedle": "recorre actualización, inserción, eliminación y creación de función" }]
+    }
+  ]
+}

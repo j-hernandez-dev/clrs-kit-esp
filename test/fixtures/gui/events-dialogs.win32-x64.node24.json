@@ -1,0 +1,85 @@
+{
+  "ok": true,
+  "gtk": [
+    4,
+    22,
+    4
+  ],
+  "node": "24.16.0",
+  "platform": "win32",
+  "arch": "x64",
+  "checks": [
+    "all-181-catalogued-event-connections",
+    "async-callback-node-io-and-timers",
+    "motion-and-immediate-key",
+    "text-calendar-and-selection-snapshots",
+    "dialog-properties-and-filters",
+    "native-alert-button-choice",
+    "file-dialog-missing-resources-controlled-error",
+    "application-window-parent-close-cancels-dialog",
+    "dispose-drains-native-dialog-cancellations",
+    "standalone-generated-event-success-and-localized-failure"
+  ],
+  "observed": [
+    [
+      "io-completed"
+    ],
+    [
+      "puntero_entro",
+      "b",
+      1.5,
+      2.5
+    ],
+    [
+      "cambio",
+      "e",
+      "España"
+    ],
+    [
+      "fecha_cambiada",
+      "c",
+      [
+        2024,
+        2,
+        29
+      ]
+    ],
+    [
+      "seleccion_cambiada",
+      "d",
+      -1,
+      null
+    ],
+    [
+      "seleccion_cambiada",
+      "t",
+      []
+    ],
+    [
+      "seleccion_cambiada",
+      "t",
+      [
+        0,
+        1
+      ]
+    ]
+  ],
+  "connectedEvents": 181,
+  "hasFileDialogResources": false,
+  "generatedChecks": [
+    "event-success",
+    "event-failure"
+  ],
+  "binding": "4.1.1",
+  "date": "2026-09-10",
+  "notValidated": [
+    "Linux/macOS",
+    "Node 22/26",
+    "GTK 4.10 exacto",
+    "Selección/cancelación positiva de FileDialog con GTK real: faltan esquemas GSettings en la instalación disponible"
+  ],
+  "notes": [
+    "Selección y cancelación de FileDialog cubiertas por dobles y ejecución de JS generado.",
+    "No se instalan recursos nativos ni se reintroduce multimedia."
+  ]
+}

@@ -1,0 +1,146 @@
+import {
+    freezeGuiContract, GUI_CONTRACT, GUI_DOMAINS as D, guiParameter as arg, guiReference
+} from "./GuiContract.js";
+import { GUI_COMPONENTS } from "./GuiComponentCatalog.js";
+import { guiFunctionCost } from "./GuiCostCatalog.js";
+
+const functions = Object.fromEntries(Object.values(GUI_COMPONENTS).map(component => [
+    component.factory.name, {
+        kind: "factory", parameters: component.factory.parameters, returns: D.void,
+        componentType: component.type, documentation: component.description,
+        effects: ["create-component", "write-session"],
+        constraints: [{ kind: "unique-id", argument: 0, scope: "programKey" },
+            ...component.constraints.filter(rule => rule.kind === "ordered-range")],
+        errors: ["CLRS_GUI_INVALID_ARGUMENT", "CLRS_GUI_INVALID_ID", "CLRS_GUI_DUPLICATE_ID"],
+        source: component.source
+    }
+]));
+
+const id = arg("componente", D.id, "Identificador de un componente de esta ejecución.");
+const propertyName = arg("propiedad", D.string, "Nombre público de una propiedad catalogada.");
+const componentErrors = ["CLRS_GUI_INVALID_ID", "CLRS_GUI_COMPONENT_NOT_FOUND"];
+const propertyErrors = [...componentErrors, "CLRS_GUI_PROPERTY_NOT_FOUND"];
+Object.assign(functions, {
+    ESTABLECER: {
+        kind: "property-write", parameters: [id, propertyName, arg("dato", D.value, "Valor compatible con la propiedad.")],
+        returns: D.void, documentation: "Modifica una propiedad pública del componente.",
+        effects: ["write-component"], constraints: [{ kind: "property-domain", component: 0, property: 1, value: 2 }],
+        errors: [...propertyErrors, "CLRS_GUI_PROPERTY_READ_ONLY", "CLRS_GUI_INVALID_PROPERTY_VALUE",
+            "CLRS_GUI_WRONG_COMPONENT_TYPE"],
+        source: { document: "docs/gui/api-catalog.md", heading: "4.1 ESTABLECER" }
+    },
+    OBTENER: {
+        kind: "property-read", parameters: [id, propertyName], returns: { type: "property-dependent", component: 0, property: 1 },
+        documentation: "Consulta una propiedad pública; devuelve el tipo declarado por esa propiedad.",
+        effects: ["read-component"], errors: [...propertyErrors, "CLRS_GUI_PROPERTY_WRITE_ONLY"],
+        source: { document: "docs/gui/api-catalog.md", heading: "4.2 OBTENER" }
+    },
+    CONECTAR: {
+        kind: "event-connect", parameters: [id, arg("evento", D.string, "Nombre público de un evento catalogado."),
+            arg("FUNCION", D.functionReference, "Identificador de función CLRS resuelto; no una cadena.")],
+        returns: D.void, documentation: "Conecta una función CLRS a un evento. El callback recibe primero el identificador del componente.",
+        effects: ["connect-event"], constraints: [{ kind: "event-callback", component: 0, event: 1, callback: 2 }],
+        errors: [...componentErrors, "CLRS_GUI_EVENT_NOT_FOUND", "CLRS_GUI_INVALID_CALLBACK", "CLRS_GUI_CALLBACK_REQUIRES_SYNC"],
+        source: { document: "docs/gui/api-catalog.md", heading: "4.3 CONECTAR" }
+    }
+});
+
+const windows = arg("ventana", guiReference(["Window", "ApplicationWindow"], true), "Ventana padre de la sesión o NULO.");
+const child = arg("componente", guiReference("widget"), "Hijo widget de la misma sesión.");
+const day = arg("dia", D.day, "Día entre 1 y 31; GTK valida su sentido en el mes actual.");
+const action = (documentation, parameters = [], options = {}) => ({ documentation, parameters, ...options });
+const actions = {
+    MOSTRAR: action("Muestra un widget; presenta las ventanas de nivel superior."),
+    OCULTAR: action("Oculta un widget."),
+    ENFOCAR: action("Intenta enfocar el widget. Devuelve Lógico.", [], { returns: D.boolean }),
+    CONTENER: action("Establece el único hijo principal de un contenedor vacío.", [child], { relation: "attach-single" }),
+    QUITAR: action("Retira un hijo que pertenece al contenedor indicado.", [child], { relation: "remove-child" }),
+    ANEXAR: action("Agrega un componente al final del contenedor.", [child], { relation: "attach" }),
+    PREPONER: action("Agrega un componente al principio del contenedor.", [child], { relation: "attach" }),
+    COLOCAR: action("Coloca un componente en una cuadrícula.", [child,
+        arg("columna", D.integer, "Columna de inicio."), arg("fila", D.integer, "Fila de inicio."),
+        arg("ancho", D.positiveInteger, "Cantidad de columnas ocupadas."),
+        arg("alto", D.positiveInteger, "Cantidad de filas ocupadas.")], { relation: "attach" }),
+    CERRAR: action("Solicita el cierre de una ventana respetando su evento cerrar."),
+    MAXIMIZAR: action("Maximiza una ventana."),
+    MINIMIZAR: action("Minimiza una ventana."),
+    PANTALLA_COMPLETA: action("Solicita pantalla completa para una ventana."),
+    RESTAURAR: action("Restaura una ventana según su estado actual."),
+    PULSAR_PROGRESO: action("Avanza el pulso de una barra de progreso indeterminada."),
+    INICIAR: action("Inicia el indicador de carga."),
+    PARAR: action("Detiene el indicador de carga."),
+    MARCAR_DIA: action("Marca un día del calendario.", [day]),
+    DESMARCAR_DIA: action("Retira la marca de un día del calendario.", [day]),
+    LIMPIAR_MARCAS: action("Retira todas las marcas del calendario."),
+    LIMPIAR_IMAGEN: action("Limpia la fuente de una imagen."),
+    ANEXAR_FILA: action("Agrega una fila a la vista de columnas.", [arg("fila", D.row, "Una celda por columna.")], { constraints: [{ kind: "row-width", argument: 1, model: "columnas" }] }),
+    QUITAR_FILA: action("Retira una fila de la vista de columnas.", [arg("indice", D.natural, "Índice de una fila existente.")], { constraints: [{ kind: "existing-row", argument: 1 }] }),
+    LIMPIAR_FILAS: action("Retira todas las filas de la vista de columnas."),
+    MOSTRAR_ALERTA: action("Muestra una alerta sin esperar respuesta.", [windows], { wait: false }),
+    ELEGIR_ALERTA: action("Espera la elección de un botón de alerta. Devuelve su índice o -1 al cancelar sin botón de cancelación.", [windows],
+        { returns: D.naturalOrUnset, wait: true, cancellation: { when: "no-cancel-button", value: -1 } }),
+    ABRIR_ARCHIVO: action("Selecciona una ruta local sin leer el archivo. Devuelve Cadena o NULO al cancelar.", [windows],
+        { returns: D.nullableString, wait: true, cancellation: { value: null }, selectsPath: true }),
+    ABRIR_ARCHIVOS: action("Selecciona rutas locales sin leer archivos. Devuelve un arreglo de cadenas; vacío al cancelar.", [windows],
+        { returns: D.strings, wait: true, cancellation: { value: [] }, selectsPath: true }),
+    GUARDAR_ARCHIVO: action("Selecciona un destino sin crear ni escribir el archivo. Devuelve Cadena o NULO al cancelar.", [windows],
+        { returns: D.nullableString, wait: true, cancellation: { value: null }, selectsPath: true }),
+    ELEGIR_CARPETA: action("Selecciona una carpeta local. Devuelve Cadena o NULO al cancelar.", [windows],
+        { returns: D.nullableString, wait: true, cancellation: { value: null }, selectsPath: true }),
+    ELEGIR_CARPETAS: action("Selecciona carpetas locales. Devuelve un arreglo de cadenas; vacío al cancelar.", [windows],
+        { returns: D.strings, wait: true, cancellation: { value: [] }, selectsPath: true })
+};
+for (const [name, descriptor] of Object.entries(actions)) {
+    const componentTypes = Object.values(GUI_COMPONENTS).filter(component => Object.hasOwn(component.actions, name)).map(component => component.type);
+    functions[name] = {
+        kind: "action", documentation: descriptor.documentation,
+        parameters: [arg(descriptor.parameters.length && descriptor.parameters[0] === child ? "contenedor" : "componente",
+            guiReference(componentTypes), "Componente que admite esta acción."), ...descriptor.parameters],
+        returns: descriptor.returns ?? D.void,
+        componentTypes, effects: ["act-on-component", ...(descriptor.wait ? ["await-user"] : []), ...(descriptor.selectsPath ? ["select-local-path"] : [])],
+        asynchronous: descriptor.wait === true,
+        cancellation: descriptor.cancellation ?? null,
+        fileSystemEffect: "none",
+        constraints: [...(descriptor.constraints ?? []), ...(descriptor.relation ? [{ kind: descriptor.relation,
+            sameSession: true, noImplicitReparent: true, validateMembership: true }] : [])],
+        errors: [...componentErrors, "CLRS_GUI_INVALID_ARGUMENT", "CLRS_GUI_ACTION_NOT_SUPPORTED", "CLRS_GUI_WRONG_COMPONENT_TYPE",
+            ...(descriptor.relation ? ["CLRS_GUI_PARENT_CONFLICT", "CLRS_GUI_CHILD_NOT_FOUND"] : []),
+            ...(descriptor.selectsPath ? ["CLRS_GUI_FILE_NOT_LOCAL", "CLRS_GUI_DIALOG_RESOURCES_UNAVAILABLE"] : []), ...(descriptor.extraErrors ?? [])],
+        source: { document: "docs/gui/api-catalog.md", heading: "12. Tabla resumida de acciones" }
+    };
+}
+
+for (const [name, parameter, returns, description, errors] of [
+    ["ESTABLECER_TEMA", arg("nombre", D.themeName, "Nombre de un tema GTK disponible; no es un enum cerrado."), D.void,
+        "Establece el tema GTK global de la sesión.", ["CLRS_GUI_INVALID_THEME_NAME", "CLRS_GUI_THEME_UNAVAILABLE"]],
+    ["OBTENER_TEMA", null, D.string, "Consulta el nombre de tema vigente en GTK.", []],
+    ["ESTABLECER_MODO_TEMA", arg("modo", D.themeMode, "sistema, claro u oscuro."), D.void,
+        "Establece la preferencia global de apariencia sin sustituir el nombre del tema.", ["CLRS_GUI_INVALID_THEME_MODE"]],
+    ["OBTENER_MODO_TEMA", null, D.themeMode, "Consulta la preferencia de apariencia; inicialmente sistema.", []]
+]) {
+    functions[name] = { kind: "theme", parameters: parameter ? [parameter] : [], returns,
+        documentation: description, scope: "session", effects: [parameter ? "write-theme" : "read-theme"],
+        errors, source: { document: "docs/gui/api-catalog.md", heading: "9. Configuración global de tema" } };
+}
+
+/** Proyección estándar única; la ejecución se delega al runtime GUI preparado. */
+export const GUI_FUNCTION_DEFINITIONS = freezeGuiContract(Object.fromEntries(
+    Object.entries(functions).map(([name, descriptor]) => [name, {
+        name, capability: GUI_CONTRACT.capability, requiresGui: true,
+        capabilities: ["gui"],
+        availability: GUI_CONTRACT.availability,
+        cost: guiFunctionCost(name, descriptor), costStatus: "modeled",
+        symbolicEffect: { kind: "opaque", argument: 0 },
+        returnType: standardReturnType(descriptor.returns),
+        constraints: [], asynchronous: false, ...descriptor,
+        arity: descriptor.parameters.length,
+        signature: `${name}(${descriptor.parameters.map(parameter => parameter.name).join(", ")})`
+    }])
+));
+
+function standardReturnType(domain) {
+    if (domain.oneOf || domain.type === "property-dependent") {
+        return "unknown";
+    }
+    return domain.type;
+}

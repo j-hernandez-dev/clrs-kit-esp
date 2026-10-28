@@ -1,0 +1,21 @@
+{
+  "date": "2026-09-10",
+  "ok": true,
+  "command": "npm run test:gui:base -- <isolated-node-gtk-installation>",
+  "runtimeSource": "src/standard-library/gui/runtime/GuiRuntimeSource.js",
+  "binding": "4.1.1",
+  "node": "24.16.0",
+  "platform": "win32",
+  "arch": "x64",
+  "gtk": [4, 22, 4],
+  "checks": [
+    "theme-baseline-mode-and-name",
+    "native-containment-and-private-viewport-detach",
+    "curated-properties-enums-and-requested-size",
+    "all-base-properties-and-theme-after-widget-creation",
+    "close-veto-hide-not-destroy-and-last-window-lifetime",
+    "generated-clrs-theme-only-window-callback-and-localized-error"
+  ],
+  "nonFatalWarnings": ["win32 session dbus binary not found"],
+  "notValidated": ["Linux", "macOS", "Node 22", "Node 26", "GTK exactly 4.10", "Remaining controls (block 6)", "Remaining events and dialogs (block 7)", "Standalone export (block 12)"]
+}

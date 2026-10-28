@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "validatedOn": "2026-09-10",
+  "command": "npm run test:gui:private",
+  "ok": true,
+  "binding": "4.1.1",
+  "gtk": [4, 22, 4],
+  "node": "24.16.0",
+  "abi": "137",
+  "platform": "win32",
+  "arch": "x64",
+  "checks": [
+    "private-npm-install",
+    "prebuilt-only",
+    "public-esm-resolution",
+    "nonvisual-child-probe",
+    "transactional-publish",
+    "reuse-without-install",
+    "spaces-unicode-hash-path",
+    "lock-and-staging-cleanup"
+  ],
+  "notes": [
+    "Instalación real mediante npm y el instalador oficial de binarios; sin scripts de lifecycle ni fallback de compilación.",
+    "Raíz temporal aislada con espacios, acento y carácter #, eliminada al concluir.",
+    "La primera ejecución bajo restricciones falló en npm sin publicar packages; el ensayo autorizado con red completó ambas comprobaciones.",
+    "No se modifica la instalación de VS Code ni el package.json del workspace."
+  ],
+  "notValidated": ["Linux", "macOS", "Node 22", "Node 26", "GTK exactamente 4.10", "Runtime de los 25 componentes GUI"]
+}

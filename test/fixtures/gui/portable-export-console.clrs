@@ -1,0 +1,3 @@
+PRINCIPAL()
+    mensaje = "exportación normal"
+    escribir mensaje

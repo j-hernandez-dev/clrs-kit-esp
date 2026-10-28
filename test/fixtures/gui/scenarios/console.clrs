@@ -1,0 +1,3 @@
+PRINCIPAL()
+    datos = [1, 2, 3]
+    escribir LONG(datos)

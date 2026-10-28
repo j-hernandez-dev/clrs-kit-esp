@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "parser-semantics",
+      "name": "Parser y semántica",
+      "tests": [
+        "test/pipeline.characterization.test.js",
+        "test/semantic.analysis.test.js"
+      ]
+    },
+    {
+      "id": "execution",
+      "name": "Ejecución",
+      "tests": [
+        "test/compilation.service.test.js",
+        "test/execution.trace.test.js",
+        "test/terminal.ui.test.js",
+        "test/terminal.presentation.test.js",
+        "test/terminal.animation.test.js",
+        "test/terminal.cli.integration.test.js",
+        "test/gui.runtime.presentation.test.js"
+      ]
+    },
+    {
+      "id": "testing",
+      "name": "Pruebas",
+      "tests": [
+        "test/clrs.testing.discovery.test.js",
+        "test/clrs.testing.execution.test.js",
+        "test/clrs.testing.results.test.js"
+      ]
+    },
+    {
+      "id": "comparison",
+      "name": "Comparación",
+      "tests": [
+        "test/clrs.testing.comparison.test.js",
+        "test/clrs.testing.explanation.test.js"
+      ]
+    },
+    {
+      "id": "debugging",
+      "name": "Depuración",
+      "tests": [
+        "test/debug.session.test.js",
+        "test/clrs.testing.debug-run.test.js"
+      ]
+    },
+    {
+      "id": "coverage",
+      "name": "Cobertura",
+      "tests": [
+        "test/clrs.testing.native-run.test.js",
+        "test/complexity.coverage.test.js",
+        "test/diagram.application.test.js"
+      ]
+    },
+    {
+      "id": "quick-actions",
+      "name": "Acciones rápidas",
+      "tests": [
+        "test/language.corrections.inequivocal.test.js",
+        "test/language.corrections.explanatory.test.js",
+        "test/code.action.provider.test.js"
+      ]
+    },
+    {
+      "id": "call-hierarchy",
+      "name": "Jerarquía de llamadas",
+      "tests": [
+        "test/semantic.call.graph.test.js",
+        "test/call.hierarchy.provider.test.js"
+      ]
+    },
+    {
+      "id": "broker95",
+      "name": "BROKER.95",
+      "tests": [
+        "test/broker95.acceptance.corpus.test.js",
+        "test/broker95.learning.corpus.test.js",
+        "test/broker95.providers.corpus.test.js"
+      ]
+    },
+    {
+      "id": "diagram",
+      "name": "Diagramador",
+      "tests": [
+        "test/diagram.editing.corpus.test.js",
+        "test/diagram.execution.corpus.test.js",
+        "test/svg.export.test.js"
+      ]
+    },
+    {
+      "id": "array-literals",
+      "name": "Literales de arreglo",
+      "tests": [
+        "test/array.literal.corpus.test.js"
+      ]
+    },
+    {
+      "id": "gui",
+      "name": "Biblioteca GUI y corpus transversal",
+      "tests": ["test/gui.corpus.test.js"]
+    },
+    {
+      "id": "cli-export-architecture",
+      "name": "Contrato arquitectónico de exportación CLI y GUI",
+      "tests": [
+        "test/cli.export.architecture.test.js",
+        "test/cli.export.profile.test.js",
+        "test/cli.manifest.test.js",
+        "test/cli.export.transaction.test.js",
+        "test/cli.lock.validation.test.js",
+        "test/javascript.export.presentation.test.js",
+        "test/cli.export.corpus.test.js",
+        "test/cli.export.install.test.js",
+        "test/cli.export.build.test.js",
+        "test/cli.export.documentation.test.js"
+      ]
+    },
+    {
+      "id": "portable-export",
+      "name": "Exportación portable determinista",
+      "tests": ["test/portable.export.corpus.test.js"]
+    },
+    {
+      "id": "multiplatform",
+      "name": "Regresiones multiplataforma",
+      "tests": [
+        "test/platform.regression.test.js"
+      ]
+    }
+  ]
+}

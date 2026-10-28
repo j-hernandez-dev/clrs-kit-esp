@@ -1,0 +1,178 @@
+name: Corpus integral
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      gui_native:
+        description: Ejecutar aceptación GTK real en Windows x64 (descarga npm privada)
+        type: boolean
+        default: false
+      portable_build_native:
+        description: Construir y ejecutar el portable en cada plataforma host (opt-in)
+        type: boolean
+        default: false
+      cli_native:
+        description: Instalar y ejecutar el proyecto CLI exportado en cada plataforma (opt-in)
+        type: boolean
+        default: false
+      cli_build_native:
+        description: Construir y ejecutar el binario CLI del host en cada plataforma (opt-in)
+        type: boolean
+        default: false
+
+jobs:
+  corpus:
+    name: ${{ matrix.os }} · Node.js ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24, 26]
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+
+      - name: Instalar dependencias raíz
+        run: npm ci
+
+      - name: Instalar dependencias del frontend
+        run: npm --prefix frontend ci
+
+      - name: Ejecutar corpus integral en Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:corpus
+
+      - name: Ejecutar corpus integral
+        if: runner.os != 'Linux'
+        run: npm run test:corpus
+
+  gui-native:
+    name: GTK real · Windows x64 · Node.js 24
+    if: github.event_name == 'workflow_dispatch' && inputs.gui_native
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Componentes, eventos, FileDialog y limpieza con GTK real
+        run: npm run test:gui:corpus:native
+      - name: JavaScript trasladado, npm ci y npm start
+        run: node scripts/gui/validate-export.mjs test/fixtures/gui/export.win32-x64.node24.json
+      - name: Sesión DAP con GTK real
+        run: npm run test:gui:debug:native
+      - name: Reparación privada de GSettings
+        run: node scripts/gui/validate-schema-repair.mjs
+      - name: Conservar evidencias nativas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gui-native-windows-node24
+          path: test/fixtures/gui/*.json
+
+  cli-install-native:
+    name: CLI install · ${{ matrix.os }} · Node.js 24
+    if: github.event_name == 'workflow_dispatch' && inputs.cli_native
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Exportar, trasladar, instalar y ejecutar el CLI
+        run: npm run test:cli:install:native -- test/fixtures/cli/install-ci.json
+      - name: Conservar evidencia de instalación CLI
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli-install-${{ matrix.os }}-node24
+          path: test/fixtures/cli/install-ci.json
+
+  portable-build-native:
+    name: Portable host · ${{ matrix.os }} · Node.js 24
+    if: github.event_name == 'workflow_dispatch' && inputs.portable_build_native
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Build y dos arranques del portable en Windows/macOS
+        if: runner.os != 'Linux'
+        run: npm run test:gui:portable-build:native -- test/fixtures/gui/portable-build-ci.json
+      - name: Build y dos arranques del portable en Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:gui:portable-build:native -- test/fixtures/gui/portable-build-ci.json
+      - name: Conservar evidencia del host
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portable-build-${{ matrix.os }}-node24
+          path: test/fixtures/gui/portable-build-ci.json
+
+  cli-build-native:
+    name: CLI executable · ${{ matrix.os }} · Node.js 24
+    if: github.event_name == 'workflow_dispatch' && inputs.cli_build_native
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Construir y ejecutar el binario CLI del host
+        run: npm run test:cli:build:native -- test/fixtures/cli/build-ci.json
+      - name: Conservar evidencia del ejecutable CLI
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli-build-${{ matrix.os }}-node24
+          path: test/fixtures/cli/build-ci.json

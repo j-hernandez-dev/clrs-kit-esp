@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "platform": "win32",
+  "arch": "x64",
+  "node": "24.16.0",
+  "abi": "137",
+  "nodeGtk": "4.1.1",
+  "gtk": [4, 22, 4],
+  "schemaId": "org.gtk.gtk4.Settings.FileChooser",
+  "damagedCopyRejected": true,
+  "removedResource": "gschemas.compiled",
+  "oldGtkOnlyCheckPassed": true,
+  "repairs": 1,
+  "managerProbeCallsDuringRepair": 3,
+  "states": ["CHECKING", "BROKEN", "INSTALLING", "CHECKING", "READY"],
+  "postRepairIndependentProbePassed": true,
+  "stagingAndLocksEmpty": true,
+  "isolatedInstallationRemoved": true,
+  "native": {
+    "exitCode": 0,
+    "schemaResolved": true,
+    "realDialogsCreated": 8,
+    "checks": ["ABRIR_ARCHIVO", "ABRIR_ARCHIVOS", "GUARDAR_ARCHIVO", "ELEGIR_CARPETA", "ELEGIR_CARPETAS", "dispose-cancels-pending-dialog"],
+    "validInitialFolder": true,
+    "cancellationMechanism": "Gio.Cancellable / session.dispose",
+    "selectionOfRealPathVerified": false,
+    "warning": "GLib-GIO-WARNING: win32 session dbus binary not found"
+  }
+}
